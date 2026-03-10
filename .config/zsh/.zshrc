@@ -243,3 +243,4 @@ alias ls="eza -1a --icons=always --group-directories-first --hyperlink"
 alias jackett="/usr/lib/jackett/jackett --DataFolder=/home/pavel/.config/Jackett"
 alias prowlarr="/usr/lib/prowlarr/bin/Prowlarr -nobrowser -data=/home/pavel/.config/Prowlarr"
 alias -g dn='2>/dev/null'
+alias dotfiles='git --git-dir=$HOME/.dotfiles-git --work-tree=$HOME'

@@ -30,7 +30,7 @@
 	],
 	"index_files": true,
 	"font_face": "Lilex Nerd Font",
-	"font_size": 14,
+	"font_size": 15,
 	"caret_style": "solid", //"smooth", "phase", "blink" and "solid"
 	"block_caret": false,
 	"caret_extra_top": 4,
