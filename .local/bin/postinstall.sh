@@ -6,7 +6,8 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 REPO="pakhromov/dotfiles"
-DOTFILES="$HOME/.local/dotfiles"
+DOTFILES="$HOME/.local/bin/postinstall"
+GIT_DIR="$HOME/.dotfiles-git"
 
 add_repos() {
     echo "==> Adding Chaotic-AUR repo..."
@@ -27,12 +28,11 @@ add_repos() {
 
 clone_dotfiles() {
     echo "==> Cloning dotfiles..."
-    mkdir -p "$DOTFILES"
-    git clone --bare "https://github.com/$REPO.git" "$DOTFILES/.git"
-    git --git-dir="$DOTFILES/.git" config core.bare false
-    git --git-dir="$DOTFILES/.git" config core.worktree "$HOME"
-    git --git-dir="$DOTFILES/.git" --work-tree="$HOME" checkout
-    git --git-dir="$DOTFILES/.git" --work-tree="$HOME" config status.showUntrackedFiles no
+    git clone --bare "https://github.com/$REPO.git" "$GIT_DIR"
+    git --git-dir="$GIT_DIR" config core.bare false
+    git --git-dir="$GIT_DIR" config core.worktree "$HOME"
+    git --git-dir="$GIT_DIR" --work-tree="$HOME" checkout
+    git --git-dir="$GIT_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
     update-mime-database ~/.local/share/mime
 
     echo "==> Cloning zsh plugins..."
