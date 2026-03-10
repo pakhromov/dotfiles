@@ -44,4 +44,8 @@ OS_WIN_TITLE=$(kitten @ --to "$SOCKET" ls | \
     jq -r --argjson wid "${PROGRAM_WINDOW:-0}" \
     '.[] | select(any(.tabs[]; .windows[]?.id == $wid)) | .tabs[] | select(.windows[]?.id == $wid) | .title' | \
     head -1)
-focus-window kitty "$OS_WIN_TITLE"
+if [ -n "$OS_WIN_TITLE" ]; then
+    wlrctl toplevel focus kitty "title:$OS_WIN_TITLE"
+else
+    wlrctl toplevel focus kitty
+fi

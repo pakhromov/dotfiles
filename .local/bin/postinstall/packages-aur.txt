@@ -21,4 +21,5 @@ surge-bin
 sway-scroll
 waycorner
 wayscriber-bin
+wlrctl
 xdg-desktop-portal-termfilechooser-hunkyburrito-git

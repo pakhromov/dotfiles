@@ -3,16 +3,31 @@ arg="$1"
 
 YAZI_ID=$(cat /tmp/yazi_instance_id 2>/dev/null)
 
-if [ -n "$YAZI_ID" ]; then
-    if [ -d "$arg" ]; then
-        recent=$(ls -tp "$arg" | grep -v '/$' | head -1)
-        ya emit-to "$YAZI_ID" plugin --str "write-id" "$arg"
-        [ -n "$recent" ] && ya emit-to "$YAZI_ID" reveal --str "$arg/$recent"
-    else
-        ya emit-to "$YAZI_ID" plugin --str "write-id" "$(dirname "$arg")"
-        ya emit-to "$YAZI_ID" reveal --str "$arg"
-    fi
+if [ -d "$arg" ]; then
+    target_dir="$arg"
+    recent=$(ls -tp "$arg" | grep -v '/$' | head -1)
+    target_file="${recent:+$arg/$recent}"
+else
+    target_dir=$(dirname "$arg")
+    target_file="$arg"
+fi
+
+if [ -n "$YAZI_ID" ] && ya emit-to "$YAZI_ID" plugin --str "write-id" "$target_dir"; then
+    [ -n "$target_file" ] && ya emit-to "$YAZI_ID" reveal --str "$target_file"
     kitty-launch-or-focus.sh yazi
 else
-    kitty-launch-or-focus.sh yazi "$arg"
+    rm -f /tmp/yazi_instance_id
+    kitty-launch-or-focus.sh yazi
+    (
+        for i in $(seq 1 30); do
+            sleep 0.3
+            new_id=$(cat /tmp/yazi_instance_id 2>/dev/null)
+            if [ -n "$new_id" ]; then
+                ya emit-to "$new_id" plugin --str "write-id" "$target_dir"
+                [ -n "$target_file" ] && ya emit-to "$new_id" reveal --str "$target_file"
+                kitty-launch-or-focus.sh yazi
+                break
+            fi
+        done
+    ) &!
 fi

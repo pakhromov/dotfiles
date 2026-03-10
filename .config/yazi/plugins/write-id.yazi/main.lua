@@ -5,7 +5,7 @@ end)
 local find_tab = ya.sync(function(_, dir)
     for i, tab in ipairs(cx.tabs) do
         if tostring(tab.current.cwd) == dir then
-            return i - 1  -- 0-based index for tab_switch
+            return i - 1
         end
     end
     return -1

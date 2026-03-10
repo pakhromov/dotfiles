@@ -30,6 +30,7 @@ impala
 intel-ucode
 iriunwebcam-bin
 iwd
+jq
 kitty
 libreoffice-fresh
 localsend

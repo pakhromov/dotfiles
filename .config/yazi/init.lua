@@ -1,7 +1,7 @@
-require("write-id"):setup()
 require("custom-filter"):setup()
 require("recycle-bin"):setup()
 require("autosave"):setup({})
+require("write-id"):setup()
 require("sshfs"):setup()
 require("full-border"):setup {
     -- Available values: ui.Border.PLAIN, ui.Border.ROUNDED
