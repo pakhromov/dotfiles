@@ -4,5 +4,7 @@ Requires=dbus.socket
 After=dbus.socket
 
 [Service]
-ExecStart=/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
 OOMScoreAdjust=-900
+ExecStart=/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+ExecReload=/bin/kill -HUP $MAINPID
+
