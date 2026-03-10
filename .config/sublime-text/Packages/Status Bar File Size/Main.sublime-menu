@@ -1,0 +1,23 @@
+[
+    {
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "Status Bar File Size",
+                        "command": "edit_settings",
+                        "args": {
+                            "base_file": "${packages}/Status Bar File Size/StatusBarFileSize.sublime-settings",
+                            "default": "{\n\t$0\n}"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

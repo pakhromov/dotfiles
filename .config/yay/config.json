@@ -1,0 +1,16 @@
+{
+	"buildDir": "/tmp/yay-pavel",
+	"cleanafter": true,
+	"redownload": "no",
+	"rebuild": "no",
+	"keepsrc": false,
+	"removemake": "yes",
+	"answerclean": "None",
+	"answerdiff": "None",
+	"answeredit": "None",
+	"answerupgrade": "",
+	"mflags": "--skippgpcheck",
+	"pgpfetch": false,
+	"sudoloop": true,
+	"doubleconfirm": false
+}

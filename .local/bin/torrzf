@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -eu
+
+[[ $# -eq 1 ]] || { printf 'Usage: torrzf <torrent-file|magnet-link>\n' >&2; exit 1; }
+
+torrent="$1"
+
+list=$(TORRENT="$torrent" node --input-type=module <<'EOF'
+import parseTorrent from '/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/parse-torrent/index.js'
+import fs from 'fs'
+const parsed = await parseTorrent(fs.readFileSync(process.env.TORRENT))
+parsed.files.forEach((f, i) => {
+  const b = f.length
+  const size = b >= 1e9 ? (b/1e9).toFixed(1)+' GB'
+             : b >= 1e6 ? (b/1e6).toFixed(1)+' MB'
+             : b >= 1e3 ? (b/1e3).toFixed(1)+' KB'
+             : b+' B'
+  process.stdout.write(`${i}\t${f.name} (${size})\n`)
+})
+EOF
+)
+
+selected=$(fzf --multi \
+  --with-nth=2.. \
+  --delimiter=$'\t' \
+  --bind 'ctrl-a:toggle-all' \
+  --border-label ' SELECT FILES TO DOWNLOAD ' \
+  --preview-label " $(basename "$torrent") " \
+  <<<"$list") || exit 0
+
+[[ -z "$selected" ]] && exit 0
+
+indices=()
+while IFS=$'\t' read -r idx _rest; do
+  indices+=("$idx")
+done <<<"$selected"
+
+torrzf-dl "$torrent" "${indices[@]}"

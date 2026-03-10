@@ -1,0 +1,208 @@
+/**
+ * Fullscreen Grid Launcher Theme for Rofi
+ */
+
+* {
+    /* Color scheme - Dark theme */
+    bg0: #1e1e2eff;
+    bg1: #313244ff;
+    bg2: #45475aff;
+    fg0: #cdd6f4ff;
+    fg1: #bac2deff;
+    accent: #89b4faff;
+    urgent: #f38ba8ff;
+    active: #a6e3a1ff;
+
+    /* Spacing */
+    spacing: 0;
+    background-color: transparent;
+    text-color: @fg0;
+    font: "JetBrains Mono 11";
+}
+
+window {
+    /* Fullscreen window */
+    fullscreen: false;
+    width: 100%;
+    height: 100%;
+    transparency: "real";
+    background-color: @bg0;
+    border: 0px;
+    padding: 40px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing: 20px;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: @bg1;
+    text-color: @fg0;
+    border-radius: 12px;
+    padding: 16px 24px;
+    spacing: 12px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @accent;
+    font: "JetBrains Mono Bold 14";
+}
+
+entry {
+    background-color: transparent;
+    text-color: @fg0;
+    placeholder: "Type to search...";
+    placeholder-color: @fg1;
+    cursor: text;
+}
+
+listview {
+    background-color: transparent;
+
+    /* Grid layout */
+    columns: 6;
+    lines: 10;
+
+    /* Spacing between items */
+    spacing: 12px;
+
+    /* Scrolling */
+    cycle: false;
+    dynamic: true;
+    fixed-columns: true;
+
+    /* Show scrollbar */
+    scrollbar: true;
+}
+
+element {
+    background-color: @bg1;
+    text-color: @fg0;
+    border-radius: 12px;
+    padding: 16px 12px;
+    spacing: 8px;
+
+    /* Vertical layout: icon on top, text below */
+    orientation: vertical;
+    children: [ element-icon, element-text ];
+
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: rgba(49, 50, 68, 0.3);
+    text-color: @fg0;
+}
+
+element selected.normal {
+    background-color: rgba(137, 180, 250, 0.3);
+    text-color: @fg0;
+    border: 2px;
+    border-color: @accent;
+}
+
+element alternate.normal {
+    background-color: rgba(49, 50, 68, 0.3);
+    text-color: @fg0;
+}
+
+element normal.active {
+    background-color: rgba(166, 227, 161, 0.3);
+    text-color: @active;
+}
+
+element selected.active {
+    background-color: rgba(166, 227, 161, 0.5);
+    text-color: @active;
+    border: 2px;
+    border-color: @active;
+}
+
+element normal.urgent {
+    background-color: rgba(243, 139, 168, 0.3);
+    text-color: @urgent;
+}
+
+element selected.urgent {
+    background-color: rgba(243, 139, 168, 0.5);
+    text-color: @urgent;
+    border: 2px;
+    border-color: @urgent;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 64px;
+    cursor: inherit;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+    font: "Noto Sans 11";
+}
+
+element-text selected {
+    font: "Noto Sans Bold 11";
+}
+
+/* Message box (for errors, etc) */
+message {
+    background-color: @bg1;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 0px 0px 20px 0px;
+}
+
+textbox {
+    background-color: transparent;
+    text-color: @fg0;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+}
+
+/* Mode switcher (if enabled) */
+mode-switcher {
+    spacing: 0;
+    background-color: transparent;
+}
+
+button {
+    background-color: @bg1;
+    text-color: @fg1;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 4px;
+    cursor: pointer;
+}
+
+button selected {
+    background-color: @accent;
+    text-color: @bg0;
+    font: "JetBrains Mono Bold 11";
+}
+
+/* Scrollbar */
+scrollbar {
+    background-color: transparent;
+    handle-color: @bg2;
+    border-color: transparent;
+    handle-width: 8px;
+    padding: 0;
+    margin: 0 0 0 8px;
+}
+
+scrollbar handle {
+    background-color: @accent;
+    border-radius: 4px;
+}

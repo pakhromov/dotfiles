@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+;(async () => {
+  const { default: WebTorrent } = await import('/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/webtorrent/index.js')
+
+  const [, , torrentId, ...indexArgs] = process.argv
+
+  if (!torrentId || indexArgs.length === 0) {
+    process.stderr.write('Usage: torrzf-dl <torrent-id> <index1> [index2...]\n')
+    process.exit(1)
+  }
+
+  const fmtSize = b => b >= 1e9  ? (b/1e9).toFixed(1)+' GB'
+                     : b >= 1e6  ? (b/1e6).toFixed(1)+' MB'
+                     : b >= 1e3  ? (b/1e3).toFixed(1)+' KB'
+                     : b+' B'
+
+  const bar = (dl, total, w=20) => {
+    const n = total > 0 ? Math.round(dl / total * w) : 0
+    return '[' + '█'.repeat(n) + '░'.repeat(w - n) + ']'
+  }
+
+  const client = new WebTorrent({ maxConns: 100, utp: true, dht: true, lsd: true })
+  const torrent = client.add(torrentId, { path: process.cwd(), deselect: true })
+
+  let interval
+
+  process.on('SIGINT', () => {
+    clearInterval(interval)
+    client.destroy(() => process.exit(0))
+  })
+
+  torrent.on('ready', () => {
+    const selectedFiles = indexArgs.map(i => torrent.files[Number(i)])
+    const totalBytes = selectedFiles.reduce((sum, f) => sum + f.length, 0)
+    const N = selectedFiles.length
+
+    const torrentBytes = torrent.files.reduce((sum, f) => sum + f.length, 0)
+    process.stdout.write(`Torrent: ${torrent.name} (${fmtSize(torrentBytes)})\n`)
+    process.stdout.write(`Downloading ${N} of ${torrent.files.length} file(s):\n\n`)
+
+    selectedFiles.forEach(f => {
+      process.stdout.write(`  ${f.name} (${fmtSize(f.length)})  ${bar(0, 1)}  0.0%\n`)
+    })
+    process.stdout.write('\n')
+    process.stdout.write(`  Total: 0.0%  0.0 MB  0.00 MB/s  0 peer(s)\n`)
+
+    selectedFiles.forEach(f => f.select())
+
+    interval = setInterval(() => {
+      const dlBytes = selectedFiles.reduce((sum, f) => sum + f.downloaded, 0)
+      const done    = dlBytes >= totalBytes
+
+      process.stdout.write(`\x1b[${N + 2}A`)
+
+      selectedFiles.forEach(f => {
+        const pct = f.length > 0 ? (f.downloaded / f.length * 100).toFixed(1) : '0.0'
+        process.stdout.write(`\r\x1b[K  ${f.name} (${fmtSize(f.length)})  ${bar(f.downloaded, f.length)}  ${pct}%\n`)
+      })
+
+      process.stdout.write('\n')
+
+      const pct   = ((dlBytes / totalBytes) * 100).toFixed(1)
+      const mb    = (dlBytes / 1e6).toFixed(1)
+      const mbTotal = (totalBytes / 1e6).toFixed(1)
+      const speed = (torrent.downloadSpeed / 1e6).toFixed(2)
+      const peers = torrent.numPeers
+      process.stdout.write(`\r\x1b[K  Total: ${pct}%  ${mb} MB/${mbTotal} MB  ${speed} MB/s  ${peers} peer(s)\n`)
+
+      if (done) {
+        clearInterval(interval)
+        client.destroy(() => process.exit(0))
+      }
+    }, 500)
+  })
+
+  torrent.on('error', err => {
+    process.stderr.write(`\nTorrent error: ${err.message}\n`)
+    process.exit(1)
+  })
+
+  client.on('error', err => {
+    process.stderr.write(`\nClient error: ${err.message}\n`)
+    process.exit(1)
+  })
+})().catch(err => {
+  process.stderr.write(`Error: ${err.message}\n`)
+  process.exit(1)
+})

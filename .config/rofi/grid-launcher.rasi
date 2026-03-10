@@ -1,0 +1,46 @@
+/**
+ * Fullscreen Grid Application Launcher
+ * Usage: rofi -config ~/.config/rofi/grid-launcher.rasi -show drun
+ */
+
+configuration {
+    /* General settings */
+    modi: "drun";
+    show-icons: true;
+    icon-theme: "Papirus-Dark";
+
+    /* Display settings */
+    display-drun: "Applications";
+    drun-display-format: "{name}";
+
+    /* Behavior - hover to select, single click to launch */
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+
+    /* Unbind scroll wheel from entry navigation */
+    kb-row-up: "Up,Control+p";
+    kb-row-down: "Down,Control+n";
+    kb-page-up: "Page_Up";
+    kb-page-down: "Page_Down";
+
+    /* Matching */
+    matching: "fuzzy";
+    case-sensitive: false;
+
+    /* Disable history for launcher mode */
+    disable-history: false;
+
+    /* Terminal for terminal apps */
+    terminal: "foot";
+
+    /* Performance */
+    threads: 0;
+    scroll-method: 0;
+
+    /* Click outside to close */
+    click-to-exit: true;
+}
+
+/* Import the grid theme */
+@theme "grid-theme"

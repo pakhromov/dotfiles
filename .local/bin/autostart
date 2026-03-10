@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+set -eu
+
+start() {
+  if ! pgrep -f "^$1" >/dev/null 2>&1; then
+    "$@" >/dev/null 2>&1 &
+  fi
+}
+
+restart() {
+  pkill -f "^$1" 2>/dev/null || true
+  sleep 0.3
+  "$@" >/dev/null 2>&1 &
+}
+
+if [ "${1:-}" = "-tty" ]; then
+    start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
+    sudo systemctl stop greetd
+    sudo chronyd -q
+    exit 0
+fi
+
+start pipewire
+start wireplumber
+start mako
+start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
+[ "${XDG_CURRENT_DESKTOP:-}" = "wayfire" ] && restart waycorner
+
+case "${XDG_CURRENT_DESKTOP:-}" in
+    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on ;;
+    river)   wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
+    *)       ;;
+esac
+
+sudo systemctl stop greetd
+sudo chronyd -q

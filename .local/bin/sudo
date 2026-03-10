@@ -1,0 +1,15 @@
+#!/bin/sh
+NOTIFY_TIMEOUT=10
+
+if ! /usr/bin/sudo -nl "$@" >/dev/null 2>&1; then
+    (sleep "$NOTIFY_TIMEOUT" && kitten notify "sudo" "[sudo] password for $USER" </dev/null) &
+    NOTIFY_PID=$!
+    (while ! /usr/bin/sudo -nl "$@" >/dev/null 2>&1; do sleep 0.5; done; kill $NOTIFY_PID 2>/dev/null) &
+    MONITOR_PID=$!
+    /usr/bin/sudo "$@"
+    EXIT_CODE=$?
+    kill $NOTIFY_PID $MONITOR_PID 2>/dev/null
+    wait $NOTIFY_PID $MONITOR_PID 2>/dev/null
+    exit $EXIT_CODE
+fi
+exec /usr/bin/sudo "$@"

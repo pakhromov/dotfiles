@@ -1,0 +1,44 @@
+{
+  "name": "webtorrent-mpv-hook",
+  "version": "1.4.6",
+  "description": "Adds a hook that allows mpv to stream torrents",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrxdst/webtorrent-mpv-hook.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mrxdst/webtorrent-mpv-hook/issues"
+  },
+  "homepage": "https://github.com/mrxdst/webtorrent-mpv-hook#readme",
+  "keywords": [
+    "mpv",
+    "webtorrent"
+  ],
+  "bin": "build/bin.mjs",
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf build",
+    "prebuild": "npm run lint",
+    "build": "npm run clean && tsc",
+    "lint": "eslint"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "convert-units": "~2.3.4",
+    "mpv-json-ipc": "~1.0.1",
+    "webtorrent": "2.5.0"
+  },
+  "devDependencies": {
+    "@types/convert-units": "~2.3.3",
+    "@types/mpv-script": "~0.32.1",
+    "@types/node": "~22.5.2",
+    "@types/webtorrent": "~0.109.3",
+    "eslint": "~9.9.1",
+    "rimraf": "~6.0.1",
+    "typescript": "~5.5.4",
+    "typescript-eslint": "~8.4.0"
+  }
+}

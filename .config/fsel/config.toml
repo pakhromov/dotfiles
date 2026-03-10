@@ -1,0 +1,84 @@
+# ===== BASIC SETTINGS =====
+# These settings go at the ROOT LEVEL (not in any [section])
+
+# Keybinds (optional - uncomment to customize)
+# See keybinds.toml for examples
+# [keybinds]
+# up = ["up", { key = "p", modifiers = "ctrl" }]
+# down = ["down", { key = "n", modifiers = "ctrl" }]
+# select = ["enter"]
+# exit = ["esc"]
+# pin = [{ key = "space", modifiers = "ctrl" }]
+
+cursor = "|"
+
+# Command to launch terminal apps (apps with Terminal=true)
+terminal_launcher = "kitty --single-instance --class fzf"
+
+# Don't wrap around at list ends (false = wrap around)
+hard_stop = false
+rounded_borders = true
+
+highlight_color = "#FFD787"
+main_border_color = "#5F5F5F"       # Border color for the main info panel (top)
+apps_border_color = "#5F5F5F"       # Border color for the apps list panel (middle)
+input_border_color = "#5F5F5F"      # Border color for the input panel (bottom)
+header_title_color = "#87afd7"      # Panel title color
+main_text_color = "#6C6C6C"         # Text color for the main info panel
+apps_text_color = "#6C6C6C"         # Text color for the apps list
+input_text_color = "#6C6C6C"        # Text color for the input field
+pin_color = "#87afd7"        # Color for pin icon (default: orange)
+pin_icon = "📌"                       # Icon for pinned apps (use Ctrl+Space to pin/unpin)
+
+# Show selected app name in panel titles (instead of "Apps"/"Fsel")
+fancy_mode = false
+
+# ===== LAYOUT =====
+
+# Top panel height as percentage (10-70%)
+title_panel_height_percent = 1
+
+# Input panel height in lines (1-10)
+input_panel_height = 3
+
+# Title panel position: "top", "middle", or "bottom"
+title_panel_position = "bottom"
+
+# ===== SECTIONS =====
+# All sections must be at the bottom of the file!
+
+# ===== APP LAUNCHER =====
+# These settings MUST be in the [app_launcher] section
+# WARNING: DO NOT put color/UI options here - they belong at the root level!
+[app_launcher]
+
+# Filter apps based on OnlyShowIn/NotShowIn and $XDG_CURRENT_DESKTOP
+# Hides apps not meant for your desktop environment
+filter_desktop = false
+
+# Include raw executables from $PATH (ls, grep, etc.)
+list_executables_in_path = false
+
+# Hide app list until you start typing
+hide_before_typing = false
+
+# Match mode: "fuzzy" or "exact"
+# fuzzy = fzf-style matching (fire matches Firefox)
+# exact = only exact/starts-with/contains matches
+match_mode = "exact"
+
+# Confirm before launching with -p if app has never been launched before
+# Helps prevent accidental launches of wrong apps
+confirm_first_launch = false
+
+# Character depth for prefix matching priority (default: 3)
+# When query length is within this depth, prefix matches (exact, word-start)
+# are prioritized over fuzzy matches. Beyond this depth, all matches use fuzzy scoring.
+# Example: With prefix_depth=3, typing "fi" (2 chars) prioritizes prefix matches,
+#          but typing "fire" (4 chars) uses fuzzy matching for all results.
+prefix_depth = 3
+
+# ===== DMENU MODE =====
+# Override settings when using --dmenu flag
+# Inherits from main settings if not specified
+# These settings MUST be in the [dmenu] section

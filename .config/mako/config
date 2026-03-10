@@ -1,0 +1,47 @@
+output=DP-2
+layer=overlay
+
+markup=1
+format= <i><b>%s</b></i>\n%b\n<b>%h</b>
+max-history=0
+history=0
+actions=1
+icons=1
+default-timeout=0
+ignore-timeout=1
+ignore-replace=1
+
+anchor=top-right
+max-visible=10
+sort=+time
+
+font=JetBrainsMono 10
+text-alignment=left
+
+on-button-left=invoke-default-action
+on-button-middle=exec makoctl menu -n "$id" -- rofi -dmenu
+on-button-right=dismiss
+on-touch=invoke-default-action
+
+background-color=#000000
+text-color=#FFFFFF
+border-color=#FFFFFF
+progress-color=over #504945
+
+width=300
+height=300
+outer-margin=10
+margin=10
+padding=10
+
+border-size=2
+border-radius=6
+
+max-icon-size=64
+icon-location=left
+icon-border-radius=0
+icon-path=/usr/share/icons/Cosmic/scalable/status:/usr/share/icons/Cosmic/scalable/devices:/usr/share/icons/Cosmic/scalable/apps
+
+[app-name=osd]
+ignore-timeout=0
+ignore-replace=0

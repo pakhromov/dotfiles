@@ -1,0 +1,5 @@
+[screencast]
+output_name=DP-2
+max_fps=60
+chooser_cmd=slurp -f %o -or
+chooser_type=none

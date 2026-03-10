@@ -1,0 +1,95 @@
+diff --git a/config.c b/config.c
+index 817f7e9..fa84005 100644
+--- a/config.c
++++ b/config.c
+@@ -110,6 +110,7 @@ void init_default_style(struct mako_style *style) {
+ 	style->actions = true;
+ 	style->default_timeout = 0;
+ 	style->ignore_timeout = false;
++	style->ignore_replace = false;
+ 
+ 	style->colors.background = 0x285577FF;
+ 	style->colors.text = 0xFFFFFFFF;
+@@ -311,6 +312,11 @@ bool apply_style(struct mako_style *target, const struct mako_style *style) {
+ 		target->spec.ignore_timeout = true;
+ 	}
+ 
++	if (style->spec.ignore_replace) {
++		target->ignore_replace = style->ignore_replace;
++		target->spec.ignore_replace = true;
++	}
++
+ 	if (style->spec.colors.background) {
+ 		target->colors.background = style->colors.background;
+ 		target->spec.colors.background = true;
+@@ -642,6 +648,9 @@ static bool apply_style_option(struct mako_style *style, const char *name,
+ 	} else if (strcmp(name, "ignore-timeout") == 0) {
+ 		return spec->ignore_timeout =
+ 			parse_boolean(value, &style->ignore_timeout);
++	} else if (strcmp(name, "ignore-replace") == 0) {
++		return spec->ignore_replace =
++			parse_boolean(value, &style->ignore_replace);
+ 	} else if (strcmp(name, "group-by") == 0) {
+ 		return spec->group_criteria_spec =
+ 			parse_criteria_spec(value, &style->group_criteria_spec);
+@@ -921,6 +930,7 @@ int parse_config_arguments(struct mako_config *config, int argc, char **argv) {
+ 		{"history", required_argument, 0, 0},
+ 		{"default-timeout", required_argument, 0, 0},
+ 		{"ignore-timeout", required_argument, 0, 0},
++		{"ignore-replace", required_argument, 0, 0},
+ 		{"output", required_argument, 0, 0},
+ 		{"layer", required_argument, 0, 0},
+ 		{"anchor", required_argument, 0, 0},
+diff --git a/dbus/xdg.c b/dbus/xdg.c
+index 1f91431..238659f 100644
+--- a/dbus/xdg.c
++++ b/dbus/xdg.c
+@@ -106,6 +106,9 @@ static int handle_notify(sd_bus_message *msg, void *data,
+ 	struct mako_notification *notif = NULL;
+ 	if (replaces_id > 0) {
+ 		notif = get_notification(state, replaces_id);
++		if (notif && notif->style.ignore_replace) {
++			notif = NULL;
++		}
+ 	}
+ 
+ 	if (notif) {
+@@ -362,7 +365,7 @@ static int handle_notify(sd_bus_message *msg, void *data,
+ 	if (notif->tag) {
+ 		// Find and replace the existing notfication with a matching tag
+ 		struct mako_notification *replace_notif = get_tagged_notification(state, notif->tag, app_name);
+-		if (replace_notif) {
++		if (replace_notif && !replace_notif->style.ignore_replace) {
+ 			notif->id = replace_notif->id;
+ 			wl_list_insert(&replace_notif->link, &notif->link);
+ 			destroy_notification(replace_notif);
+@@ -446,7 +449,7 @@ static int handle_close_notification(sd_bus_message *msg, void *data,
+ 
+ 	// TODO: check client
+ 	struct mako_notification *notif = get_notification(state, id);
+-	if (notif) {
++	if (notif && !notif->style.ignore_replace) {
+ 		struct mako_surface *surface = notif->surface;
+ 		close_notification(notif, MAKO_NOTIFICATION_CLOSE_REQUEST, true);
+ 		set_dirty(surface);
+diff --git a/include/config.h b/include/config.h
+index 4876989..b4cfa13 100644
+--- a/include/config.h
++++ b/include/config.h
+@@ -40,7 +40,7 @@ enum mako_icon_location {
+ // structs are also mirrored.
+ struct mako_style_spec {
+ 	bool width, height, outer_margin, margin, padding, border_size, border_radius, font,
+-		markup, format, text_alignment, actions, default_timeout, ignore_timeout,
++		markup, format, text_alignment, actions, default_timeout, ignore_timeout, ignore_replace,
+ 		icons, max_icon_size, icon_path, icon_border_radius, group_criteria_spec, invisible, history,
+ 		icon_location, max_visible, layer, output, anchor;
+ 	struct {
+@@ -77,6 +77,7 @@ struct mako_style {
+ 	bool actions;
+ 	int default_timeout; // in ms
+ 	bool ignore_timeout;
++	bool ignore_replace;
+ 
+ 	struct {
+ 		uint32_t background;

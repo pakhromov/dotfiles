@@ -1,0 +1,35 @@
+#!/bin/bash
+
+_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mESC\033[36m cancel\033[m'
+_footer_plain='TAB select   ENTER copy   ESC cancel'
+_pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
+(( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
+
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+  --no-sort --multi --exact --reverse --no-hscroll --height=100%
+  --highlight-line
+  --scroll-off 7
+  --info=inline-right
+  --info-command='echo -e \"\$FZF_POS/\$FZF_MATCH_COUNT(\$FZF_SELECT_COUNT)\"'
+  --border
+  --input-border
+  --border-label ' EMOJI PICKER '
+  --footer \"$_footer\"
+  --footer-border 'none'
+  --prompt '> '
+  --pointer '>'
+  --gutter '┃'
+  --marker '┃'
+  --ellipsis '  '
+  --scrollbar ''
+  --separator ''
+  --color fg:242,bg:233,hl:65,fg+:222,bg+:234,hl+:108
+  --color info:108,prompt:110,spinner:150,pointer:167,marker:65
+"
+
+if [[ "$1" == "-t" ]]; then
+  $2 "$0"
+else
+  sel=$(fzf < ~/.local/bin/icons/emoji.txt | awk '{print $1}' | tr -d "\n")
+  [ -n "$sel" ] && wl-copy -- "$sel" >/dev/null 2>&1
+fi

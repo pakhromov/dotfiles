@@ -1,0 +1,27 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"Add Folder To Project",
+		"All Autocomplete",
+		"AlternativeAutocompletion",
+		"BracketHighlighter",
+		"Clickable URLs",
+		"Compare Side-By-Side",
+		"FileTabRename",
+		"FontCycler",
+		"GitHub Theme",
+		"KDL",
+		"Package Control",
+		"QColor",
+		"SideBarTools",
+		"Splunk Conf File Syntax Highlighting",
+		"Status Bar File Size",
+		"Statusbar Path",
+		"Theme - Cyanide",
+		"WordingStatus",
+	],
+}

@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+: "${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR not set}"
+: "${DBUS_SESSION_BUS_ADDRESS:?DBUS_SESSION_BUS_ADDRESS not set}"
+
+pgrep -x xdg-permission-store >/dev/null 2>&1 || /usr/lib/xdg-permission-store &
+sleep 0.1
+pgrep -x xdg-document-portal >/dev/null 2>&1 || /usr/lib/xdg-document-portal &
+sleep 0.1
+pgrep -x xdg-desktop-portal-wlr >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal-wlr &
+sleep 0.1
+pgrep -x xdg-desktop-portal-termfilechooser >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal-termfilechooser &
+sleep 0.1
+pgrep -x xdg-desktop-portal >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal &

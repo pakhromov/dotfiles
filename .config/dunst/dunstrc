@@ -1,0 +1,177 @@
+[global]
+
+
+    width = 300
+    height = (70, 300)
+    offset = (30, 50)
+
+    notification_limit = 0
+
+    highlight = "#cba6f7"
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 400
+    progress_bar_corner_radius = 5
+    icon_corner_radius = 0
+
+
+    padding = 8
+    horizontal_padding = 8
+    text_icon_padding = 8
+    frame_width = 2
+    frame_color = "#cba6f7"
+    gap_size = 20
+
+
+
+    # Sort type.
+    # possible values are:
+    #  * id: sort by id
+    #  * urgency_ascending: sort by urgency (low then normal then critical)
+    #  * urgency_descending: sort by urgency (critical then normal then low)
+    #  * update: sort by update (most recent always at the top)
+    sort = yes
+
+
+    font = JetBrainsMono 10
+    line_height = 2
+
+
+    # The format of the message.  Possible variables are:
+    #   %a  appname
+    #   %s  summary
+    #   %b  body
+    #   %c  category
+    #   %S  stack_tag
+    #   %i  iconname (including its path)
+    #   %I  iconname (without its path)
+    #   %p  progress value if set ([  0%] to [100%]) or nothing
+    #   %n  progress value if set without any extra characters
+    #   %%  literal %
+    # Markup is allowed
+    format = "<b>%s</b>\n%b"
+
+    # Possible values are "left", "center" and "right".
+    alignment = left
+
+
+    # Possible values are "top", "center" and "bottom".
+    vertical_alignment = center
+
+
+    # Set to -1 to disable.
+    show_age_threshold = 60
+
+    # Specify where to make an ellipsis in long lines.
+    # Possible values are "start", "middle" and "end".
+    ellipsize = middle
+
+
+
+    stack_duplicates = false
+    hide_duplicate_count = true
+
+    # Display indicators for URLs (U) and actions (A).
+    show_indicators = no
+
+
+    icon_theme = Adwaita
+    # icon_theme = "Adwaita, breeze"
+
+    # Align icons left/right/top/off
+    icon_position = left
+
+    # set to 0 to disable
+    min_icon_size = 32
+    max_icon_size = 32
+
+
+
+
+    # Should a notification popped up from history be sticky or timeout
+    # as if it would normally do.
+    sticky_history = yes
+
+    # Maximum amount of notifications kept in history
+    history_length = 100
+
+
+    dmenu = rofi -dmenu dunst:
+
+
+    corner_radius = 8
+
+
+    # Ignore the dbus closeNotification message.
+    # Useful to enforce the timeout set by dunst configuration. Without this
+    # parameter, an application may close the notification sent before the
+    # user defined timeout.
+    ignore_dbusclose = true
+
+    ### Wayland ###
+    # Uncomment this if you want to let notifications appear under fullscreen
+    # applications (default: overlay)
+    layer = top
+
+
+
+
+
+
+    # * none: Don't do anything.
+    # * do_action: Invoke the action determined by the action_name rule. If there is no
+    #              such action, open the context menu.
+    # * open_url: If the notification has exactly one url, open it. If there are multiple
+    #             ones, open the context menu.
+    # * close_current: Close current notification.
+    # * remove_current: Remove current notification from history.
+    # * close_all: Close all notifications.
+    # * context: Open context menu for the notification.
+    # * context_all: Open context menu for all notifications.
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = context
+    mouse_right_click = close_current
+
+
+[urgency_low]
+    background = "#11111b"
+    foreground = "#ffffff"
+    frame_color = "#89b4fa"
+    timeout = 0
+    default_icon = dialog-information
+
+[urgency_normal]
+    background = "#11111b"
+    foreground = "#ffffff"
+    timeout = 0
+    override_pause_level = 30
+    default_icon = dialog-information
+
+[urgency_critical]
+    background = "#11111b"
+    foreground = "#ffffff"
+    frame_color = "#f38ba8"
+    timeout = 0
+    override_pause_level = 60
+    default_icon = dialog-warning
+
+[volume]
+    appname = "volume"
+    default_icon = "/usr/share/icons/Papirus/32x32/devices/audio-headphones.svg"
+    history_ignore = yes
+    timeout = 2
+
+
+[brightness]
+    appname = "brightness"
+    history_ignore = yes
+    timeout = 2
+
+[normcap]
+    appname = "NormCap"
+    timeout = 2
+
+[gpu_sr]
+    appname = "com.dec05eba.gpu_screen_recorder"
+    timeout = 2

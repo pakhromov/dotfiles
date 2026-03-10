@@ -1,0 +1,370 @@
+{
+  "features": {
+    "edit_prediction_provider": "none"
+  },
+  "notification_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "icon_theme": "Colored Zed Icons Theme Dark",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "theme": {
+    "mode": "dark",
+    "light": "JetBrains Dark",
+    "dark": "Beanseeds Pro"
+  },
+  "restore_on_startup": "last_session",
+  "base_keymap": "SublimeText",
+  "buffer_font_family": "Hack",
+  "ui_font_size": 16,
+  "buffer_font_size": 14,
+  "buffer_font_weight": 400,
+  "multi_cursor_modifier": "cmd_or_ctrl",
+  "collaboration_panel": { "button": false },
+  "chat_panel": { "button": "never" },
+  // "git_panel": {"button": false },
+  // "notification_panel": {"button": false },
+  // "agent": {"button": false },
+  // "debugger": {"button": false },
+  // "diagnostics": {"button": false },
+  "search": { "button": false },
+  "bottom_dock_layout": "left_aligned",
+  "auto_signature_help": true, // Show method signatures in the editor, when inside parentheses.
+  "always_treat_brackets_as_autoclosed": true,
+  "title_bar": {
+    "show_branch_icon": true, // Show/hide branch icon beside branch switcher
+    "show_branch_name": true, // Show/hide branch name
+    "show_project_items": true, // Show/hide project host and name
+    "show_onboarding_banner": true, // Show/hide onboarding banners
+    "show_user_picture": true, // Show/hide user avatar
+    "show_sign_in": true // Show/hide sign-in button
+  },
+  "unnecessary_code_fade": 0.5, // How much to fade out unused code.
+  "soft_wrap": "editor_width",
+  "show_wrap_guides": false,
+  "git": {
+    "inline_blame": {
+      "enabled": true, // Show/hide inline blame
+      "min_column": 0, // Minimum column to inline display blame
+      "show_commit_summary": true // Show/hide commit summary
+    },
+    "hunk_style": "staged_hollow" // staged_hollow, unstaged_hollow
+  },
+  "gutter": {
+    // Whether to show line numbers in the gutter.
+    "line_numbers": true,
+    // Whether to show runnables buttons in the gutter.
+    "runnables": true,
+    // Whether to show breakpoints in the gutter.
+    "breakpoints": true,
+    // Whether to show fold buttons in the gutter.
+    "folds": false,
+    // Minimum number of characters to reserve space for in the gutter.
+    "min_line_number_digits": 1
+  },
+  "scrollbar": {
+    // When to show the scrollbar in the editor.
+    // This setting can take four values:
+    //
+    // 1. Show the scrollbar if there's important information or
+    //    follow the system's configured behavior (default):
+    //   "auto"
+    // 2. Match the system's configured behavior:
+    //    "system"
+    // 3. Always show the scrollbar:
+    //    "always"
+    // 4. Never show the scrollbar:
+    //    "never"
+    "show": "auto",
+    // Whether to show cursor positions in the scrollbar.
+    "cursors": true,
+    // Whether to show git diff indicators in the scrollbar.
+    "git_diff": false,
+    // Whether to show buffer search results in the scrollbar.
+    "search_results": true,
+    // Whether to show selected text occurrences in the scrollbar.
+    "selected_text": true,
+    // Whether to show selected symbol occurrences in the scrollbar.
+    "selected_symbol": true,
+    // Which diagnostic indicators to show in the scrollbar:
+    //  - "none" or false: do not show diagnostics
+    //  - "error": show only errors
+    //  - "warning": show only errors and warnings
+    //  - "information": show only errors, warnings, and information
+    //  - "all" or true: show all diagnostics
+    "diagnostics": "all",
+    // Forcefully enable or disable the scrollbar for each axis
+    "axes": {
+      // When false, forcefully disables the horizontal scrollbar. Otherwise, obey other settings.
+      "horizontal": true,
+      // When false, forcefully disables the vertical scrollbar. Otherwise, obey other settings.
+      "vertical": true
+    }
+  },
+  "indent_guides": {
+    "enabled": false
+  },
+  "toolbar": {
+    "breadcrumbs": true, // Whether to show breadcrumbs.
+    "quick_actions": true, // Whether to show quick action buttons.
+    "selections_menu": false, // Whether to show the Selections menu
+    "agent_review": true, // Whether to show agent review buttons
+    "code_actions": true // Whether to show code action buttons
+  },
+  // Customize the tab bar appearance
+  "tab_bar": {
+    "show": true, // Show/hide the tab bar
+    "show_nav_history_buttons": false, // Show/hide history buttons on tab bar
+    "show_tab_bar_buttons": true // Show hide buttons (new, split, zoom)
+  },
+  "tabs": {
+    "git_status": true, // Color to show git status
+    "close_position": "right", // Close button position (left, right, hidden)
+    "show_close_button": "hover", // Close button shown (hover, always, hidden)
+    "file_icons": true, // Icon showing file type
+    // Show diagnostics in file icon (off, errors, all). Requires file_icons=true
+    "show_diagnostics": "all"
+  },
+  "preview_tabs": {
+    // Whether preview tabs should be enabled.
+    // Preview tabs allow you to open files in preview mode, where they close automatically
+    // when you switch to another file unless you explicitly pin them.
+    // This is useful for quickly viewing files without cluttering your workspace.
+    "enabled": false,
+    // Whether to open tabs in preview mode when selected from the file finder.
+    "enable_preview_from_file_finder": false,
+    // Whether a preview tab gets replaced when code navigation is used to navigate away from the tab.
+    "enable_keep_preview_on_code_navigation": false
+  },
+  "inlay_hints": {
+    "enabled": true,
+    // Toggle certain types of hints on and off, all switched on by default.
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
+
+    // Whether to show a background for inlay hints (theme `hint.background`)
+    "show_background": false, //
+
+    // Time to wait after editing before requesting hints (0 to disable debounce)
+    "edit_debounce_ms": 500,
+    // Time to wait after scrolling before requesting hints (0 to disable debounce)
+    "scroll_debounce_ms": 50,
+
+    // A set of modifiers which, when pressed, will toggle the visibility of inlay hints.
+    "toggle_on_modifiers_press": {
+      "control": false,
+      "shift": false,
+      "alt": false,
+      "platform": false,
+      "function": false
+    }
+  },
+  "terminal": {
+    "alternate_scroll": "off",
+    "blinking": "terminal_controlled",
+    "copy_on_select": false,
+    "dock": "bottom",
+    "default_width": 640,
+    "default_height": 320,
+    "detect_venv": {
+      "on": {
+        "directories": [".env", "env", ".venv", "venv"],
+        "activate_script": "default"
+      }
+    },
+    "env": {},
+    "font_family": null,
+    "font_features": null,
+    "font_size": null,
+    "line_height": "comfortable",
+    "option_as_meta": false,
+    "button": true,
+    "shell": "system",
+    "toolbar": {
+      "breadcrumbs": false
+    },
+    "working_directory": "current_project_directory",
+    "scrollbar": {
+      "show": null
+    }
+  },
+  "agent": {
+    "default_model": {
+      "provider": "openrouter",
+      "model": "moonshotai/kimi-k2:free"
+    },
+    // Version of this setting.
+    // Whether the agent is enabled.
+    "enabled": true,
+    /// What completion mode to start new threads in, if available. Can be 'normal' or 'burn'.
+    "preferred_completion_mode": "normal",
+    // Whether to show the agent panel button in the status bar.
+    "button": true,
+    // Where to dock the agent panel. Can be 'left', 'right' or 'bottom'.
+    "dock": "right",
+    // Default width when the agent panel is docked to the left or right.
+    "default_width": 640,
+    // Default height when the agent panel is docked to the bottom.
+    "default_height": 320,
+    // The default model to use when creating new threads.
+    // Additional parameters for language model requests. When making a request to a model, parameters will be taken
+    // from the last entry in this list that matches the model's provider and name. In each entry, both provider
+    // and model are optional, so that you can specify parameters for either one.
+    "model_parameters": [
+      // To set parameters for all requests to OpenAI models:
+      // {
+      //   "provider": "openai",
+      //   "temperature": 0.5
+      // }
+      //
+      // To set parameters for all requests in general:
+      // {
+      //   "temperature": 0
+      // }
+      //
+      // To set parameters for a specific provider and model:
+      // {
+      //   "provider": "zed.dev",
+      //   "model": "claude-sonnet-4",
+      //   "temperature": 1.0
+      // }
+    ],
+    // When enabled, the agent can run potentially destructive actions without asking for your confirmation.
+    "always_allow_tool_actions": false,
+    // When enabled, the agent will stream edits.
+    "stream_edits": false,
+    // When enabled, agent edits will be displayed in single-file editors for review
+    "single_file_review": true,
+    // When enabled, show voting thumbs for feedback on agent edits.
+    "enable_feedback": true,
+    "default_profile": "ask",
+    "profiles": {
+      "write": {
+        "name": "Write",
+        "enable_all_context_servers": true,
+        "tools": {
+          "copy_path": true,
+          "create_directory": true,
+          "delete_path": true,
+          "diagnostics": true,
+          "edit_file": true,
+          "fetch": true,
+          "list_directory": true,
+          "move_path": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "grep": true,
+          "terminal": true,
+          "thinking": true,
+          "web_search": true
+        }
+      },
+      "ask": {
+        "name": "Ask",
+        // We don't know which of the context server tools are safe for the "Ask" profile, so we don't enable them by default.
+        // "enable_all_context_servers": true,
+        "tools": {
+          "contents": true,
+          "diagnostics": true,
+          "fetch": true,
+          "list_directory": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "open": true,
+          "grep": true,
+          "thinking": true,
+          "web_search": true
+        }
+      },
+      "minimal": {
+        "name": "Minimal",
+        "enable_all_context_servers": false,
+        "tools": {}
+      }
+    },
+    // Where to show notifications when the agent has either completed
+    // its response, or else needs confirmation before it can run a
+    // tool action.
+    // "primary_screen" - Show the notification only on your primary screen (default)
+    // "all_screens" - Show these notifications on all screens
+    // "never" - Never show these notifications
+    "notify_when_agent_waiting": "primary_screen",
+    // Whether to play a sound when the agent has either completed
+    // its response, or needs user input.
+
+    // Default: false
+    "play_sound_when_agent_done": false
+  },
+  "language_models": {
+    "anthropic": {
+      "api_url": "https://api.anthropic.com"
+    },
+    "google": {
+      "api_url": "https://generativelanguage.googleapis.com"
+    },
+    "ollama": {
+      "api_url": "http://localhost:11434"
+    },
+    "openai": {
+      "api_url": "https://api.moonshot.ai/v1"
+    },
+    "open_router": {
+      "api_url": "https://openrouter.ai/api/v1"
+    },
+    "lmstudio": {
+      "api_url": "http://localhost:1234/api/v0"
+    },
+    "deepseek": {
+      "api_url": "https://api.deepseek.com"
+    },
+    "mistral": {
+      "api_url": "https://api.mistral.ai/v1"
+    }
+  },
+  // Controls whether edit predictions are shown immediately (true)
+  // or manually by triggering `editor::ShowEditPrediction` (false).
+  "show_edit_predictions": true,
+  // Controls whether edit predictions are shown in a given language scope.
+  // Example: ["string", "comment"]
+  "edit_predictions_disabled_in": [],
+  "edit_predictions": {
+    // A list of globs representing files that edit predictions should be disabled for.
+    // There's a sensible default list of globs already included.
+    // Any addition to this list will be merged with the default list.
+    // Globs are matched relative to the worktree root,
+    // except when starting with a slash (/) or equivalent in Windows.
+    "disabled_globs": [
+      "**/.env*",
+      "**/*.pem",
+      "**/*.key",
+      "**/*.cert",
+      "**/*.crt",
+      "**/.dev.vars",
+      "**/secrets.yml"
+    ],
+    // When to show edit predictions previews in buffer.
+    // This setting takes two possible values:
+    // 1. Display predictions inline when there are no language server completions available.
+    //     "mode": "eager"
+    // 2. Display predictions inline only when holding a modifier key (alt by default).
+    //     "mode": "subtle"
+    "mode": "eager",
+    // Copilot-specific settings
+    // "copilot": {
+    //   "enterprise_uri": "",
+    //   "proxy": "",
+    //   "proxy_no_verify": false
+    // },
+    // Whether edit predictions are enabled when editing text threads.
+    // This setting has no effect if globally disabled.
+    "enabled_in_text_threads": true
+  }
+}

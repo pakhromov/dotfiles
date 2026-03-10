@@ -1,0 +1,7 @@
+# Kitty startup session
+# First tab - btm
+launch btm
+
+# Second tab - yazi
+new_tab
+launch yazi

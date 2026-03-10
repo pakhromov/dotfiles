@@ -1,0 +1,129 @@
+SetTerminalTitle: true
+DefaultKeyBind: "disable"
+
+General:
+  TabWidth: 8
+  VScrollLines: 5
+  Prompt:
+    Normal:
+      ShowFilename: true
+      InvertColor: false
+
+
+  Style:
+    SearchHighlight:
+      Reverse: true
+    SectionLine:
+      Background: "grey"
+    SectionHeaderBorder:
+      Foreground: "yellowgreen"
+    MultiColorHighlight:
+      - Foreground: "red"
+        Bold: true
+        Italic: true
+      - Foreground: "aqua"
+        Bold: true
+        Italic: true
+      - Foreground: "yellow"
+        Bold: true
+        Italic: true
+      - Foreground: "fuchsia"
+        Bold: true
+        Italic: true
+      - Foreground: "lime"
+        Bold: true
+        Italic: true
+      - Foreground: "blue"
+        Bold: true
+        Italic: true
+      - Foreground: "grey"
+        Bold: true
+        Italic: true
+    JumpTargetLine:
+      #Background: "yellow"
+      #Foreground: "black"
+      Bold: false
+      Underline: false
+      Dim: false
+      Italic: false
+      #UnderLineStyle: 2
+      #UnderlineColor: "green"
+
+StyleOverStrike:
+  Bold: true
+StyleOverLine:
+  Underline: true
+
+KeyBind:
+    exit:
+        - "q"
+        - "ctrl+c"
+    cancel:
+        - "Escape"
+    edit:
+        - "ctrl+e"
+    reload:
+        - "ctrl+r"
+    help:
+        - "?"
+    down:
+        - "Down"
+    up:
+        - "Up"
+    top:
+        - "shift+Up"
+    bottom:
+        - "shift+Down"
+    page_half_up:
+        - "ctrl+Up"
+    page_half_down:
+        - "ctrl+Down"
+    next_section:
+        - "alt+Down"
+    previous_section:
+        - "alt+Up"
+    line_number_mode:
+        - "'"
+    search:
+        - "/"
+        - "ctrl+f"
+    wrap_mode:
+        - "ctrl+w"
+    goto:
+        - "."
+    next_search:
+        - "n"
+        - "Right"
+    next_backsearch:
+        - "N"
+        - "p"
+        - "m"
+        - "Left"
+    next_doc:
+        - "]"
+    previous_doc:
+        - "["
+    multi_color:
+        - ","
+    filter:
+        - "&"
+    close_doc:
+        - "ctrl+q"
+    input_casesensitive:
+        - "alt+c"
+    input_smart_casesensitive:
+        - "alt+s"
+    input_incsearch:
+        - "alt+i"
+    input_regexp_search:
+        - "alt+r"
+    input_non_match:
+        - "alt+n"
+    input_previous:
+        - "Up"
+    input_next:
+        - "Down"
+    input_copy:
+        - "ctrl+c"
+    input_paste:
+        - "ctrl+v"

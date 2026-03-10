@@ -1,0 +1,18 @@
+.bookmark-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 56%;
+  height: 34px !important;
+  z-index: 5;
+  border: none !important;
+  background: transparent !important;
+}
+
+.toolbar-addressbar {
+  padding-right: 56% !important;
+}
+
+.bookmark-bar button.chevron {
+  height: 34px !important;
+}

@@ -1,0 +1,444 @@
+#!/usr/bin/env node
+
+;(async () => {
+  const net  = require('net')
+  const fs   = require('fs')
+  const http = require('http')
+  const os   = require('os')
+
+  const { default: WebTorrent }       = await import('/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/webtorrent/index.js')
+  const { default: MemoryChunkStore } = await import('/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/memory-chunk-store/index.js')
+
+  const CONTROL_SOCKET = '/tmp/webtorrent-server.sock'
+  const MPV_SOCKET     = '/tmp/mpvsocket'
+
+  const getLanIp = () => {
+    for (const addrs of Object.values(os.networkInterfaces()))
+      for (const a of addrs)
+        if (a.family === 'IPv4' && !a.internal) return a.address
+    return '127.0.0.1'
+  }
+
+  // ─── CLI ────────────────────────────────────────────────────────────
+
+  let useHook = false
+  const rest = []
+  for (const a of process.argv.slice(2)) {
+    if (a === '--hook') useHook = true
+    else rest.push(a)
+  }
+  const torrentId = rest[0]
+
+  if (!torrentId) {
+    process.stderr.write('Usage: webtorrent [--hook] <torrent-file|magnet-link>\n')
+    process.exit(1)
+  }
+
+  // ─── MPV IPC ────────────────────────────────────────────────────────
+
+  const mpvSend = cmd => new Promise((resolve, reject) => {
+    const sock = net.createConnection(MPV_SOCKET)
+    sock.setTimeout(1000)
+    let buf = '', settled = false
+    const finish = (val, err) => {
+      if (settled) return
+      settled = true
+      sock.destroy()
+      err ? reject(err) : resolve(val)
+    }
+    sock.on('connect', () => sock.write(JSON.stringify(cmd) + '\n'))
+    sock.on('data', chunk => {
+      buf += chunk.toString()
+      for (const line of buf.split('\n')) {
+        try {
+          const msg = JSON.parse(line)
+          if ('error' in msg)
+            msg.error === 'success' ? finish(msg.data) : finish(undefined, new Error(msg.error))
+        } catch {}
+      }
+    })
+    sock.on('timeout', () => finish(undefined, new Error('mpv timeout')))
+    sock.on('error',   e  => finish(undefined, e))
+  })
+
+  const mpvGet = prop => mpvSend({ command: ['get_property', prop] })
+  const mpvMsg = (...args) =>
+    mpvSend({ command: ['script-message-to', 'webtorrent_hook', ...args] }).catch(() => {})
+
+  // ─── OSD helpers ────────────────────────────────────────────────────
+
+  const buildBar = (pieces, barSize = 35) => {
+    if (!pieces || pieces.length === 0) return '░'.repeat(barSize)
+    const full = pieces.map(p => p ? 1 - (p.missing / p.length) : 1)
+    const bar = Array.from({ length: barSize }, (_, i) => {
+      const lo    = Math.floor(i       * full.length / barSize)
+      const hi    = Math.floor((i + 1) * full.length / barSize)
+      const slice = full.slice(lo, Math.max(hi, lo + 1))
+      return slice.reduce((a, c) => a + c, 0) / slice.length
+    })
+    return bar.map(p => p >= 1 ? '█' : p >= 2/3 ? '▓' : p >= 1/3 ? '▒' : '░').join('')
+  }
+
+  const buildOsdText = (torrent, currentUrl) => {
+    const B   = t => '{\\b1}' + t + '{\\b0}'
+    const aS  = '${osd-ass-cc/0}'
+    const aE  = '${osd-ass-cc/1}'
+    const raw = t => aE + t.replace(/\$/g, '$$$$') + aS
+    const em  = '\u2003'
+
+    const fmtB = (b, d = 2) => {
+      b = b || 0
+      if (b >= 1e9) return (b / 1e9).toFixed(d) + ' GB'
+      if (b >= 1e6) return (b / 1e6).toFixed(d) + ' MB'
+      if (b >= 1e3) return (b / 1e3).toFixed(d) + ' kB'
+      return b + ' B'
+    }
+
+    const style = '{\\r}{\\an7}{\\fs8}{\\fn sans}{\\bord0.8}' +
+      '{\\3c&H262626&}{\\1c&HFFFFFF&}{\\alpha&H11&}{\\xshad0}{\\yshad0}{\\4c&H000000&}'
+    const bar = buildBar(torrent.pieces)
+    const pct = Math.floor(Math.max(Math.min(torrent.progress || 0, 1), 0) * 1000) / 10
+
+    const lines = [
+      `${B('Torrent:')}  ${raw(torrent.name || torrent.infoHash || '')}`,
+      `  ${B('Progress:')}  ${bar}  ${pct === 100 ? pct : pct.toFixed(1)}%`,
+      `  ${B('Downloaded:')}  ${fmtB(torrent.downloaded).padEnd(10, em)}  ${B('Size:')}  ${fmtB(torrent.length).padEnd(10, em)}`,
+      `  ${B('Speed:')}  ${(fmtB(torrent.downloadSpeed) + '/s').padEnd(10, em)}  ${B('Peers:')}  ${torrent.numPeers || 0}`,
+    ]
+
+    if (currentUrl && torrent.files && torrent.files.length > 1) {
+      const m = currentUrl.match(/\/webtorrent\/[^/]+\/(.+)$/)
+      if (m) {
+        const fp   = m[1].split('/').map(decodeURIComponent).join('/')
+        const file = torrent.files.find(f => f.path.replace(/\\/g, '/') === fp)
+        if (file) {
+          const sp      = Math.floor(file.offset / torrent.pieceLength)
+          const ep      = Math.ceil((file.offset + file.length - 1) / torrent.pieceLength)
+          const fileBar = buildBar(torrent.pieces.slice(sp, ep + 1))
+          const fpct    = Math.floor(Math.max(Math.min(file.progress || 0, 1), 0) * 1000) / 10
+          lines.push(
+            '',
+            `${B('File:')}  ${raw(file.name)}`,
+            `  ${B('Progress:')}  ${fileBar}  ${fpct === 100 ? fpct : fpct.toFixed(1)}%`,
+            `  ${B('Downloaded:')}  ${fmtB(file.downloaded).padEnd(10, em)}  ${B('Size:')}  ${fmtB(file.length)}`
+          )
+        }
+      }
+    }
+
+    return aS + style + lines.join('\n') + aE
+  }
+
+  // ─── Seekable ranges ────────────────────────────────────────────────
+  // Returns [[startFrac, endFrac], …] of downloaded piece ranges for a file.
+  // Fractions are 0.0–1.0 relative to the file; mfpbar multiplies by duration.
+
+  const getSeekableRanges = (file, torrent) => {
+    if (!torrent.pieces || !torrent.pieceLength) return []
+    const sp = Math.floor(file.offset / torrent.pieceLength)
+    const ep = Math.ceil((file.offset + file.length) / torrent.pieceLength)
+    const filePieces = torrent.pieces.slice(sp, Math.min(ep + 1, torrent.pieces.length))
+    if (!filePieces.length) return []
+    const ranges = []
+    let rangeStart = null
+    for (let i = 0; i < filePieces.length; i++) {
+      const done = !filePieces[i] || filePieces[i].missing === 0
+      if (done && rangeStart === null) rangeStart = i
+      else if (!done && rangeStart !== null) {
+        ranges.push([rangeStart / filePieces.length, i / filePieces.length])
+        rangeStart = null
+      }
+    }
+    if (rangeStart !== null) ranges.push([rangeStart / filePieces.length, 1.0])
+    return ranges
+  }
+
+  // ─── URL helpers ────────────────────────────────────────────────────
+
+  const MEDIA_EXTS = new Set([
+    'mkv','mp4','avi','mov','wmv','flv','webm','m4v','ts','m2ts',
+    'mpg','mpeg','ogv','rmvb','3gp','divx',
+    'mp3','flac','ogg','aac','wav','m4a','wma','opus','ape','mka'
+  ])
+  const isMedia = f => MEDIA_EXTS.has(f.name.split('.').pop().toLowerCase())
+
+  const makeUrls = (torrent, port, host) =>
+    torrent.files.filter(isMedia).map(f =>
+      `http://${host}:${port}/webtorrent/${torrent.infoHash}/${
+        f.path.replace(/\\/g, '/').split('/').map(encodeURIComponent).join('/')
+      }`)
+
+  const makeNames = torrent =>
+    torrent.files.filter(isMedia).map(f => f.name)
+
+  const urlFilePath = (url, infoHash) => {
+    const m = url && url.match(new RegExp(`/webtorrent/${infoHash}/(.+)$`))
+    return m ? m[1].split('/').map(decodeURIComponent).join('/') : null
+  }
+
+  // ─── MPV monitor ────────────────────────────────────────────────────
+  // Polls mpv every 500ms to track which file is currently playing,
+  // so buildOsdText and getSeekableRanges have a current URL to work with.
+
+  function makeMonitor() {
+    let lastUrl = null
+    const id = setInterval(async () => {
+      try { lastUrl = await mpvGet('path') } catch {}
+    }, 500)
+    return {
+      getLastUrl: () => lastUrl,
+      stop: () => clearInterval(id)
+    }
+  }
+
+  // ─── Control socket helpers ─────────────────────────────────────────
+
+  const serverRunning = () => new Promise(resolve => {
+    const s = net.createConnection(CONTROL_SOCKET)
+    s.setTimeout(1000)
+    s.on('connect', () => { s.destroy(); resolve(true)  })
+    s.on('timeout', () => { s.destroy(); resolve(false) })
+    s.on('error',   ()  => resolve(false))
+  })
+
+  const callServer = (id, hook) => new Promise((resolve, reject) => {
+    const s = net.createConnection(CONTROL_SOCKET)
+    s.setTimeout(5000)
+    let buf = ''
+    s.on('connect', () => s.write(JSON.stringify({ cmd: 'load', torrentId: id, hook }) + '\n'))
+    s.on('data', chunk => {
+      buf += chunk.toString()
+      const nl = buf.indexOf('\n')
+      if (nl < 0) return
+      try { resolve(JSON.parse(buf.slice(0, nl))) } catch (e) { reject(e) }
+      s.destroy()
+    })
+    s.on('timeout', () => { s.destroy(); reject(new Error('server timeout')) })
+    s.on('error', reject)
+  })
+
+  // ─── Server ─────────────────────────────────────────────────────────
+
+  async function runServer(initialId) {
+    const wt = new WebTorrent({ maxConns: 100, utp: true, dht: true, lsd: true })
+
+    wt.on('error', err => {
+      process.stderr.write(`WebTorrent error: ${err.message}\n`)
+    })
+
+    const socketEnv = process.env.WEBTORRENT_SOCKET || ''
+    let socketPort, bindHost, host
+    if (socketEnv) {
+      const [envHost, envPort] = socketEnv.split(':')
+      socketPort = parseInt(envPort || '9999', 10) || 9999
+      bindHost   = '0.0.0.0'
+      host       = envHost
+    } else if (useHook) {
+      socketPort = 8888
+      bindHost   = '127.0.0.1'
+      host       = '127.0.0.1'
+    } else {
+      socketPort = 9999
+      bindHost   = '0.0.0.0'
+      host       = getLanIp()
+    }
+
+    let torrent          = null
+    let hookPushInterval = null
+    let monitor          = null
+    let currentUrls      = null
+    let currentNames     = null
+
+    // ─── HTTP server (files + playlist on one port) ──────────────────
+
+    const server = http.createServer((req, res) => {
+      if (req.url === '/latest.m3u') {
+        if (!torrent || !currentUrls) {
+          res.writeHead(503, { 'Content-Type': 'text/plain' })
+          res.end('No active torrent\n')
+          return
+        }
+        const names = currentNames
+        const body = '#EXTM3U\r\n' + currentUrls.map((u, i) =>
+          `#EXTINF:-1,${names[i] || ''}\r\n${u}\r\n`
+        ).join('')
+        res.writeHead(200, {
+          'Content-Type': 'audio/x-mpegurl; charset=utf-8',
+          'Content-Length': Buffer.byteLength(body),
+          'Cache-Control': 'no-cache'
+        })
+        res.end(body)
+        return
+      }
+
+      // File streaming: /webtorrent/<infoHash>/<filePath>
+      const m = req.url && req.url.match(/^\/webtorrent\/([^/]+)\/(.+)$/)
+      if (!m) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Not found\n')
+        return
+      }
+
+      if (!torrent || torrent.infoHash !== m[1]) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Torrent not found\n')
+        return
+      }
+
+      const filePath = m[2].split('/').map(decodeURIComponent).join('/')
+      const file = torrent.files.find(f => f.path.replace(/\\/g, '/') === filePath)
+      if (!file) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('File not found\n')
+        return
+      }
+
+      const total = file.length
+      const rangeHeader = req.headers['range']
+      let start = 0, end = total - 1
+      if (rangeHeader) {
+        const parts = rangeHeader.replace(/bytes=/, '').split('-')
+        start = parseInt(parts[0], 10) || 0
+        end   = parts[1] ? parseInt(parts[1], 10) : total - 1
+      }
+
+      const resHeaders = {
+        'Content-Type': 'application/octet-stream',
+        'Accept-Ranges': 'bytes',
+        'Content-Length': end - start + 1
+      }
+      if (rangeHeader) resHeaders['Content-Range'] = `bytes ${start}-${end}/${total}`
+      res.writeHead(rangeHeader ? 206 : 200, resHeaders)
+
+      const stream = file.createReadStream({ start, end })
+      stream.on('error', () => res.end())
+      stream.pipe(res)
+    })
+
+    server.on('error', err => {
+      process.stderr.write(`Server error: ${err.message}\n`)
+      process.exit(1)
+    })
+
+    const port = await new Promise((resolve, reject) => {
+      server.once('error', reject)
+      server.listen(socketPort, bindHost, () => resolve(server.address().port))
+    })
+
+    const playlistUrl = `http://${host}:${port}/latest.m3u`
+
+    // ─── Hook push ───────────────────────────────────────────────────
+
+    const startHookPush = urls => {
+      if (!monitor) monitor = makeMonitor()
+      if (hookPushInterval) clearInterval(hookPushInterval)
+      const names = currentNames
+      const playlistJson = JSON.stringify({ urls, names })
+      let playlistSent = false
+
+      const tryPlaylist = () => {
+        mpvSend({ command: ['script-message-to', 'webtorrent_hook', 'playlist', playlistJson] })
+          .then(() => { playlistSent = true })
+          .catch(() => {})
+      }
+
+      tryPlaylist()
+
+      hookPushInterval = setInterval(() => {
+        if (!torrent) return
+        if (!playlistSent) { tryPlaylist(); return }
+        const lastUrl = monitor && monitor.getLastUrl()
+        mpvMsg('osd-data', buildOsdText(torrent, lastUrl))
+        if (lastUrl) {
+          const fp   = urlFilePath(lastUrl, torrent.infoHash)
+          const file = fp && torrent.files.find(f => f.path.replace(/\\/g, '/') === fp)
+          if (file) {
+            mpvSend({ command: ['script-message-to', 'mfpbar', 'torrent-cache-ranges', JSON.stringify(getSeekableRanges(file, torrent))] }).catch(() => {})
+          }
+        }
+      }, 500)
+    }
+
+    // ─── Torrent loading ─────────────────────────────────────────────
+
+    const loadTorrent = id => new Promise((resolve, reject) => {
+      const prev = torrent
+      const t = wt.add(id, { store: MemoryChunkStore, deselect: true })
+      t.on('ready', () => {
+        torrent = t
+        if (prev) wt.remove(prev.infoHash, { destroyStore: true }, () => {})
+        currentUrls  = makeUrls(torrent, port, host)
+        currentNames = makeNames(torrent)
+        resolve(currentUrls)
+      })
+      t.on('error', reject)
+    })
+
+    // ─── Control socket ──────────────────────────────────────────────
+
+    try { fs.unlinkSync(CONTROL_SOCKET) } catch {}
+
+    const ctrl = net.createServer(conn => {
+      let buf = ''
+      conn.on('data', chunk => {
+        buf += chunk.toString()
+        const nl = buf.indexOf('\n')
+        if (nl < 0) return
+        let msg
+        try { msg = JSON.parse(buf.slice(0, nl)) } catch { conn.destroy(); return }
+        if (msg.cmd === 'load') {
+          loadTorrent(msg.torrentId)
+            .then(urls => {
+              conn.write(JSON.stringify({ ok: true, urls, name: torrent.name, host, port }) + '\n')
+              if (msg.hook) startHookPush(urls)
+            })
+            .catch(e => conn.write(JSON.stringify({ ok: false, error: e.message }) + '\n'))
+        }
+      })
+      conn.on('error', () => {})
+    })
+    ctrl.listen(CONTROL_SOCKET)
+
+    const urls = await loadTorrent(initialId)
+    if (useHook) monitor = makeMonitor()
+
+    const shutdown = () => {
+      if (hookPushInterval) clearInterval(hookPushInterval)
+      if (monitor) monitor.stop()
+      ctrl.close()
+      server.close()
+      try { fs.unlinkSync(CONTROL_SOCKET) } catch {}
+      wt.destroy(() => process.exit(0))
+    }
+
+    if (useHook) {
+      startHookPush(urls)
+    } else {
+      process.stdout.write(`Torrent: ${torrent.name}\nPlaylist: ${playlistUrl}\n\n`)
+      urls.forEach((u, i) => process.stdout.write(`  [${i}] ${u}\n`))
+      process.stdout.write('\nServer running. Ctrl+C to stop.\n')
+    }
+    process.on('SIGINT', shutdown)
+  }
+
+  // ─── Main ────────────────────────────────────────────────────────────
+
+  if (await serverRunning()) {
+    const result = await callServer(torrentId, useHook)
+    if (!result.ok) {
+      process.stderr.write(`Server error: ${result.error}\n`)
+      process.exit(1)
+    }
+    if (!useHook) {
+      process.stdout.write(`Torrent: ${result.name}\n`)
+      result.urls.forEach((u, i) => process.stdout.write(`  [${i}] ${u}\n`))
+      process.stdout.write(`Playlist: http://${result.host}:${result.port}/latest.m3u\n`)
+    }
+  } else {
+    await runServer(torrentId)
+  }
+
+})().catch(err => {
+  process.stderr.write(`Error: ${err.message}\n`)
+  process.exit(1)
+})

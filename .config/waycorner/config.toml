@@ -1,0 +1,17 @@
+[top_right_corner]
+enter_command =[""]
+## #enter_command = ["nwg-drawer"]
+## #enter_command = ["wofi", "--show", "drun"]
+## #enter_command = ["nwggrid", "-p", "-n", "6", "-s", "100"]
+## #enter_command = ["nwggrid", "-d", "~/.config/nwg-launchers/applist/", "-n", "6", # "-s", "100"]
+## #enter_command = ["nwggrid", "-client"]
+## #enter_command = ["rofi", "-config", "~/.config/rofi/grid-launcher.rasi", "-show", # "drun"]
+#enter_command = ["rofi", "-config", "~/.config/rofi/fullscreen-tabs.rasi", "-show", "drun"]
+#locations = ["top_right"]
+#timeout_ms = 0
+#
+#[top_left_corner]
+#enter_command = ["wtype", "-k", "Super_L"]
+##enter_command = ["mmsg", "-d", "toggleoverview"]
+#locations = ["top_left"]
+#timeout_ms = 0

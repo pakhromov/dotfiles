@@ -1,0 +1,544 @@
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
+# Arrow key navigation that preserves filters
+[[mgr.prepend_keymap]]
+on   = "<Up>"
+run  = "arrow prev"
+desc = "Previous file"
+
+[[mgr.prepend_keymap]]
+on   = "<Down>"
+run  = "arrow next"
+desc = "Next file"
+
+# Arrow key navigation with filter clearing
+[[mgr.prepend_keymap]]
+on   = "<Left>"
+run  = [ "plugin custom-filter -- clear", "leave", "plugin autosave" ]
+desc = "Back to parent directory (clears filter)"
+
+[[mgr.prepend_keymap]]
+on   = "<Right>"
+run  = [ "plugin custom-filter -- clear", "plugin smart-enter", "plugin autosave" ]
+desc = "Smart enter: enter directories, open files (clears filter)"
+
+# Backspace for filter management
+[[mgr.prepend_keymap]]
+on   = "<Backspace>"
+run  = "plugin custom-filter -- backspace"
+desc = "Remove last character from filter"
+
+# Enter opens interactively
+[[mgr.prepend_keymap]]
+on   = "<Enter>"
+run  = "plugin custom-filter -- enter"
+desc = "Create file or directory from filter text"
+
+# Ctrl+Enter to go to file's directory (useful in search results)
+[[mgr.prepend_keymap]]
+on   = "<C-Enter>"
+run  = "plugin goto-file-dir"
+desc = "Navigate to hovered file's directory"
+
+# Smart tab navigation
+[[mgr.prepend_keymap]]
+on   = "<C-Right>"
+run  = [ "plugin smart-tab", "plugin autosave" ]
+desc = "Go to next tab or create new tab if on last"
+
+# ALL letter keys for immediate filtering
+[[mgr.prepend_keymap]]
+on   = "a"
+run  = "plugin custom-filter -- add a"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "b"
+run  = "plugin custom-filter -- add b"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "c"
+run  = "plugin custom-filter -- add c"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "d"
+run  = "plugin custom-filter -- add d"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "e"
+run  = "plugin custom-filter -- add e"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "f"
+run  = "plugin custom-filter -- add f"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "g"
+run  = "plugin custom-filter -- add g"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "h"
+run  = "plugin custom-filter -- add h"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "i"
+run  = "plugin custom-filter -- add i"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "j"
+run  = "plugin custom-filter -- add j"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "k"
+run  = "plugin custom-filter -- add k"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "l"
+run  = "plugin custom-filter -- add l"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "m"
+run  = "plugin custom-filter -- add m"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "n"
+run  = "plugin custom-filter -- add n"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "o"
+run  = "plugin custom-filter -- add o"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "p"
+run  = "plugin custom-filter -- add p"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "q"
+run  = "plugin custom-filter -- add q"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "r"
+run  = "plugin custom-filter -- add r"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "s"
+run  = "plugin custom-filter -- add s"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "t"
+run  = "plugin custom-filter -- add t"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "u"
+run  = "plugin custom-filter -- add u"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "v"
+run  = "plugin custom-filter -- add v"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "w"
+run  = "plugin custom-filter -- add w"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "x"
+run  = "plugin custom-filter -- add x"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "y"
+run  = "plugin custom-filter -- add y"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "z"
+run  = "plugin custom-filter -- add z"
+desc = "Filter files"
+
+# Period for filtering (e.g., .config)
+[[mgr.prepend_keymap]]
+on   = "."
+run  = "plugin custom-filter -- add ."
+desc = "Filter files"
+
+# Hyphen and underscore for filtering
+[[mgr.prepend_keymap]]
+on   = "-"
+run  = "plugin custom-filter -- add -"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "_"
+run  = "plugin custom-filter -- add _"
+desc = "Filter files"
+
+# ALL number keys for immediate filtering
+[[mgr.prepend_keymap]]
+on   = "0"
+run  = "plugin custom-filter -- add 0"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "1"
+run  = "plugin custom-filter -- add 1"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "2"
+run  = "plugin custom-filter -- add 2"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "3"
+run  = "plugin custom-filter -- add 3"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "4"
+run  = "plugin custom-filter -- add 4"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "5"
+run  = "plugin custom-filter -- add 5"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "6"
+run  = "plugin custom-filter -- add 6"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "7"
+run  = "plugin custom-filter -- add 7"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "8"
+run  = "plugin custom-filter -- add 8"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "9"
+run  = "plugin custom-filter -- add 9"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on   = "C"
+run  = [ "cd ~/.config", "plugin autosave" ]
+desc = "Go to .config directory"
+
+[[mgr.prepend_keymap]]
+on   = "D"
+run  = [ "cd ~/Downloads", "plugin autosave" ]
+desc = "Go to Downloads directory"
+
+[[mgr.prepend_keymap]]
+on   = "F"
+run  = [ "cd ~/Documents", "plugin autosave" ]
+desc = "Go to Documents directory"
+
+[[mgr.prepend_keymap]]
+on   = "V"
+run  = [ "cd ~/Videos", "plugin autosave" ]
+desc = "Go to Videos directory"
+
+[[mgr.prepend_keymap]]
+on   = "M"
+run  = [ "cd /run/media/pavel/", "plugin autosave" ]
+desc = "Go to mounts"
+
+[[mgr.prepend_keymap]]
+on   = "P"
+run  = [ "cd ~/Pictures", "plugin autosave" ]
+desc = "Go to Pictures directory"
+
+[[mgr.prepend_keymap]]
+on   = "L"
+run  = [ "cd ~/.local", "plugin autosave" ]
+desc = "Go to .local directory"
+
+[[mgr.prepend_keymap]]
+on   = "O"
+run  = "plugin toggle-pane max-preview"
+desc = "Maximize or restore the preview pane"
+
+[[mgr.prepend_keymap]]
+on   = "<C-o>"
+run  = "plugin toggle-pane min-parent"
+desc = "Show or hide the parent pane"
+
+[[mgr.prepend_keymap]]
+on = "<C-l>"
+run = 'shell --block "$HOME/.config/yazi/scripts/localsend-send.sh %s"'
+desc = "Send via LocalSend"
+
+[[mgr.prepend_keymap]]
+on = ["<C-t>","d"]
+run = "plugin recycle-bin -- delete"
+desc = "Delete from Trash"
+
+[[mgr.prepend_keymap]]
+on = ["<C-t>","r"]
+run = "plugin recycle-bin -- restore"
+desc = "Restore from Trash"
+
+[[mgr.prepend_keymap]]
+on   = "T"
+run  = [ "cd ~/.local/share/Trash/files", "plugin autosave" ]
+desc = "Go to Trash directory"
+
+[[mgr.prepend_keymap]]
+on   = "<C-m>"
+run  = "plugin mount"
+desc = "Mount manager"
+
+[[mgr.prepend_keymap]]
+on   = "<C-M>"
+run  = "plugin gvfs-mount -- select-then-mount --jump"
+desc = "GVFS Mount manager"
+
+[[mgr.prepend_keymap]]
+on  = "<C-d>"
+run = 'shell -- dragon-drop -a -x -i -T %s'
+
+[[mgr.prepend_keymap]]
+on = [ "A" ]
+run = "plugin file-actions -- --around "
+desc= "Perform actions on selected files"
+
+[[mgr.prepend_keymap]]
+on = "<C-r>"
+run = "plugin smart-rename"
+desc = "Smart rename: single or batch"
+
+[[mgr.prepend_keymap]]
+on   = "<C-e>"
+run  = 'shell "dua i" --block'
+desc = "Disk usage analyzer (dua)"
+
+[[mgr.prepend_keymap]]
+on   = "/"
+run  = "plugin paste-nav"
+desc = "Paste navigate to pasted path"
+
+[[mgr.prepend_keymap]]
+on = "<A-c>"
+run = "plugin ucp copy"
+desc = "Copy"
+
+[[mgr.prepend_keymap]]
+on = "<A-v>"
+run = "plugin ucp paste"
+desc = "Paste"
+
+[[mgr.prepend_keymap]]
+on = "<A-m>"
+run = "plugin sshfs -- menu"
+desc = "Open SSHFS options"
+
+[[mgr.prepend_keymap]]
+on = "I"
+run = "plugin mediainfo -- toggle-metadata"
+desc = "Toggle media preview metadata"
+
+
+[mgr]
+
+keymap = [
+
+    # Navigation history
+    { on = "[", run = "back", desc = "Go back to previous directory" },
+    { on = "]", run = "forward", desc = "Go forward to next directory" },
+
+    { on = "<Esc>", run = ["escape", "unyank", "plugin custom-filter -- clear"],             desc = "Exit visual mode, clear selection, or cancel search" },
+    { on = "<C-q>",     run = "quit",               desc = "Quit the process" },
+    { on = "<C-Up>", run = "arrow -30%",  desc = "Move cursor up half page" },
+    { on = "<C-Down>", run = "arrow 30%",   desc = "Move cursor down half page" },
+    { on = "<S-Up>", run = "arrow top", desc = "Go to top" },
+    { on = "<S-Down>",          run = "arrow bot", desc = "Go to bottom" },
+    { on = "<Space>", run = [ "toggle", "arrow next" ], desc = "Toggle the current selection state" },
+    { on = "<C-a>",   run = "toggle_all --state=on",    desc = "Select all files" },
+    { on = "<C-c>",         run = "yank",                        desc = "Yank selected files (copy)" },
+    { on = "<C-x>",         run = "yank --cut",                  desc = "Yank selected files (cut)" },
+    { on = "<C-v>",         run = ["paste", "escape", "unyank"],                       desc = "Paste yanked files" },
+    { on = "<C-V>",         run = "paste --force",               desc = "Paste yanked files (overwrite if the destination exists)" },
+    { on = "<C-Backspace>",         run = "remove",                      desc = "Trash selected files" },
+    { on = "<C-Delete>",         run = "remove --permanently",        desc = "Permanently delete selected files" },
+    { on = "<C-r>",         run = "rename --cursor=before_ext",  desc = "Rename selected file(s)" },
+    { on = "<C-f>",         run = "search --via=fd",             desc = "Search files by name via fd" },
+    { on = "<A-f>",         run = "search --via=rg",             desc = "Search files by content via ripgrep" },
+    { on = "<C-z>",         run = "plugin zoxide",               desc = "Jump to a directory via zoxide" },
+    { on = ";",         run = "shell --interactive",         desc = "Run a shell command" },
+    { on = ":",         run = "shell --block --interactive", desc = "Run a shell command (block until finishes)" },
+    { on = "`",         run = 'shell "zsh" --block',         desc = "Open zsh subshell" },
+
+    # Linemode
+    { on = [ "<", "s" ], run = "linemode size",        desc = "Linemode: size" },
+    { on = [ "<", "b" ], run = "linemode btime",       desc = "Linemode: btime" },
+    { on = [ "<", "m" ], run = "linemode mtime",       desc = "Linemode: mtime" },
+    { on = [ "<", "n" ], run = "linemode none",        desc = "Linemode: none" },
+
+    # Copy
+    { on = [ "<C-s>", "f" ], run = "copy path",             desc = "Copy the file path" },
+    { on = [ "<C-s>", "c" ], run = "copy filename",         desc = "Copy the filename" },
+
+        # Sorting
+    { on = [ ",", "m" ], run = [ "sort mtime --reverse", "linemode mtime" ],    desc = "Sort by modified time" },
+    { on = [ ",", "b" ], run = [ "sort btime --reverse", "linemode btime" ],    desc = "Sort by birth time" },
+    { on = [ ",", "e" ], run = "sort extension --reverse=no",                   desc = "Sort by extension" },
+    { on = [ ",", "a" ], run = "sort alphabetical --reverse=no",                desc = "Sort alphabetically" },
+    { on = [ ",", "n" ], run = "sort natural --reverse=no",                     desc = "Sort naturally" },
+    { on = [ ",", "s" ], run = [ "sort size --reverse", "linemode size" ],      desc = "Sort by size" },
+
+    # Tabs
+    { on = "<C-Left>", run = [ "tab_switch -1 --relative", "plugin autosave" ], desc = "Switch to previous tab" },
+    { on = "<C-S-Left>", run = [ "tab_swap -1", "plugin autosave" ], desc = "Swap current tab with previous tab" },
+    { on = "<C-S-Right>", run = [ "tab_swap 1", "plugin autosave" ],  desc = "Swap current tab with next tab" },
+    { on = "<C-w>", run = [ "close", "plugin autosave" ],              desc = "Close the current tab, or quit if it's last" },
+    { on = "<C-A-Right>", run = [ "tab_create --current", "plugin autosave" ],  desc = "Create a new tab" },
+
+    # Tasks
+    { on = "W", run = "tasks:show", desc = "Show task manager" },
+
+    # Help
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[tasks]
+
+keymap = [
+    { on = "<Esc>", run = "close", desc = "Close task manager" },
+
+    { on = "<Up>",   run = "arrow prev", desc = "Previous task" },
+    { on = "<Down>", run = "arrow next", desc = "Next task" },
+
+    { on = "<Enter>", run = "inspect", desc = "Inspect the task" },
+    { on = "<C-c>",       run = "cancel",  desc = "Cancel the task" },
+
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[spot]
+
+keymap = [
+    { on = "<Esc>", run = "close", desc = "Close the spot" },
+
+    { on = "<Up>",    run = "arrow prev", desc = "Previous line" },
+    { on = "<Down>",  run = "arrow next", desc = "Next line" },
+    { on = "<Left>",  run = "swipe prev", desc = "Swipe to previous file" },
+    { on = "<Right>", run = "swipe next", desc = "Swipe to next file" },
+
+    # Copy
+    { on = [ "c", "c" ], run = "copy cell", desc = "Copy selected cell" },
+
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[pick]
+
+keymap = [
+    { on = "<Esc>",   run = "close",          desc = "Cancel pick" },
+    { on = "<Enter>", run = "close --submit", desc = "Confirm pick" },
+
+    { on = "<Up>",   run = "arrow prev", desc = "Previous option" },
+    { on = "<Down>", run = "arrow next", desc = "Next option" },
+
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+[input]
+
+keymap = [
+    { on = "<ESC>",   run = "close",          desc = "Cancel input" },
+    { on = "<Enter>", run = "close --submit", desc = "Submit input" },
+
+    { on = "<Left>",  run = "move -1", desc = "Move back a character" },
+    { on = "<Right>", run = "move 1",  desc = "Move forward a character" },
+    { on = "<C-a>", run = [ "move eol", "visual", "move bol" ], desc = "Select from EOL to BOL" },
+    { on = "<C-Left>",     run = "backward",              desc = "Move back to the start of the current or previous WORD" },
+    { on = "<C-Right>",     run = "forward --end-of-word",               desc = "Move forward to the start of the next WORD" },
+    { on = "<Backspace>", run = "backspace",         desc = "Delete the character before the cursor" },
+    { on = "<Delete>",    run = "backspace --under", desc = "Delete the character under the cursor" },
+    { on = "<C-Backspace>", run = "kill backward", desc = "Kill backwards to the start of the current word" },
+    { on = "<C-Delete>", run = "kill forward",  desc = "Kill forwards to the end of the current word" },
+
+    # Cut/Yank/Paste
+    { on = "d", run = "delete --cut",                                      desc = "Cut selected characters" },
+    { on = "D", run = [ "delete --cut", "move eol" ],                      desc = "Cut until EOL" },
+    { on = "c", run = "delete --cut --insert",                             desc = "Cut selected characters, and enter insert mode" },
+    { on = "C", run = [ "delete --cut --insert", "move eol" ],             desc = "Cut until EOL, and enter insert mode" },
+    { on = "s", run = [ "delete --cut --insert", "move 1" ],               desc = "Cut current character, and enter insert mode" },
+    { on = "S", run = [ "move bol", "delete --cut --insert", "move eol" ], desc = "Cut from BOL until EOL, and enter insert mode" },
+    { on = "x", run = [ "delete --cut", "move 1 --in-operating" ],         desc = "Cut current character" },
+    { on = "y", run = "yank",                                              desc = "Copy selected characters" },
+    { on = "p", run = "paste",                                             desc = "Paste copied characters after the cursor" },
+    { on = "P", run = "paste --before",                                    desc = "Paste copied characters before the cursor" },
+    { on = "<C-c>", run = "yank",                                              desc = "Copy selected characters" },
+    { on = "<C-x>", run = "delete --cut",                                      desc = "Cut selected characters" },
+    { on = "<C-v>", run = "paste",                                             desc = "Paste copied characters after the cursor" },
+
+    { on = "<C-z>",     run = "undo", desc = "Undo the last operation" },
+    { on = "<C-Z>", run = "redo", desc = "Redo the last operation" },
+
+    # Help
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[confirm]
+
+keymap = [
+    { on = "<Esc>",   run = "close",          desc = "Cancel the confirm" },
+    { on = "<Enter>", run = "close --submit", desc = "Submit the confirm" },
+
+    { on = "<Up>",   run = "arrow prev", desc = "Previous line" },
+    { on = "<Down>", run = "arrow next", desc = "Next line" },
+
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[cmp]
+
+keymap = [
+    { on = "ESC",   run = "close",                                      desc = "Cancel completion" },
+    { on = "<Tab>",   run = "close --submit",                             desc = "Submit the completion" },
+    { on = "<Enter>", run = [ "close --submit", "input:close --submit" ], desc = "Complete and submit the input" },
+
+    { on = "<Up>",   run = "arrow prev", desc = "Previous item" },
+    { on = "<Down>", run = "arrow next", desc = "Next item" },
+
+    { on = "<F1>", run = "help", desc = "Open help" },
+]
+
+[help]
+
+keymap = [
+    { on = "<Esc>", run = "escape", desc = "Clear the filter, or hide the help" },
+    { on = "<C-c>", run = "close",  desc = "Hide the help" },
+
+    { on = "<Up>",   run = "arrow prev", desc = "Previous line" },
+    { on = "<Down>", run = "arrow next", desc = "Next line" },
+
+    { on = "/", run = "filter", desc = "Filter help items" },
+]

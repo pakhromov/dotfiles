@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+;(async () => {
+  const { default: parseTorrent } = await import('/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/parse-torrent/index.js')
+  const { default: fs } = await import('fs')
+
+  const file = process.argv[2]
+  if (!file) { process.stderr.write('Usage: torrent-info <file.torrent>\n'); process.exit(1) }
+
+  const t = await parseTorrent(fs.readFileSync(file))
+
+  const fmtSize = b => b >= 1e9 ? (b/1e9).toFixed(1)+' GB'
+                     : b >= 1e6 ? (b/1e6).toFixed(1)+' MB'
+                     : b >= 1e3 ? (b/1e3).toFixed(1)+' KB'
+                     : b+' B'
+
+  const totalBytes = t.files ? t.files.reduce((sum, f) => sum + f.length, 0) : (t.length || 0)
+
+  console.log(`Name:      ${t.name}`)
+  console.log(`Size:      ${fmtSize(totalBytes)}`)
+  if (t.private !== undefined) console.log(`Private:   ${t.private ? 'yes' : 'no'}`)
+  if (t.createdBy)             console.log(`Created:   ${t.createdBy}`)
+  if (t.creationDate)          console.log(`Date:      ${new Date(t.creationDate * 1000).toISOString().slice(0, 10)}`)
+  if (t.comment)               console.log(`Origin:    ${t.comment}`)
+  if (t.urlList?.length)       console.log(`Web seeds: ${t.urlList.join('\n           ')}`)
+
+  console.log()
+  console.log(`Files(${t.files?.length ?? 1}):     `)
+  t.files?.forEach(f => console.log(`  ${f.name} (${fmtSize(f.length)})`))
+})().catch(err => { process.stderr.write(err.message + '\n'); process.exit(1) })

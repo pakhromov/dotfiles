@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Usage: vpn-command [--conf wg.conf] command [args...]
+# Runs a single command inside a WireGuard VPN network namespace.
+# The namespace is torn down automatically when the command exits.
+set -eu
+
+CONF="${VPN_CONF:-/home/pavel/.config/wireguard/proton.conf}"
+if [[ "${1:-}" == --conf ]]; then
+    CONF="$2"; shift 2
+fi
+
+if [[ $# -eq 0 ]]; then
+    printf 'Usage: vpn-command [--conf wg.conf] command [args...]\n' >&2
+    exit 1
+fi
+
+exec vpn-shell "$CONF" "$@"
