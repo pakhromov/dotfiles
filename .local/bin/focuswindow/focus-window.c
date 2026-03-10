@@ -11,15 +11,24 @@ struct state {
     struct wl_seat *seat;
     struct zwlr_foreign_toplevel_manager_v1 *manager;
     char *target_app_id;
+    char *target_title;  /* NULL = match any title */
+    char *current_title; /* title of toplevel being processed */
     int found;
 };
 
-static void toplevel_handle_title(void *data, struct zwlr_foreign_toplevel_handle_v1 *handle, const char *title) {}
+static void toplevel_handle_title(void *data, struct zwlr_foreign_toplevel_handle_v1 *handle, const char *title) {
+    struct state *state = data;
+    free(state->current_title);
+    state->current_title = strdup(title);
+}
 static void toplevel_handle_app_id(void *data, struct zwlr_foreign_toplevel_handle_v1 *handle, const char *app_id) {
     struct state *state = data;
-    if (strcmp(app_id, state->target_app_id) == 0) {
-        zwlr_foreign_toplevel_handle_v1_activate(handle, state->seat);
-        state->found = 1;
+    if (!state->found && strcmp(app_id, state->target_app_id) == 0) {
+        if (state->target_title == NULL ||
+                (state->current_title && strcmp(state->current_title, state->target_title) == 0)) {
+            zwlr_foreign_toplevel_handle_v1_activate(handle, state->seat);
+            state->found = 1;
+        }
     }
 }
 static void toplevel_handle_output_enter(void *data, struct zwlr_foreign_toplevel_handle_v1 *handle, struct wl_output *output) {}
@@ -82,12 +91,13 @@ static const struct wl_registry_listener registry_listener = {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <app_id>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <app_id> [title]\n", argv[0]);
         return 1;
     }
 
     struct state state = {0};
     state.target_app_id = argv[1];
+    state.target_title = argc >= 3 ? argv[2] : NULL;
 
     state.display = wl_display_connect(NULL);
     if (!state.display) {

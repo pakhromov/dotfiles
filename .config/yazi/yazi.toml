@@ -28,16 +28,15 @@ ueberzug_offset = [ 0, 0, 0, 0 ]
 
 [opener]
 xdg-open = [{ run = 'xdg-open %s', desc = "xdg-open" }]
-subl = [{ run = 'subl %s', desc = "subl"}]
+editor = [{ run = '$EDITOR %s', desc = "$EDITOR"}]
 extract = [{ run = 'ya pub extract --list %s', desc = "extract here" }]
 mpv = [{ run = 'mpv %s', orphan = true, desc = "mpv" }]
 qimgv = [{ run = 'qimgv %s', orphan = true, desc = "qimgv" }]
 pdf-arranger = [{ run = 'pdfarranger %s', orphan = true, desc = "pdf arranger" }]
 master-pdf = [{ run = 'masterpdfeditor4 %s', orphan = true, desc = "pdf editor" }]
-browser = [{ run = 'waterfox %s', orphan = true, desc = "browser" }]
-fdm = [{ run = 'fdm %s', orphan = true, desc = "fdm" }]
+browser = [{ run = '$BROWSER %s', orphan = true, desc = "$BROWSER" }]
 mcat = [{ run = "kitty @ launch --type=tab --hold --cwd=current mcat %s", desc = "mcat" }]
-mdfried = [{ run = "kitty @ launch --type=tab --hold --cwd=current mdfried %s", desc = "mdfried" }]
+torrzf = [{ run = "kitty @ launch --type=tab --hold --cwd=current torrzf %s", desc = "torrzf" }]
 execute-shell = [{ run = "kitty @ launch --type=tab --hold --cwd=current -- bash -c 'echo \"RUNNING ./$(basename \"$1\")\"; echo; bash \"$1\"' _ %s", desc = "run in a new tab" }]
 execute-shell-bg = [{ run = 'bash %s', orphan = true, desc = "run in background" }]
 execute-python = [{ run = "kitty @ launch --type=tab --hold --cwd=current -- bash -c 'echo \"RUNNING ./$(basename \"$1\")\"; echo; python \"$1\"' _ %s", desc = "run in a new tab" }]
@@ -49,22 +48,20 @@ download = [
 
 [open]
 rules = [
-	#{ url = "*/", use = [ "subl" ] },
-	{ url = "*.{sh,bash,zsh,fish}", use = [ "subl", "execute-shell", "execute-shell-bg" ] },
-	{ url = "*.py", use = [ "subl", "execute-python", "execute-python-bg" ] },
-	{ url = "*.md", use = [ "subl", "mcat", "mdfried" ] },
-	{ url = "*.svg", use = [ "browser", "qimgv", "pdf-arranger" ] },
-	{ mime = "text/*", use = [ "subl" ] },
+	{ url = "*.{sh,bash,zsh,fish,py}", use = [ "editor", "execute-shell", "execute-shell-bg" ] },
+	{ url = "*.md", use = [ "editor", "mcat" ] },
+	{ url = "*.svg", use = [ "browser", "qimgv"] },
+	{ mime = "text/*", use = [ "editor" ] },
 	{ mime = "image/*", use = [ "qimgv" ,"pdf-arranger" ] },
-	{ mime = "application/pdf", use = [ "browser", "pdf-arranger", "master-pdf", "xdg-open" ] },
-	{ mime = "application/bittorrent", use = [ "mpv", "fdm" ] },
+	{ mime = "application/pdf", use = [ "browser", "pdf-arranger", "master-pdf"] },
+	{ mime = "application/bittorrent", use = [ "mpv", "torrzf" ] },
 	{ mime = "{audio,video}/*", use = [ "mpv" ] },
 	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract" ] },
-	{ mime = "application/{json,ndjson}", use = [ "subl" ] },
-	{ mime = "*/javascript", use = [ "subl" ] },
-	{ mime = "inode/empty", use = [ "subl" ] },
+	{ mime = "application/{json,ndjson}", use = [ "editor" ] },
+	{ mime = "*/javascript", use = [ "editor" ] },
+	{ mime = "inode/empty", use = [ "editor" ] },
 	{ mime = "vfs/{absent,stale}", use = "download" },
-	{ url = "*", use = [ "subl", "xdg-open" ] },
+	{ url = "*", use = [ "editor", "xdg-open" ] },
 ]
 
 [tasks]

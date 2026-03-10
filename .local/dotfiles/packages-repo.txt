@@ -13,6 +13,7 @@ docker
 docker-compose
 dragon-drop-git
 dua-cli
+expac
 eza
 fd
 fzf
@@ -50,6 +51,7 @@ oh-my-posh-bin
 openai-codex
 openresolv
 openssh
+pacman-contrib
 pdfarranger
 pipewire
 pipewire-alsa

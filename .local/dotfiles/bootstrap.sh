@@ -33,11 +33,11 @@ clone_dotfiles() {
     git --git-dir="$DOTFILES/.git" config core.worktree "$HOME"
     git --git-dir="$DOTFILES/.git" --work-tree="$HOME" checkout
     git --git-dir="$DOTFILES/.git" --work-tree="$HOME" config status.showUntrackedFiles no
+    update-mime-database ~/.local/share/mime
 
     echo "==> Cloning zsh plugins..."
     git clone https://github.com/Skylor-Tang/auto-venv                     "$HOME/.config/zsh/plugins/auto-venv"
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
-    git clone https://github.com/zsh-users/zsh-autosuggestions              "$HOME/.config/zsh/plugins/zsh-autosuggestions"
 
     echo "==> Cloning yazi plugins..."
     git clone https://github.com/alberti42/faster-piper.yazi.git          "$HOME/.config/yazi/plugins/faster-piper.yazi"

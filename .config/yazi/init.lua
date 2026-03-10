@@ -1,3 +1,4 @@
+require("write-id"):setup()
 require("custom-filter"):setup()
 require("recycle-bin"):setup()
 require("autosave"):setup({})

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 ;(async () => {
-  const { default: WebTorrent } = await import('/home/pavel/.local/lib/webtorrent-mpv-hook/node_modules/webtorrent/index.js')
+  const { default: WebTorrent } = await import('/home/pavel/.local/bin/webtorrent-lib/node_modules/webtorrent/index.js')
 
   const [, , torrentId, ...indexArgs] = process.argv
 

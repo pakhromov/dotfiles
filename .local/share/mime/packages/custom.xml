@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+  <mime-type type="text/x-zsh">
+    <comment>Zsh script</comment>
+    <glob pattern="*.zsh"/>
+  </mime-type>
+
+  <mime-type type="text/x-bash">
+    <comment>Bash script</comment>
+    <glob pattern="*.bash"/>
+  </mime-type>
+
+
+</mime-info>

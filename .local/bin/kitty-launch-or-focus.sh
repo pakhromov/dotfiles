@@ -32,8 +32,16 @@ if [ -n "$PROGRAM_WINDOW" ]; then
     kitten @ --to "$SOCKET" focus-window --match "id:$PROGRAM_WINDOW"
 else
     # Launch program in new tab
-    kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS
+    kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS >/dev/null
+    # Re-query to find the new window
+    PROGRAM_WINDOW=$(kitten @ --to "$SOCKET" ls | \
+        jq -r --arg prog "$PROGRAM" '.[].tabs[].windows[] | select(.foreground_processes[]?.cmdline[]? | test($prog)) | .id' | \
+        head -1)
 fi
 
-# Focus the kitty window using foreign-toplevel protocol
-focus-window kitty
+# Get the title of the OS window containing PROGRAM_WINDOW and focus it
+OS_WIN_TITLE=$(kitten @ --to "$SOCKET" ls | \
+    jq -r --argjson wid "${PROGRAM_WINDOW:-0}" \
+    '.[] | select(any(.tabs[]; .windows[]?.id == $wid)) | .tabs[] | select(.windows[]?.id == $wid) | .title' | \
+    head -1)
+focus-window kitty "$OS_WIN_TITLE"
