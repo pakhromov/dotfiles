@@ -251,17 +251,20 @@ local function fetch_dotfiles(job, cwd)
 	local git_dir = home .. "/.dotfiles-git"
 	if not fs.cha(Url(git_dir)) then return false end
 
-	local paths = {}
+	-- Build both absolute paths (for ls-files) and relative paths (for diff/status)
+	local abs_paths, rel_paths = {}, {}
 	for _, file in ipairs(job.files) do
-		paths[#paths + 1] = tostring(file.url)
+		local abs = tostring(file.url)
+		abs_paths[#abs_paths + 1] = abs
+		rel_paths[#rel_paths + 1] = abs:sub(#home + 2)
 	end
 
 	local base_args = { "--git-dir", git_dir, "--work-tree", home, "--no-optional-locks", "-c", "core.quotePath=" }
 
-	-- Find which paths are tracked by the dotfiles repo
+	-- Find which paths are tracked by the dotfiles repo.
 	-- cwd=home ensures git outputs paths relative to the work-tree root, not yazi's cwd
-	local ls_out = Command("git"):cwd(home):arg(base_args):arg({ "ls-files", "--" }):arg(paths):stdout(Command.PIPED):output()
-	if not ls_out or ls_out.stdout == "" then return true end -- repo exists but no tracked files in this batch; still return true to block remove()
+	local ls_out = Command("git"):cwd(home):arg(base_args):arg({ "ls-files", "--" }):arg(abs_paths):stdout(Command.PIPED):output()
+	if not ls_out or ls_out.stdout == "" then return true end -- repo exists but no tracked files in this batch
 
 	local tracked = {}
 	for line in ls_out.stdout:gmatch("[^\r\n]+") do
@@ -269,19 +272,25 @@ local function fetch_dotfiles(job, cwd)
 	end
 
 	-- Fetch from remote
-	Command("git"):arg({ "--git-dir", git_dir, "--work-tree", home, "fetch", "--quiet" }):stderr(Command.PIPED):status()
+	Command("git"):cwd(home):arg({ "--git-dir", git_dir, "--work-tree", home, "fetch", "--quiet" }):stderr(Command.PIPED):status()
 
 	-- Check upstream
-	local has_upstream = Command("git")
+	local has_upstream = Command("git"):cwd(home)
 		:arg({ "--git-dir", git_dir, "--work-tree", home, "--no-optional-locks", "rev-parse", "--verify", "--quiet", "@{upstream}" })
 		:stderr(Command.PIPED):status()
 
 	local diff_out
 	if has_upstream and has_upstream.success then
-		diff_out = Command("git"):cwd(home):arg(base_args):arg({ "diff", "--name-status", "--no-renames", "@{upstream}", "--" }):arg(paths):stdout(Command.PIPED):output()
+		-- Use relative paths and explicit HEAD..@{upstream} to correctly detect "behind remote" files
+		diff_out = Command("git"):cwd(home):arg(base_args)
+			:arg({ "diff", "--name-status", "--no-renames", "HEAD", "@{upstream}", "--" })
+			:arg(rel_paths):stdout(Command.PIPED):output()
 	end
 
-	local status_out = Command("git"):cwd(home):arg(base_args):arg({ "status", "--porcelain", "--untracked-files=no", "--no-renames" }):arg(paths):stdout(Command.PIPED):output()
+	-- Use relative paths for status too (porcelain output is already relative to cwd=home)
+	local status_out = Command("git"):cwd(home):arg(base_args)
+		:arg({ "status", "--porcelain", "--untracked-files=no", "--no-renames", "--" })
+		:arg(rel_paths):stdout(Command.PIPED):output()
 
 	local status_codes = {
 		["M"] = CODES.modified, ["T"] = CODES.modified,
@@ -316,7 +325,7 @@ local function fetch_dotfiles(job, cwd)
 	ya.dict_merge(changed, bubble_up(changed))
 
 	-- Mark untracked paths in current view as unknown so they show nothing
-	for _, abs_path in ipairs(paths) do
+	for _, abs_path in ipairs(abs_paths) do
 		local rel = abs_path:sub(#home + 2)
 		if changed[rel] == nil then
 			changed[rel] = CODES.unknown

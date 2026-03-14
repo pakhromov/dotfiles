@@ -1,6 +1,12 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 format = """
-[╭─](#585858)[](color_bg)$os[ ](fg:color_fg bg:color_bg)$directory([╱ ](fg:color_fg bg:color_bg)$git_branch)$git_status[](fg:color_bg)\
+[╭─](#585858)[](color_bg)\
+$os[ ](fg:color_fg bg:color_bg)\
+$directory\
+([╱ ](fg:color_fg bg:color_bg)$git_branch)\
+$git_status\
+($git_metrics[╱ ](fg:color_fg bg:color_bg))\
+[](fg:color_bg)\
 $fill\
 [](fg:color_bg)\
 [ ](bg:color_bg)\
@@ -18,39 +24,36 @@ $fill\
 ($python[╱ ](fg:color_fg bg:color_bg))\
 ($ruby[╱ ](fg:color_fg bg:color_bg))\
 ($rust[╱ ](fg:color_fg bg:color_bg))\
+($haskell[╱ ](fg:color_fg bg:color_bg))\
+($zig[╱ ](fg:color_fg bg:color_bg))\
+($sudo[╱ ](fg:color_fg bg:color_bg))\
+($shell[╱ ](fg:color_fg bg:color_bg))\
+($scala[╱ ](fg:color_fg bg:color_bg))\
+($rlang[╱ ](fg:color_fg bg:color_bg))\
+($php[╱ ](fg:color_fg bg:color_bg))\
+($perl[╱ ](fg:color_fg bg:color_bg))\
+($nix_shell[╱ ](fg:color_fg bg:color_bg))\
+($nim[╱ ](fg:color_fg bg:color_bg))\
+($netns[╱ ](fg:color_fg bg:color_bg))\
+($meson[╱ ](fg:color_fg bg:color_bg))\
+($memory_usage[╱ ](fg:color_fg bg:color_bg))\
+($localip[╱ ](fg:color_fg bg:color_bg))\
+($kubernetes[╱ ](fg:color_fg bg:color_bg))\
+($kotlin[╱ ](fg:color_fg bg:color_bg))\
+($jobs[╱ ](fg:color_fg bg:color_bg))\
+($gradle[╱ ](fg:color_fg bg:color_bg))\
+($golang[╱ ](fg:color_fg bg:color_bg))\
+($gcloud[╱ ](fg:color_fg bg:color_bg))\
+($dotnet[╱ ](fg:color_fg bg:color_bg))\
 ($username$hostname[╱ ](fg:color_fg bg:color_bg))\
 $status\
 ([╱ ](fg:color_fg bg:color_bg)$cmd_duration)\
-[](fg:color_bg) \n$character\
+[](fg:color_bg) $line_break\
+$character\
 """
 
 add_newline = false
 palette = 'dark'
-
-
-#Haskell
-#Zig
-#Sudo
-#Shell
-#Scala
-#R
-#PHP
-#Perl
-#Nix-shell
-#Nim
-#Network Namespace
-#Meson
-#Memory Usage
-#Local IP
-#Line Break
-#Kubernetes
-#Kotlin
-#Jobs
-#Gradle
-#Go
-#Git Metrics
-#Google Cloud
-#Dotnet
 
 
 [palettes.dark]
@@ -83,22 +86,14 @@ vimcmd_replace_one_symbol = '[▶](bold fg:76)'
 vimcmd_replace_symbol = '[▶](bold fg:76)'
 vimcmd_visual_symbol = '[V](bold fg:76)'
 
-[time]
-disabled = false
-format = '[$time  ]($style)'
-style = 'fg:66 bg:color_bg'
-
-
 [fill]
 symbol = '─'
 style = 'fg:240'
-
 
 [os]
 format = '[$symbol]($style)'
 style = 'fg:#E0F8FF bg:color_bg'
 disabled = false
-
 
 [directory]
 format ='[$read_only]($read_only_style)[ ](fg:#43CCEA bg:color_bg)[$path ]($style)'
@@ -255,76 +250,3 @@ symbol = " "
 format = '[$symbol($version )]($style)'
 style = 'bold fg:red bg:color_bg'
 symbol = "󱘗 "
-
-
-[battery]
-format = '[$symbol ]($style)'
-full_symbol = '[󰁹 $percentage](bold fg:70 bg:color_bg)'
-unknown_symbol = '[󰂑 ](bold fg:color_fg bg:color_bg)'
-empty_symbol = '[󰂎 $percentage](bold fg:160 bg:color_bg)'
-
-[[battery.display]]
-threshold = 100
-charging_symbol = '[󰁹 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁹 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 95
-charging_symbol = '[󰂂 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰂂 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 85
-charging_symbol = '[󰂁 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰂁 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 75
-charging_symbol = '[󰂀 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰂀 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 65
-charging_symbol = '[󰁿 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁿 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 55
-charging_symbol = '[󰁾 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁾 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 45
-charging_symbol = '[󰁽 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁽 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 35
-charging_symbol = '[󰁼 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁼 $percentage](bold fg:178 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 25
-charging_symbol = '[󰁻 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁻 $percentage](bold fg:160 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 15
-charging_symbol = '[󰁺 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰁺 $percentage](bold fg:160 bg:color_bg)'
-style = 'bg:color_bg'
-
-[[battery.display]]
-threshold = 5
-charging_symbol = '[󰂎 $percentage](bold fg:70 bg:color_bg)'
-discharging_symbol = '[󰂎 $percentage](bold fg:160 bg:color_bg)'
-style = 'bg:color_bg'
