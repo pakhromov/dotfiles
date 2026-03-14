@@ -238,9 +238,9 @@ function handler()
 
             -- Append the selection arrow: visible if selected, transparent otherwise
             if is_selected then
-                ass:append("{\\alpha&H00&}󰋇  ")
+                ass:append("{\\alpha&H00&}⮞  ")
             else
-                ass:append("{\\alpha&HFF&}󰋇  ")
+                ass:append("{\\alpha&HFF&}⮞  ")
             end
 
             -- Add type icon
@@ -568,8 +568,8 @@ local function render_playlist()
             elseif is_playing then ass:append("{\\c&HFFCC00&}")
             else ass:append("{\\c&HFFFFFF&}") end
 
-            if is_selected then ass:append("{\\alpha&H00&}󰋇  ")
-            else ass:append("{\\alpha&HFF&}󰋇  ") end
+            if is_selected then ass:append("{\\alpha&H00&}⮞  ")
+            else ass:append("{\\alpha&HFF&}⮞  ") end
 
             ass:append("{\\alpha&H00&}󱜆  ")
             local status = is_playing and "  󰊼" or ""

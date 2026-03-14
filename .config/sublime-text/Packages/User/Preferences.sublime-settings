@@ -29,8 +29,8 @@
 		"JetBrainsMono Nerd Font"
 	],
 	"index_files": true,
-	"font_face": "Lilex Nerd Font",
-	"font_size": 15,
+	"font_face": "MesloLGS Nerd Font",
+	"font_size": 13,
 	"caret_style": "solid", //"smooth", "phase", "blink" and "solid"
 	"block_caret": false,
 	"caret_extra_top": 4,
@@ -69,4 +69,8 @@
 	"close_find_after_find_all": false,
 	"close_find_after_replace_all": false,
 	"drag_text": false,
+	"ignored_packages":
+	[
+		"Vintage",
+	],
 }

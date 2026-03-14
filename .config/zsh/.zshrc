@@ -210,6 +210,7 @@ add-zsh-hook -Uz chpwd chpwd-ls
 
 _newline_before_prompt() { (( _PROMPT_COUNT++ > 0 )) && print; }
 add-zsh-hook precmd _newline_before_prompt
+
 clear-scrollback() { printf '\x1b[2J\x1b[3J\x1b[H'; _PROMPT_COUNT=0; zle reset-prompt; _PROMPT_COUNT=1; }
 zle -N clear-scrollback
 bindkey '^L' clear-scrollback
@@ -231,16 +232,11 @@ bindkey '^V' paste-from-clipboard
 unalias -a
 alias clear="printf '\x1b[2J\x1b[3J\x1b[H'; _PROMPT_COUNT=0"
 alias f="fastfetch"
-alias t="torrserver"
 alias r="sudo pacman -Rns"
 alias i="yay -S"
 alias l="launch"
-alias pk="pacseek"
-alias pa="pacsea"
 alias rr="yzf -x"
 alias ro="yzf -o"
 alias ls="eza -1a --icons=always --group-directories-first --hyperlink"
-alias jackett="/usr/lib/jackett/jackett --DataFolder=/home/pavel/.config/Jackett"
-alias prowlarr="/usr/lib/prowlarr/bin/Prowlarr -nobrowser -data=/home/pavel/.config/Prowlarr"
 alias -g dn='2>/dev/null'
 alias dotfiles='git --git-dir=$HOME/.dotfiles-git --work-tree=$HOME'

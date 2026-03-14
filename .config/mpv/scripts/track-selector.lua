@@ -136,13 +136,13 @@ local function render()
             local is_sel  = col == "audio" and ai == audio_cur
             local is_live = tostring(a.id) == cur_aid
             if is_sel then
-                left = "{\\c" .. C.selected .. "}{\\alpha&H00&}➤\\h" .. esc(text)
+                left = "{\\c" .. C.selected .. "}{\\alpha&H00&}⮞\\h" .. esc(text)
             else
                 local clr = is_live and C.active or C.normal
-                left = "{\\alpha&HFF&}➤\\h{\\alpha&H00&}{\\c" .. clr .. "}" .. esc(text)
+                left = "{\\alpha&HFF&}⮞\\h{\\alpha&H00&}{\\c" .. clr .. "}" .. esc(text)
             end
         else
-            left = "{\\alpha&HFF&}➤\\h{\\alpha&H00&}" .. string.rep(" ", COL_W)
+            left = "{\\alpha&HFF&}⮞\\h{\\alpha&H00&}" .. string.rep(" ", COL_W)
         end
 
         -- ── Right column (subtitles) ───────────────────────────────────────
@@ -153,10 +153,10 @@ local function render()
             local is_live = (s.id == false and cur_sid == "no") or
                             (s.id and tostring(s.id) == cur_sid)
             if is_sel then
-                right = "{\\c" .. C.selected .. "}{\\alpha&H00&}➤\\h" .. esc(text)
+                right = "{\\c" .. C.selected .. "}{\\alpha&H00&}⮞\\h" .. esc(text)
             else
                 local clr = is_live and C.active or C.normal
-                right = "{\\alpha&HFF&}➤\\h{\\alpha&H00&}{\\c" .. clr .. "}" .. esc(text)
+                right = "{\\alpha&HFF&}⮞\\h{\\alpha&H00&}{\\c" .. clr .. "}" .. esc(text)
             end
         end
 

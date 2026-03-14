@@ -140,9 +140,9 @@ local function render()
                 ass:append("{\\c" .. C.selected .. "}")
             end
             if is_sel then
-                ass:append("{\\alpha&H00&}➤\\h")
+                ass:append("{\\alpha&H00&}⮞\\h")
             else
-                ass:append("{\\alpha&HFF&}➤\\h{\\alpha&H00&}")
+                ass:append("{\\alpha&HFF&}⮞\\h{\\alpha&H00&}")
             end
 
             -- switch to monospace for the three columns so space-padding aligns

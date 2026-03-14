@@ -1,6 +1,6 @@
 {
-  "features": {
-    "edit_prediction_provider": "none"
+  "project_panel": {
+    "button": true
   },
   "notification_panel": {
     "dock": "right"
@@ -20,9 +20,9 @@
   },
   "restore_on_startup": "last_session",
   "base_keymap": "SublimeText",
-  "buffer_font_family": "Hack",
+  "buffer_font_family": "JetBrainsMonoNL Nerd Font",
   "ui_font_size": 16,
-  "buffer_font_size": 14,
+  "buffer_font_size": 15.0,
   "buffer_font_weight": 400,
   "multi_cursor_modifier": "cmd_or_ctrl",
   "collaboration_panel": { "button": false },
@@ -37,6 +37,8 @@
   "auto_signature_help": true, // Show method signatures in the editor, when inside parentheses.
   "always_treat_brackets_as_autoclosed": true,
   "title_bar": {
+    "show_menus": false,
+    "show_user_menu": true,
     "show_branch_icon": true, // Show/hide branch icon beside branch switcher
     "show_branch_name": true, // Show/hide branch name
     "show_project_items": true, // Show/hide project host and name
@@ -110,8 +112,8 @@
     "enabled": false
   },
   "toolbar": {
-    "breadcrumbs": true, // Whether to show breadcrumbs.
-    "quick_actions": true, // Whether to show quick action buttons.
+    "breadcrumbs": false, // Whether to show breadcrumbs.
+    "quick_actions": false, // Whether to show quick action buttons.
     "selections_menu": false, // Whether to show the Selections menu
     "agent_review": true, // Whether to show agent review buttons
     "code_actions": true // Whether to show code action buttons
@@ -236,7 +238,6 @@
       // }
     ],
     // When enabled, the agent can run potentially destructive actions without asking for your confirmation.
-    "always_allow_tool_actions": false,
     // When enabled, the agent will stream edits.
     "stream_edits": false,
     // When enabled, agent edits will be displayed in single-file editors for review
@@ -341,6 +342,7 @@
     // Any addition to this list will be merged with the default list.
     // Globs are matched relative to the worktree root,
     // except when starting with a slash (/) or equivalent in Windows.
+    "provider": "none",
     "disabled_globs": [
       "**/.env*",
       "**/*.pem",

@@ -1,17 +1,9 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 format = """
-[╭─](#585858)[](color_bg)\
-$os\
-[ ](fg:color_fg bg:color_bg)\
-$directory\
-([╱ ](fg:color_fg bg:color_bg)$git_branch)\
-$git_status\
-[](fg:color_bg)\
+[╭─](#585858)[](color_bg)$os[ ](fg:color_fg bg:color_bg)$directory([╱ ](fg:color_fg bg:color_bg)$git_branch)$git_status[](fg:color_bg)\
 $fill\
 [](fg:color_bg)\
 [ ](bg:color_bg)\
-($status[╱ ](fg:color_fg bg:color_bg))\
-($cmd_duration[╱ ](fg:color_fg bg:color_bg))\
 ($direnv[╱ ](fg:color_fg bg:color_bg))\
 ($package[╱ ](fg:color_fg bg:color_bg))\
 ($c[╱ ](fg:color_fg bg:color_bg))\
@@ -27,10 +19,9 @@ $fill\
 ($ruby[╱ ](fg:color_fg bg:color_bg))\
 ($rust[╱ ](fg:color_fg bg:color_bg))\
 ($username$hostname[╱ ](fg:color_fg bg:color_bg))\
-$time\
-([╱ ](fg:color_fg bg:color_bg)$battery)\
-[](fg:color_bg)
-$character\
+$status\
+([╱ ](fg:color_fg bg:color_bg)$cmd_duration)\
+[](fg:color_bg) \n$character\
 """
 
 add_newline = false
@@ -42,8 +33,9 @@ color_bg = '#242424'
 color_fg = '#000000'
 
 [cmd_duration]
-min_time = 3000
-format = '[$duration  ]($style)'
+min_time = 0
+show_milliseconds = true
+format = '[ $duration ]($style)'
 style = 'fg:248 bg:color_bg'
 
 [status]
@@ -52,6 +44,7 @@ format = '[$symbol( $common_meaning)( $signal_name)( $signal_number)( $maybe_int
 style = 'bold fg:160 bg:color_bg'
 success_style = 'bold fg:70 bg:color_bg'
 symbol = '✘'
+success_symbol = ''
 map_symbol = false
 pipestatus = true
 pipestatus_format = '[$pipestatus]($style)'
