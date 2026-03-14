@@ -27,6 +27,32 @@ $status\
 add_newline = false
 palette = 'dark'
 
+
+#Haskell
+#Zig
+#Sudo
+#Shell
+#Scala
+#R
+#PHP
+#Perl
+#Nix-shell
+#Nim
+#Network Namespace
+#Meson
+#Memory Usage
+#Local IP
+#Line Break
+#Kubernetes
+#Kotlin
+#Jobs
+#Gradle
+#Go
+#Git Metrics
+#Google Cloud
+#Dotnet
+
+
 [palettes.dark]
 #color_bg = '#272727'
 color_bg = '#242424'
