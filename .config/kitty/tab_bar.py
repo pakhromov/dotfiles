@@ -207,7 +207,7 @@ def _build_widgets(spec, now):
         if name == 'date':
             widgets.append((DATE_ICON, now.strftime("%-d %B, %A")))
         elif name == 'time':
-            widgets.append((TIME_ICON, now.strftime("%H:%M:%S")))
+            widgets.append((TIME_ICON, now.strftime("%H:%M")))
         elif name == 'battery':
             w = _get_battery_status()
             if w:

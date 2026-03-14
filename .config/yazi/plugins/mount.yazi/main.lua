@@ -262,14 +262,22 @@ function M.operate(type)
 		if type == "mount" then
 			-- Create mount directory if it doesn't exist
 			Command("mkdir"):arg({ "-p", mount_point }):status()
-			local status = Command("sudo"):arg({ "mount", active.src, mount_point }):status()
+			-- FAT/NTFS filesystems store no Unix permissions, so pass uid/gid to own the mount
+			local uid = os.getenv("UID") or tostring(io.popen("id -u"):read("*n"))
+			local gid = os.getenv("GID") or tostring(io.popen("id -g"):read("*n"))
+			local fat_fstypes = { vfat = true, fat = true, fat32 = true, exfat = true, ntfs = true, ["ntfs-3g"] = true }
+			local args = { "mount", active.src, mount_point }
+			if fat_fstypes[active.fstype] then
+				args = { "mount", "-o", "uid=" .. uid .. ",gid=" .. gid, active.src, mount_point }
+			end
+			local status = Command("sudo"):arg(args):status()
 			if not status or not status.success then
 				M.fail("Failed to mount `%s`", active.src)
 			end
 			return
 		elseif type == "unmount" then
 			local umount_target = active.dist or active.src
-			local status = Command("sudo"):arg({ "umount", umount_target }):status()
+			local status = Command("sudo"):arg({ "umount", "-l", umount_target }):status()
 			if not status or not status.success then
 				M.fail("Failed to unmount `%s`", umount_target)
 			end
@@ -277,7 +285,7 @@ function M.operate(type)
 		elseif type == "eject" then
 			-- Unmount first
 			if active.dist then
-				Command("sudo"):arg({ "umount", active.dist }):status()
+				Command("sudo"):arg({ "umount", "-l", active.dist }):status()
 			end
 			-- Then eject/power-off
 			if active.src:match("^/dev/sr%d+") then

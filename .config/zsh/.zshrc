@@ -53,7 +53,7 @@ export MAGIC_ENTER_COMMAND='cd .'
 export ZPWR_EXPAND_BLACKLIST=(ls)
 export ZPWR_EXPAND=true
 export ZPWR_EXPAND_SECOND_POSITION=true
-export CHPWD_LS_BLACKLIST=("$HOME" "/tmp")
+export CHPWD_LS_BLACKLIST=("/tmp")
 
 fpath=(~/.config/zsh/completions $fpath)
 autoload -Uz compinit && compinit

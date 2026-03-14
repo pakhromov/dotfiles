@@ -108,12 +108,32 @@ local add_standalone = ya.sync(function(st, repo, code)
 	ui.render()
 end)
 
+-- Separate state for dotfiles bare repo — never touched by remove()
+---@param cwd string
+---@param home string
+---@param changed Changes
+local add_dotfiles = ya.sync(function(st, cwd, home, changed)
+	st.dotfiles_dirs[cwd] = home
+	st.dotfiles_repos[home] = st.dotfiles_repos[home] or {}
+	for path, code in pairs(changed) do
+		if code == CODES.unknown then
+			-- untracked by dotfiles: nil means "not tracked" in dotfiles_repos
+			st.dotfiles_repos[home][path] = nil
+		else
+			st.dotfiles_repos[home][path] = code
+		end
+	end
+	ui.render()
+end)
+
 ---@param st State
 ---@param opts Options
 local function setup(st, opts)
 	st.dirs = {}
 	st.repos = {}
 	st.standalone = {} -- repos that are themselves directory entries (viewed from outside)
+	st.dotfiles_dirs = {} -- separate state for dotfiles bare repo, never cleared by remove()
+	st.dotfiles_repos = {}
 
 	opts = opts or {}
 	opts.order = opts.order or 1500
@@ -131,12 +151,12 @@ local function setup(st, opts)
 	}
 	local signs = {
 		[CODES.unknown] = t.unknown_sign or "",
-		[CODES.ignored] = t.ignored_sign or " ",
+		[CODES.ignored] = t.ignored_sign or " ",
 		[CODES.untracked] = t.untracked_sign or "? ",
-		[CODES.modified] = t.modified_sign or " ",
-		[CODES.added] = t.added_sign or " ",
-		[CODES.deleted] = t.deleted_sign or " ",
-		[CODES.updated] = t.updated_sign or " ",
+		[CODES.modified] = t.modified_sign or " ",
+		[CODES.added] = t.added_sign or " ",
+		[CODES.deleted] = t.deleted_sign or " ",
+		[CODES.updated] = t.updated_sign or " ",
 		[CODES.clean] = t.clean_sign or "",
 	}
 
@@ -147,13 +167,22 @@ local function setup(st, opts)
 
 		local url = self._file.url
 		local url_str = tostring(url)
-		local repo = st.dirs[tostring(url.base or url.parent)]
+		local parent_str = tostring(url.base or url.parent)
+		local repo = st.dirs[parent_str]
 		local code = CODES.unknown
 		if repo then
 			code = repo == CODES.excluded and CODES.ignored or st.repos[repo][url_str:sub(#repo + 2)] or CODES.clean
 		elseif st.standalone[url_str] then
 			-- This directory is a standalone git repo (viewed from outside)
 			code = st.standalone[url_str]
+		else
+			-- Check dotfiles bare repo state (separate from regular git state)
+			local dotfiles_repo = st.dotfiles_dirs[parent_str]
+			if dotfiles_repo and st.dotfiles_repos[dotfiles_repo] then
+				local dot_code = st.dotfiles_repos[dotfiles_repo][url_str:sub(#dotfiles_repo + 2)]
+				-- nil = not tracked by dotfiles = show nothing; otherwise use stored code
+				code = dot_code or CODES.unknown
+			end
 		end
 
 		if signs[code] == "" then
@@ -213,13 +242,102 @@ local function fetch_standalone_status(dir_url)
 	return CODES.clean
 end
 
+---@param job table
+---@param cwd string
+---@return boolean found_tracked_files
+local function fetch_dotfiles(job, cwd)
+	local home = os.getenv("HOME")
+	if not home then return false end
+	local git_dir = home .. "/.dotfiles-git"
+	if not fs.cha(Url(git_dir)) then return false end
+
+	local paths = {}
+	for _, file in ipairs(job.files) do
+		paths[#paths + 1] = tostring(file.url)
+	end
+
+	local base_args = { "--git-dir", git_dir, "--work-tree", home, "--no-optional-locks", "-c", "core.quotePath=" }
+
+	-- Find which paths are tracked by the dotfiles repo
+	-- cwd=home ensures git outputs paths relative to the work-tree root, not yazi's cwd
+	local ls_out = Command("git"):cwd(home):arg(base_args):arg({ "ls-files", "--" }):arg(paths):stdout(Command.PIPED):output()
+	if not ls_out or ls_out.stdout == "" then return true end -- repo exists but no tracked files in this batch; still return true to block remove()
+
+	local tracked = {}
+	for line in ls_out.stdout:gmatch("[^\r\n]+") do
+		tracked[line] = true
+	end
+
+	-- Fetch from remote
+	Command("git"):arg({ "--git-dir", git_dir, "--work-tree", home, "fetch", "--quiet" }):stderr(Command.PIPED):status()
+
+	-- Check upstream
+	local has_upstream = Command("git")
+		:arg({ "--git-dir", git_dir, "--work-tree", home, "--no-optional-locks", "rev-parse", "--verify", "--quiet", "@{upstream}" })
+		:stderr(Command.PIPED):status()
+
+	local diff_out
+	if has_upstream and has_upstream.success then
+		diff_out = Command("git"):cwd(home):arg(base_args):arg({ "diff", "--name-status", "--no-renames", "@{upstream}", "--" }):arg(paths):stdout(Command.PIPED):output()
+	end
+
+	local status_out = Command("git"):cwd(home):arg(base_args):arg({ "status", "--porcelain", "--untracked-files=no", "--no-renames" }):arg(paths):stdout(Command.PIPED):output()
+
+	local status_codes = {
+		["M"] = CODES.modified, ["T"] = CODES.modified,
+		["A"] = CODES.added,    ["D"] = CODES.deleted, ["U"] = CODES.updated,
+	}
+	local raw_changed = {}
+
+	for line in (diff_out and diff_out.stdout or ""):gmatch("[^\r\n]+") do
+		local status, path = line:match("^(%a)%s+(.+)$")
+		if status and path then
+			raw_changed[WINDOWS and path:gsub("/", "\\") or path] = CODES.updated
+		end
+	end
+
+	if status_out then
+		for line in status_out.stdout:gmatch("[^\r\n]+") do
+			local xy = line:sub(1, 2)
+			local path = line:sub(4, 4) == '"' and line:sub(5, -2) or line:sub(4)
+			path = (WINDOWS and path:gsub("/", "\\") or path):gsub("[/\\]$", "")
+			local code = status_codes[xy:sub(1, 1)] or status_codes[xy:sub(2, 2)]
+			if code then raw_changed[path] = code end
+		end
+	end
+
+	-- Tracked files get their status (or clean); everything else gets unknown (shows nothing)
+	local changed = {}
+	for path in pairs(tracked) do
+		changed[path] = raw_changed[path] or CODES.clean
+	end
+
+	-- Bubble up to parent directories
+	ya.dict_merge(changed, bubble_up(changed))
+
+	-- Mark untracked paths in current view as unknown so they show nothing
+	for _, abs_path in ipairs(paths) do
+		local rel = abs_path:sub(#home + 2)
+		if changed[rel] == nil then
+			changed[rel] = CODES.unknown
+		end
+	end
+
+	add_dotfiles(cwd, home, changed)
+	return true
+end
+
 ---@type UnstableFetcher
 local function fetch(_, job)
 	local cwd = job.files[1].url.base or job.files[1].url.parent
 	local repo = root(cwd)
 	if not repo then
-		remove(tostring(cwd))
-		-- Check if any directories are standalone git repos
+		local dotfiles_handled = fetch_dotfiles(job, tostring(cwd))
+		if not dotfiles_handled then
+			remove(tostring(cwd))
+		end
+		-- Always check if any directories are standalone git repos,
+		-- even if dotfiles handled the batch (e.g. mediainfo.yazi is a standalone repo)
 		for _, file in ipairs(job.files) do
 			if file.cha.is_dir then
 				local code = fetch_standalone_status(file.url)

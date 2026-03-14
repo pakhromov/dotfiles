@@ -42,10 +42,8 @@ clone_dotfiles() {
     echo "==> Cloning yazi plugins..."
     git clone https://github.com/alberti42/faster-piper.yazi.git          "$HOME/.config/yazi/plugins/faster-piper.yazi"
     git clone https://github.com/BBOOXX/file-actions.yazi.git             "$HOME/.config/yazi/plugins/file-actions.yazi"
-    for d in checksum chmod_executable open_git_remote zip_archive_1; do
-        ln -sf "$HOME/.config/yazi/actions/$d" \
-               "$HOME/.config/yazi/plugins/file-actions.yazi/actions/$d"
-    done
+    rm -rf "$HOME/.config/yazi/plugins/file-actions.yazi/actions"
+    ln -sf "$HOME/.config/yazi/actions" "$HOME/.config/yazi/plugins/file-actions.yazi/actions"
     git clone https://github.com/boydaihungst/mediainfo.yazi.git          "$HOME/.config/yazi/plugins/mediainfo.yazi"
     git clone https://github.com/uhs-robert/recycle-bin.yazi.git          "$HOME/.config/yazi/plugins/recycle-bin.yazi"
     git clone https://github.com/uhs-robert/sshfs.yazi.git                "$HOME/.config/yazi/plugins/sshfs.yazi"
