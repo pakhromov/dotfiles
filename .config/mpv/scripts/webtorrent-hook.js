@@ -8,6 +8,7 @@ var active          = false
 var initiallyActive = false
 var overlayText     = ''
 var handlersSetUp   = false
+var wtPending       = false  // true while a webtorrent subprocess is in flight
 
 // ─── IPC socket ─────────────────────────────────────────────────────
 // Ensure mpv has an IPC socket so the webtorrent server can push back.
@@ -81,9 +82,24 @@ function onFileLoaded() {
   clearOverlay()
 }
 
+// ─── Lifecycle ───────────────────────────────────────────────────────
+
+function killWebtorrent() {
+  mp.command_native({
+    name: 'subprocess',
+    args: ['pkill', '-TERM', '-f', WEBTORRENT_BIN],
+    playback_only: false,
+    capture_stdout: false,
+    capture_stderr: false
+  })
+}
+
+mp.register_event('shutdown', killWebtorrent)
+
 // ─── Subprocess callback ─────────────────────────────────────────────
 
 function onWebtorrentExit(success, result) {
+  wtPending = false
   // When the server was already running, webtorrent --hook exits quickly
   // with code 0 after sending the load command — that is normal, not an error.
   if (!success) {
@@ -146,6 +162,15 @@ function onLoadHook() {
     '{\\1c&HFFFFFF&}{\\bord0.8}{\\3c&H262626&}' +
     'Loading torrent\u2026${osd-ass-cc/1}'
   printOverlay()
+
+  // Guard: if a webtorrent subprocess is already in flight, don't spawn another.
+  // This breaks any feedback loop where a failed stream causes on_load to re-fire.
+  if (wtPending) {
+    mp.msg.warn('webtorrent-hook: spawn already in progress, ignoring duplicate on_load')
+    return
+  }
+
+  wtPending = true
 
   // Start the server (or send to the already-running server).
   // In either case webtorrent --hook will push 'playlist' and 'osd-data'

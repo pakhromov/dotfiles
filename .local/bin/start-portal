@@ -4,17 +4,32 @@ set -eu
 : "${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR not set}"
 : "${DBUS_SESSION_BUS_ADDRESS:?DBUS_SESSION_BUS_ADDRESS not set}"
 
-pgrep -x pipewire >/dev/null 2>&1 || /usr/bin/pipewire &
+pids=""
+spawn() {
+    "$@" &
+    pids="$pids $!"
+}
+
+cleanup() {
+    # shellcheck disable=SC2086
+    kill $pids 2>/dev/null
+    wait $pids 2>/dev/null
+}
+trap cleanup EXIT INT TERM
+
+pgrep -x pipewire >/dev/null 2>&1 || spawn /usr/bin/pipewire
 sleep 0.2
-pgrep -x wireplumber >/dev/null 2>&1 || /usr/bin/wireplumber &
+pgrep -x wireplumber >/dev/null 2>&1 || spawn /usr/bin/wireplumber
 sleep 0.2
 
-pgrep -x xdg-permission-store >/dev/null 2>&1 || /usr/lib/xdg-permission-store &
+pgrep -x xdg-permission-store >/dev/null 2>&1 || spawn /usr/lib/xdg-permission-store
 sleep 0.1
-pgrep -x xdg-document-portal >/dev/null 2>&1 || /usr/lib/xdg-document-portal &
+pgrep -x xdg-document-portal >/dev/null 2>&1 || spawn /usr/lib/xdg-document-portal
 sleep 0.1
-pgrep -x xdg-desktop-portal-wlr >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal-wlr &
+pgrep -x xdg-desktop-portal-wlr >/dev/null 2>&1 || spawn /usr/lib/xdg-desktop-portal-wlr
 sleep 0.1
-pgrep -x xdg-desktop-portal-termfilechooser >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal-termfilechooser &
+pgrep -x xdg-desktop-portal-termfilechooser >/dev/null 2>&1 || spawn /usr/lib/xdg-desktop-portal-termfilechooser
 sleep 0.1
-pgrep -x xdg-desktop-portal >/dev/null 2>&1 || /usr/lib/xdg-desktop-portal &
+pgrep -x xdg-desktop-portal >/dev/null 2>&1 || spawn /usr/lib/xdg-desktop-portal
+
+wait

@@ -8,4 +8,4 @@ Target = usr/share/man/*
 [Action]
 Description = Updating man database...
 When = PostTransaction
-Exec = /usr/bin/systemd-run --no-block --unit=mandb-update /usr/bin/mandb --quiet
+Exec = /usr/bin/systemd-run --no-block /bin/sh -c 'flock /run/lock/mandb.lock /usr/bin/mandb --quiet'

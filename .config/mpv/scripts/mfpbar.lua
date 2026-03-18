@@ -46,7 +46,6 @@ local opt = {
 	font_color = "EBEBEB",
 	font_size = 16,
 	font_pad_x = 0,
-	font_pad_y = 0,
 	font_border_width = 2,
 	font_border_color = "000000",
 	preview_border_width = 2,
@@ -267,8 +266,8 @@ local function pbar_draw()
 	local pb_y = dpy_h - (pb_h + ypos) - opt.floating_height
 	local fs = opt.font_size
 	local fopt = { color = opt.font_color, bw = opt.font_border_width, bcolor = opt.font_border_color }
-	local timeline_y = dpy_h - opt.floating_height - opt.font_pad_y
 	draw_rounded_rect(pbar_x, pb_y, pbar_width, pb_h, opt.pbar_bg_color)
+	draw_rect(0, pb_y - pb_h, dpy_w, pb_h + 1, opt.pbar_bg_color)  -- title bar background
 
 	-- L1: cache line
 	-- Use torrent piece ranges (sent by webtorrent server) when available;
@@ -368,19 +367,15 @@ local function pbar_draw()
 		end
 	end
 
-	-- L5: current/remaining time
+	-- title bar text: filename + current/remaining time (background drawn early, before chapters)
+	local title_y = pb_y - pb_h + math.floor(pb_h / 2)
 	local time_pos = mp.get_property_native("time-pos") or 0
-	local time = format_time(time_pos)
-	draw_text(opt.font_pad_x, timeline_y, fs, "{\\an1}" .. time, fopt)
+	draw_text(opt.font_pad_x, title_y, fs, "{\\an4}" .. format_time(time_pos), fopt)
 	local remaining = mp.get_property_native(opt.timeline_rhs) or 0
-	local rem = "-" .. format_time(remaining)
-	draw_text(dpy_w - opt.font_pad_x, timeline_y, fs, "{\\an3}" .. rem, fopt)
-
-	-- filename bar at top
+	draw_text(dpy_w - opt.font_pad_x, title_y, fs, "{\\an6}" .. "-" .. format_time(remaining), fopt)
 	local filename = mp.get_property("filename", "")
 	if filename ~= "" then
-		draw_rect(0, opt.font_pad_y, dpy_w, pb_h, opt.pbar_bg_color)
-		draw_text(math.floor(dpy_w / 2), opt.font_pad_y + math.floor(pb_h / 2), fs, "{\\an5}" .. esc_ass(filename), fopt)
+		draw_text(math.floor(dpy_w / 2), title_y, fs, "{\\an5}" .. esc_ass(filename), fopt)
 	end
 
 	-- L6: hovered timeline
@@ -401,7 +396,7 @@ local function pbar_draw()
 		)
 		local x = math.min(math.max(snapped_x, hover_pbar_x), hover_pbar_x + hover_pbar_width)
 		draw_text(
-			x, dpy_h - (ypos + fs + 2) - opt.floating_height, fs,
+			x, dpy_h - (ypos + fs + 2) - opt.floating_height - pb_h, fs,
 			"{\\an8}" .. hover_text, fopt
 		)
 		ypos = ypos + fs + (fopt.bw * 2)
@@ -412,7 +407,7 @@ local function pbar_draw()
 			local hpad = 4 + pw
 			local tw = state.thumbfast.width
 			local th = state.thumbfast.height
-			local y = dpy_h - (ypos + th + pw) - opt.floating_height
+			local y = dpy_h - (ypos + th + pw) - opt.floating_height - pb_h
 			local thumb_pbar_x, thumb_pbar_width = get_pbar_dimensions(dpy_w)
 			local snapped_x = thumb_pbar_x + (thumb_pbar_width * (hover_sec / duration))
 			local x = snapped_x - (tw / 2)
