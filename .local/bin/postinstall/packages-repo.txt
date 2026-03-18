@@ -1,3 +1,5 @@
+alsa-firmware
+alsa-utils
 base
 base-devel
 bat
@@ -55,7 +57,6 @@ openssh
 pacman-contrib
 pdfarranger
 pipewire
-pipewire-alsa
 pipewire-jack
 python-ipykernel
 python-packaging
@@ -90,7 +91,6 @@ wayfire
 wayfire-plugins-extra
 wcm
 wget
-wiremix
 wireplumber
 wl-clipboard
 wlr-protocols

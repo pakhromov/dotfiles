@@ -4,6 +4,11 @@ set -eu
 : "${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR not set}"
 : "${DBUS_SESSION_BUS_ADDRESS:?DBUS_SESSION_BUS_ADDRESS not set}"
 
+pgrep -x pipewire >/dev/null 2>&1 || /usr/bin/pipewire &
+sleep 0.2
+pgrep -x wireplumber >/dev/null 2>&1 || /usr/bin/wireplumber &
+sleep 0.2
+
 pgrep -x xdg-permission-store >/dev/null 2>&1 || /usr/lib/xdg-permission-store &
 sleep 0.1
 pgrep -x xdg-document-portal >/dev/null 2>&1 || /usr/lib/xdg-document-portal &

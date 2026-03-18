@@ -3,9 +3,7 @@ format = """
 [╭─](#585858)[](color_bg)\
 $os[ ](fg:color_fg bg:color_bg)\
 $directory\
-([╱ ](fg:color_fg bg:color_bg)$git_branch)\
-$git_status\
-($git_metrics[╱ ](fg:color_fg bg:color_bg))\
+([╱ ](fg:color_fg bg:color_bg)$git_branch)$git_status$git_metrics\
 [](fg:color_bg)\
 $fill\
 [](fg:color_bg)\

@@ -6,24 +6,15 @@ start() {
     "$@" >/dev/null 2>&1 &
   fi
 }
-
 restart() {
   pkill -f "^$1" 2>/dev/null || true
   sleep 0.3
   "$@" >/dev/null 2>&1 &
 }
 
-if [ "${1:-}" = "-tty" ]; then
-    start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
-    sudo systemctl stop greetd
-    sudo chronyd -q
-    exit 0
-fi
-
-start pipewire
-start wireplumber
 start mako
 start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
+
 [ "${XDG_CURRENT_DESKTOP:-}" = "wayfire" ] && restart waycorner
 
 case "${XDG_CURRENT_DESKTOP:-}" in

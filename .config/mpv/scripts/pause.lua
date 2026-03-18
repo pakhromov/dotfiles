@@ -290,8 +290,25 @@ local function animate_indicator(paused)
 end
 
 local function on_pause_change(name, paused)
-    if paused ~= nil then
-        animate_indicator(paused)
+    if paused == nil then return end
+    if paused == false then
+        state.unpause_time = mp.get_time()
+        if state.unpause_timer then state.unpause_timer:kill() end
+        state.unpause_timer = mp.add_timeout(0.1, function()
+            state.unpause_timer = nil
+            if not mp.get_property_bool("pause") then
+                animate_indicator(false)
+            end
+        end)
+    else
+        if state.unpause_timer then
+            state.unpause_timer:kill()
+            state.unpause_timer = nil
+        end
+        local is_framestep = state.unpause_time and (mp.get_time() - state.unpause_time) < 0.1
+        if not is_framestep then
+            animate_indicator(true)
+        end
     end
 end
 

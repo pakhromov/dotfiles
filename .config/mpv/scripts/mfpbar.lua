@@ -65,8 +65,7 @@ local opt = {
 	corner_radius = 16,
 	floating_height = 0,
 	timeout = 0.5,
-	screen_percentage = 20,
-	show_when_paused = true
+	screen_percentage = 20
 }
 
 
@@ -554,12 +553,7 @@ local function reset_timer()
         state.timer:kill()
     end
     state.timer = mp.add_timeout(opt.timeout, function()
-        local paused = mp.get_property_native("pause")
-        if opt.show_when_paused and paused and not state.user_hidden then
-            update_state(true)
-        else
-            update_state(is_in_edge_area())
-        end
+        update_state(is_in_edge_area())
     end)
 end
 
@@ -631,8 +625,7 @@ local function init()
 	mp.observe_property("time-pos", "number", function(name, value)
 		if value and state.last_time_pos then
 			local diff = math.abs(value - state.last_time_pos)
-
-			if diff > 0.1 then -- Threshold of 0.1 seconds to filter out normal playback
+			if diff > 0.1 then
 				update_state(true)
 				reset_timer()
 			end
@@ -650,12 +643,7 @@ local function init()
 	end)
 
 	mp.observe_property("pause", "bool", function(_, val)
-		if val == true then
-			if opt.show_when_paused and not state.user_hidden then
-				if state.timer then state.timer:kill() end
-				update_state(true)
-			end
-		elseif val == false then
+		if val == false then
 			state.user_hidden = false
 			reset_timer()
 		end

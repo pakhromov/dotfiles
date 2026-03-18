@@ -12,7 +12,6 @@ from kitty.rgb import to_color
 from kitty.fast_data_types import add_timer, get_boss
 from datetime import datetime
 import os
-import subprocess
 
 TAB_BAR_BG = "#121212"
 
@@ -165,31 +164,12 @@ def _get_battery_status():
     return (icon, f'{percent}%')
 
 
-_updates_count = None
-_updates_time = None
-_updates_popen = None
-
-
 def _get_updates_status():
-    global _updates_popen, _updates_count, _updates_time
-
-    if _updates_popen is not None and _updates_popen.poll() is not None:
-        stdout = _updates_popen.stdout.read().strip()
-        _updates_popen = None
-        _updates_time = int(datetime.now().timestamp())
-        _updates_count = int(stdout) if stdout.isdigit() else UPDATES_FETCH
-
-    age = (datetime.now().timestamp() - _updates_time) if _updates_time is not None else None
-    if (age is None or age >= 3600) and _updates_popen is None:
-        _updates_popen = subprocess.Popen(
-            ['yzf', '-c'],
-            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL,
-            text=True
-        )
-
-    if _updates_count is None or age is None or age >= 3900:
+    with os.popen('kitty-updates 2>/dev/null') as p:
+        out = p.read().strip()
+    if out == 'fetch' or not out.isdigit():
         return (UPDATES_ICON, str(UPDATES_FETCH))
-    return (UPDATES_ICON, str(_updates_count))
+    return (UPDATES_ICON, out)
 
 
 # Shared state across draw_tab calls within one render pass
