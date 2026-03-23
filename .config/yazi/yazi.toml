@@ -89,6 +89,7 @@ run = "git"
 
 
 preloaders = [
+  { mime = "image/xcursor", run = "xcursor-preview" },
   { mime = "{audio,video,image}/*", run = "mediainfo" },
   { mime = "application/subrip", run = "mediainfo" },
   { mime = "application/postscript", run = "mediainfo" },
@@ -97,6 +98,18 @@ preloaders = [
 	{ mime = "font/*", run = "font" },
 	{ mime = "application/ms-opentype", run = "font" },
 ]
+
+[[plugin.prepend_preloaders]]
+mime = "image/xcursor"
+run = "xcursor-preview"
+
+[[plugin.prepend_preloaders]]
+url = "*/cursors/*"
+run = "xcursor-preview"
+
+[[plugin.prepend_previewers]]
+mime = "image/xcursor"
+run = "xcursor-preview"
 
 [[plugin.prepend_previewers]]
 mime = "{audio,video,image}/*"

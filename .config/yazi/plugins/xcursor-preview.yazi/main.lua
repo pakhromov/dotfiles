@@ -17,13 +17,6 @@ local function ensure_cache_dir()
 	end
 end
 
--- Resolve symlink target if present, otherwise use file url directly
-local function resolve_url(job)
-	if job.file.link_to then
-		return job.file.link_to
-	end
-	return job.file.url
-end
 
 local function url_key(url)
 	return tostring(url):gsub("[^%w%-]", "_")
@@ -31,10 +24,6 @@ end
 
 local function cache_png(url, frame)
 	return Url(CACHE_DIR .. "/" .. url_key(url) .. "_f" .. tostring(frame) .. ".png")
-end
-
-local function meta_file(url)
-	return CACHE_DIR .. "/" .. url_key(url) .. ".meta"
 end
 
 local set_state = ya.sync(function(state, k, v) state[k] = v end)
@@ -51,6 +40,10 @@ local function write_line(path, content)
 	if f then f:write(content); f:close() end
 end
 
+local function meta_file(url)
+	return CACHE_DIR .. "/" .. url_key(url) .. ".meta"
+end
+
 local function is_xcursor(url)
 	-- Check magic bytes "Xcur" to confirm this is actually an Xcursor file
 	local f = io.open(tostring(url), "rb")
@@ -62,7 +55,11 @@ end
 local function render_frame(url, frame)
 	ensure_cache_dir()
 	local dest = cache_png(url, frame)
-	if fs.cha(dest) then return true end
+	if fs.cha(dest) then
+		local m = read_line(meta_file(url))
+		if m then set_state("meta_" .. tostring(url), m) end
+		return true
+	end
 
 	local out, err = Command("python3")
 		:arg({ SCRIPT, tostring(url), tostring(frame) })
@@ -90,18 +87,17 @@ local function render_frame(url, frame)
 end
 
 local function load_meta(url)
-	local k = "meta_" .. tostring(url)
-	local m = get_state(k)
+	local m = get_state("meta_" .. tostring(url))
 	if m then return m end
 	m = read_line(meta_file(url))
-	if m then set_state(k, m) end
+	if m then set_state("meta_" .. tostring(url), m) end
 	return m
 end
 
 -- ── Entry points ─────────────────────────────────────────────────────────────
 
 function M:preload(job)
-	local url = resolve_url(job)
+	local url = job.file.url
 	log("preload: " .. tostring(url))
 	if not is_xcursor(url) then return true end
 	local ok, err = render_frame(url, job.skip or 0)
@@ -109,7 +105,7 @@ function M:preload(job)
 end
 
 function M:peek(job)
-	local url = resolve_url(job)
+	local url = job.file.url
 	log("peek: mime=" .. tostring(job.mime) .. " url=" .. tostring(url))
 
 	if not is_xcursor(url) then
@@ -195,7 +191,7 @@ end
 function M:seek(job)
 	local h = cx.active.current.hovered
 	if h and h.url == job.file.url then
-		local url = resolve_url(job)
+		local url = job.file.url
 		local total = get_state("total_frames_" .. tostring(url)) or 1
 		local new_skip = ((cx.active.preview.skip or 0) + job.units) % total
 		if new_skip < 0 then new_skip = new_skip + total end

@@ -40,7 +40,7 @@ case "$1" in
     flag=/tmp/.cclip_ok
     rm -f "$flag"
     $2 "$0"
-    [ -f "$flag" ] && { rm -f "$flag"; wtype -M ctrl -k v; }
+    [ -f "$flag" ] && { rm -f "$flag"; sleep 0.1; wtype -M ctrl -M shift -k v; sleep 0.1; pkill -x wl-copy 2>/dev/null || true; }
     ;;
   *)
     sel=$($0 --list | fzf \
@@ -56,7 +56,11 @@ case "$1" in
 $entry"
         fi
       done <<< "$sel"
-      wl-copy -- "$combined" >/dev/null 2>&1 && touch /tmp/.cclip_ok
+      if [ "$(printf '%s' "$sel" | wc -l)" -eq 0 ]; then
+        cclip copy "${sel%%$'\t'*}" && touch /tmp/.cclip_ok
+      else
+        wl-copy -- "$combined" >/dev/null 2>&1 && touch /tmp/.cclip_ok
+      fi
     fi
     ;;
 esac

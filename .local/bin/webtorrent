@@ -35,34 +35,66 @@
   }
 
   // ─── MPV IPC ────────────────────────────────────────────────────────
+  // Single persistent connection; commands are multiplexed via request_id.
 
-  const mpvSend = cmd => new Promise((resolve, reject) => {
-    const sock = net.createConnection(MPV_SOCKET)
-    sock.setTimeout(1000)
-    let buf = '', settled = false
-    const finish = (val, err) => {
-      if (settled) return
-      settled = true
-      sock.destroy()
-      err ? reject(err) : resolve(val)
-    }
-    sock.on('connect', () => sock.write(JSON.stringify(cmd) + '\n'))
-    sock.on('data', chunk => {
-      buf += chunk.toString()
-      for (const line of buf.split('\n')) {
-        try {
-          const msg = JSON.parse(line)
-          if ('error' in msg)
-            msg.error === 'success' ? finish(msg.data) : finish(undefined, new Error(msg.error))
-        } catch {}
+  const _ipc = (() => {
+    let sock = null, buf = '', reqId = 0
+    const pending = new Map()  // request_id -> { resolve, reject, timer }
+    const queue   = []         // { cmd, resolve, reject } waiting to send
+
+    function flush() {
+      if (!sock) return
+      while (queue.length) {
+        const { cmd, resolve, reject } = queue.shift()
+        const id    = ++reqId
+        const timer = setTimeout(() => {
+          pending.delete(id)
+          reject(new Error('mpv timeout'))
+        }, 2000)
+        pending.set(id, { resolve, reject, timer })
+        sock.write(JSON.stringify({ ...cmd, request_id: id }) + '\n')
       }
-    })
-    sock.on('timeout', () => finish(undefined, new Error('mpv timeout')))
-    sock.on('error',   e  => finish(undefined, e))
-  })
+    }
 
-  const mpvGet = prop => mpvSend({ command: ['get_property', prop] })
-  const mpvMsg = (...args) =>
+    function reset() {
+      for (const [, { reject, timer }] of pending) { clearTimeout(timer); reject(new Error('mpv disconnected')) }
+      pending.clear()
+      for (const { reject } of queue) reject(new Error('mpv disconnected'))
+      queue.length = 0
+      buf = ''; sock = null
+    }
+
+    function connect() {
+      sock = net.createConnection(MPV_SOCKET)
+      sock.on('connect', flush)
+      sock.on('data', chunk => {
+        buf += chunk.toString()
+        const lines = buf.split('\n')
+        buf = lines.pop()
+        for (const line of lines) {
+          if (!line) continue
+          let msg; try { msg = JSON.parse(line) } catch { continue }
+          if (!('error' in msg)) continue
+          const p = pending.get(msg.request_id)
+          if (!p) continue
+          pending.delete(msg.request_id)
+          clearTimeout(p.timer)
+          msg.error === 'success' ? p.resolve(msg.data) : p.reject(new Error(msg.error))
+        }
+      })
+      sock.on('error', reset)
+      sock.on('close', reset)
+    }
+
+    return cmd => new Promise((resolve, reject) => {
+      queue.push({ cmd, resolve, reject })
+      if (!sock) connect(); else flush()
+    })
+  })()
+
+  const mpvSend = cmd => _ipc(cmd)
+  const mpvGet  = prop => mpvSend({ command: ['get_property', prop] })
+  const mpvMsg  = (...args) =>
     mpvSend({ command: ['script-message-to', 'webtorrent_hook', ...args] }).catch(() => {})
 
   // ─── OSD helpers ────────────────────────────────────────────────────

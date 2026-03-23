@@ -28,8 +28,11 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
 "
 
 if [[ "$1" == "-t" ]]; then
+  flag=/tmp/.cclip_ok
+  rm -f "$flag"
   $2 "$0"
+  [ -f "$flag" ] && { rm -f "$flag"; wtype -M ctrl -M shift -k v; pkill -x wl-copy 2>/dev/null || true; }
 else
   sel=$(fzf < ~/.local/bin/icons/nerdfont.txt | cut -d" " -f1 | paste -sd" ")
-  [ -n "$sel" ] && wl-copy -- "$sel" >/dev/null 2>&1
+  [ -n "$sel" ] && wl-copy -- "$sel" >/dev/null 2>&1 && touch /tmp/.cclip_ok
 fi

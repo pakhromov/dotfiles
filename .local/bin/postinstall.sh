@@ -10,6 +10,7 @@ DOTFILES="$HOME/.local/bin/postinstall"
 GIT_DIR="$HOME/.dotfiles-git"
 
 add_repos() {
+    sudo pacman -S --needed --noconfirm curl
     echo "==> Adding Chaotic-AUR repo..."
     curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3056513887B78AEB' | sudo pacman-key --add -
     sudo pacman-key --lsign-key 3056513887B78AEB
@@ -27,6 +28,7 @@ add_repos() {
 }
 
 clone_dotfiles() {
+    sudo pacman -S --needed --noconfirm git shared-mime-info
     echo "==> Cloning dotfiles..."
     git clone --bare "https://github.com/$REPO.git" "$GIT_DIR"
     git --git-dir="$GIT_DIR" config core.bare false
@@ -54,7 +56,28 @@ clone_dotfiles() {
 
     echo "==> Copying system config files..."
     sudo cp -rT "$DOTFILES/root" /
-    sudo pacman -Sy
+    sudo pacman -Syyu
+}
+
+install_gpu_drivers() {
+    echo "Which GPU drivers to install?"
+    echo "  1) NVIDIA"
+    echo "  2) AMD"
+    read -rp "Choice: " gpu </dev/tty
+
+    case "$gpu" in
+        1)
+            echo "==> Installing NVIDIA drivers..."
+            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils
+            ;;
+        2)
+            echo "==> Installing AMD drivers..."
+            sudo pacman -S --needed --noconfirm mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon
+            ;;
+        *)
+            echo "Invalid choice, skipping GPU drivers."
+            ;;
+    esac
 }
 
 install_official() {
@@ -138,6 +161,13 @@ blacklist pcspkr
 blacklist snd_pcsp
 EOF
     sudo mkinitcpio -P
+
+    sudo mv /opt/sublime_text/crash_handler /opt/sublime_text/crash_handler.bak
+    sudo tee /opt/sublime_text/crash_handler >/dev/null <<'EOF'
+#!/bin/sh
+exit 0
+EOF
+    sudo chmod +x /opt/sublime_text/crash_handler
 }
 
 check_system() {
@@ -180,6 +210,45 @@ check_system() {
         fi
     done < "$DOTFILES/packages-aur.txt"
     echo "    $((total - failed))/$total installed"
+
+    echo ""
+    echo "==> GPU drivers"
+    local nvidia_pkgs=(nvidia-open nvidia-utils lib32-nvidia-utils)
+    local amd_pkgs=(mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon)
+    local nvidia_installed=0 amd_installed=0
+    local nvidia_missing=() amd_missing=()
+
+    for pkg in "${nvidia_pkgs[@]}"; do
+        if pacman -Qi "$pkg" &>/dev/null; then
+            ((nvidia_installed++))
+        else
+            nvidia_missing+=("$pkg")
+        fi
+    done
+
+    for pkg in "${amd_pkgs[@]}"; do
+        if pacman -Qi "$pkg" &>/dev/null; then
+            ((amd_installed++))
+        else
+            amd_missing+=("$pkg")
+        fi
+    done
+
+    if [[ $nvidia_installed -eq ${#nvidia_pkgs[@]} ]]; then
+        echo -e "  $ok NVIDIA drivers installed"
+    elif [[ $nvidia_installed -gt 0 ]]; then
+        echo -e "  $fail NVIDIA drivers incomplete, missing: ${nvidia_missing[*]}"
+    fi
+
+    if [[ $amd_installed -eq ${#amd_pkgs[@]} ]]; then
+        echo -e "  $ok AMD drivers installed"
+    elif [[ $amd_installed -gt 0 ]]; then
+        echo -e "  $fail AMD drivers incomplete, missing: ${amd_missing[*]}"
+    fi
+
+    if [[ $nvidia_installed -eq 0 && $amd_installed -eq 0 ]]; then
+        echo -e "  $fail No GPU drivers installed"
+    fi
 
     echo ""
     echo "==> Root dotfiles"
@@ -266,23 +335,31 @@ check_system() {
             echo -e "  $fail $f missing"
         fi
     done
+
+    if [[ -f /opt/sublime_text/crash_handler ]] && head -1 /opt/sublime_text/crash_handler | grep -q '^#!'; then
+        echo -e "  $ok sublime crash_handler disabled"
+    else
+        echo -e "  $fail sublime crash_handler not disabled"
+    fi
 }
 
 echo "What do you want to do?"
 echo "  1) Add repos (Chaotic-AUR + CachyOS)"
 echo "  2) Clone dotfiles and copy system config"
-echo "  3) Install official packages"
-echo "  4) Install AUR packages"
-echo "  5) System configuration"
-echo "  6) System check"
+echo "  3) Install GPU drivers"
+echo "  4) Install official packages"
+echo "  5) Install AUR packages"
+echo "  6) System configuration"
+echo "  7) System check"
 read -rp "Choice: " choice </dev/tty
 
 case "$choice" in
     1) add_repos ;;
     2) clone_dotfiles ;;
-    3) install_official ;;
-    4) install_aur ;;
-    5) configure_system ;;
-    6) check_system ;;
+    3) install_gpu_drivers ;;
+    4) install_official ;;
+    5) install_aur ;;
+    6) configure_system ;;
+    7) check_system ;;
     *) echo "Invalid choice"; exit 1 ;;
 esac
