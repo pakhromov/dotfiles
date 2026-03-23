@@ -257,14 +257,6 @@ upgrade() {
 	read -rsn1 -p "Press enter or esc to exit..."
 }
 
-  count_updates() {
-      pacman_count=$(checkupdates 2>/dev/null | wc -l)
-      aur_count=$(yay -Qua 2>/dev/null | wc -l)
-      tmp=$(mktemp ~/.cache/.update_count.XXXXXX)
-      printf '%s\n%s\n' "$(date +%s)" "$(( pacman_count + aur_count ))" > "$tmp"
-      mv "$tmp" ~/.cache/update_count
-  }
-
 help() {
 	prog=$(basename "$0")
 	cat <<EOF
@@ -316,6 +308,5 @@ case $1 in
 -H | H) high_impact ;;
 -q | q) query "INSTALLED PKG" "-Q" ;;
 -Q | Q) query "INSTALLED EXPLICITLY PKG" "-Qe" ;;
--c | c) count_updates ;;
 -h | h | --help) help ;; *) invalid_option ;;
 esac

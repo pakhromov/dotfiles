@@ -171,15 +171,37 @@ def _preexec():
     os.setsid()
 
 
+_updates_count = None
+_updates_popen = None
+_updates_last_launch = None
+
+
 def _get_updates_status():
-    out = subprocess.run(
-        ['kitty-updates'],
-        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-        stdin=subprocess.DEVNULL, preexec_fn=_preexec
-    ).stdout.decode().strip()
-    if out == 'fetch' or not out.isdigit():
+    global _updates_count, _updates_popen, _updates_last_launch
+
+    now = datetime.now().timestamp()
+
+    if _updates_popen is not None and _updates_popen.poll() is not None:
+        out = _updates_popen.stdout.read().decode().strip()
+        _updates_count = int(out) if out.isdigit() else None
+        _updates_popen = None
+
+    if _updates_popen is None and (
+        _updates_last_launch is None or (now - _updates_last_launch) >= 3600
+    ):
+        _updates_last_launch = now
+        _updates_popen = subprocess.Popen(
+            ['sh', '-c', 'a=$(checkupdates 2>/dev/null | wc -l); b=$(yay -Qua 2>/dev/null | wc -l); echo $((a+b))'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
+            preexec_fn=_preexec,
+        )
+
+    age = (now - _updates_last_launch) if _updates_last_launch is not None else None
+    if _updates_count is None or age is None or age >= 3900:
         return (UPDATES_ICON, str(UPDATES_FETCH))
-    return (UPDATES_ICON, out)
+    return (UPDATES_ICON, str(_updates_count))
 
 
 # Shared state across draw_tab calls within one render pass
