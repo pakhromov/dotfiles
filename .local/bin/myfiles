@@ -1,0 +1,120 @@
+#!/bin/bash
+
+TRACKED="$HOME/.local/share/myfiles/tracked"
+REMOTE="gdrive:/linux_sync"
+
+mkdir -p "$(dirname "$TRACKED")"
+
+# Returns path relative to $HOME, or path without leading / if outside home
+_rel() {
+    local path="$1"
+    if [[ "$path" == "$HOME/"* ]]; then
+        echo "${path#$HOME/}"
+    else
+        echo "${path#/}"
+    fi
+}
+
+case "$1" in
+    add)
+        if [[ -z "$2" ]]; then
+            echo "Usage: myfiles add <path>"
+            exit 1
+        fi
+        target="$(realpath "$2")"
+        if [[ ! -e "$target" ]]; then
+            echo "error: $target does not exist"
+            exit 1
+        fi
+        if grep -qxF "$target" "$TRACKED" 2>/dev/null; then
+            echo "already tracked: $target"
+        else
+            echo "$target" >> "$TRACKED"
+            echo "added: $target"
+        fi
+        ;;
+
+    push)
+        if [[ ! -s "$TRACKED" ]]; then
+            echo "nothing tracked, use 'myfiles add <path>' first"
+            exit 1
+        fi
+        manifest=$(mktemp)
+        while IFS= read -r path; do
+            if [[ ! -e "$path" ]]; then
+                echo "warning: $path no longer exists, skipping"
+                continue
+            fi
+            rel="$(_rel "$path")"
+            echo "pushing: $path"
+            if [[ -d "$path" ]]; then
+                rclone copy "$path" "$REMOTE/$rel"
+            else
+                rclone copyto "$path" "$REMOTE/$rel"
+            fi
+            echo "$rel" >> "$manifest"
+        done < "$TRACKED"
+        rclone copyto "$manifest" "$REMOTE/.myfiles_tracked"
+        rm "$manifest"
+        echo "done"
+        ;;
+
+    clone)
+        dest="${2%/}"
+        if [[ -z "$dest" ]]; then
+            echo "Usage: myfiles clone <destination>"
+            echo "Example: myfiles clone /home/pavel"
+            exit 1
+        fi
+        manifest=$(mktemp)
+        echo "fetching manifest..."
+        rclone copyto "$REMOTE/.myfiles_tracked" "$manifest" 2>/dev/null
+        if [[ ! -s "$manifest" ]]; then
+            echo "error: no manifest found on remote, run 'myfiles push' first"
+            rm "$manifest"
+            exit 1
+        fi
+        while IFS= read -r rel; do
+            target="$dest/$rel"
+            mkdir -p "$(dirname "$target")"
+            echo "cloning: $rel -> $target"
+            rclone copyto "$REMOTE/$rel" "$target"
+        done < "$manifest"
+        rm "$manifest"
+        echo "done"
+        ;;
+
+    list)
+        if [[ ! -s "$TRACKED" ]]; then
+            echo "nothing tracked"
+        else
+            cat "$TRACKED"
+        fi
+        ;;
+
+    remove)
+        if [[ -z "$2" ]]; then
+            echo "Usage: myfiles remove <path>"
+            exit 1
+        fi
+        target="$(realpath "$2")"
+        if grep -qxF "$target" "$TRACKED" 2>/dev/null; then
+            grep -vxF "$target" "$TRACKED" > "$TRACKED.tmp" && mv "$TRACKED.tmp" "$TRACKED"
+            echo "removed: $target"
+        else
+            echo "not tracked: $target"
+        fi
+        ;;
+
+    *)
+        echo "Usage: myfiles <command>"
+        echo ""
+        echo "Commands:"
+        echo "  add <path>       track a file or directory"
+        echo "  remove <path>    stop tracking a file or directory"
+        echo "  push             upload all tracked files to Google Drive"
+        echo "  clone <dest>     restore all files to <dest> (e.g. /home/pavel)"
+        echo "  list             show tracked files"
+        exit 1
+        ;;
+esac
