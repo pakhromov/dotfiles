@@ -31,8 +31,17 @@ if [[ "$1" == "-t" ]]; then
   flag=/tmp/.cclip_ok
   rm -f "$flag"
   $2 "$0"
-  [ -f "$flag" ] && { rm -f "$flag"; wtype -M ctrl -M shift -k v; pkill -x wl-copy 2>/dev/null || true; }
+  if [ -f "$flag" ]; then
+    rm -f "$flag"
+    sleep 0.1
+    wtype -M ctrl -M shift -k v
+    sleep 0.3
+    pkill -x wl-copy 2>/dev/null || true
+  fi
 else
   sel=$(fzf < ~/.local/bin/icons/nerdfont.txt | cut -d" " -f1 | paste -sd" ")
-  [ -n "$sel" ] && wl-copy -- "$sel" >/dev/null 2>&1 && touch /tmp/.cclip_ok
+  if [ -n "$sel" ]; then
+    setsid wl-copy -- "$sel" >/dev/null 2>&1 &
+    touch /tmp/.cclip_ok
+  fi
 fi
