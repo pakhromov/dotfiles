@@ -56,11 +56,7 @@ case "$1" in
 $entry"
         fi
       done <<< "$sel"
-      if [ "$(printf '%s' "$sel" | wc -l)" -eq 0 ]; then
-        cclip copy "${sel%%$'\t'*}" && touch /tmp/.cclip_ok
-      else
-        wl-copy -- "$combined" >/dev/null 2>&1 && touch /tmp/.cclip_ok
-      fi
+      wl-copy -- "$combined" >/dev/null 2>&1 && touch /tmp/.cclip_ok
     fi
     ;;
 esac
