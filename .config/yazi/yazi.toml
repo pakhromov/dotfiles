@@ -85,6 +85,16 @@ id  = "git"
 url = "*/"
 run = "git"
 
+[[plugin.prepend_fetchers]]
+id  = "myfiles"
+url = "*"
+run = "myfiles"
+
+[[plugin.prepend_fetchers]]
+id  = "myfiles"
+url = "*/"
+run = "myfiles"
+
 
 
 

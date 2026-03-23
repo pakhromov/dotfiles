@@ -1,0 +1,37 @@
+#!/bin/sh
+CACHE="$HOME/.cache/update_count"
+LOCK="$HOME/.cache/.update_count_launched"
+
+now=$(date +%s)
+age=999999
+count=""
+
+if [ -f "$CACHE" ]; then
+    ts=$(sed -n '1p' "$CACHE")
+    count=$(sed -n '2p' "$CACHE")
+    [ -n "$ts" ] && age=$((now - ts))
+fi
+
+if [ "$age" -ge 3600 ]; then
+    do_launch=1
+    if [ -f "$LOCK" ]; then
+        lock_ts=$(cat "$LOCK")
+        [ -n "$lock_ts" ] && [ $((now - lock_ts)) -lt 60 ] && do_launch=0
+    fi
+    if [ "$do_launch" = 1 ]; then
+        printf '%s\n' "$now" > "$LOCK"
+        (
+            for fd in /proc/self/fd/*; do
+                fd=${fd##*/}
+                [ "$fd" -gt 2 ] && eval "exec $fd>&-" 2>/dev/null
+            done
+            exec setsid yzf -c
+        ) </dev/null >/dev/null 2>&1 &
+    fi
+fi
+
+if [ -n "$count" ] && [ "$age" -lt 3900 ]; then
+    printf '%s\n' "$count"
+else
+    printf 'fetch\n'
+fi

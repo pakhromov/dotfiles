@@ -343,6 +343,18 @@ check_system() {
     fi
 }
 
+clone_myfiles() {
+    if ! command -v rclone &>/dev/null; then
+        echo "error: rclone is not installed"
+        exit 1
+    fi
+    if ! rclone listremotes | grep -q "^gdrive:"; then
+        echo "error: gdrive remote not configured, run 'rclone config' first"
+        exit 1
+    fi
+    myfiles clone "$HOME"
+}
+
 echo "What do you want to do?"
 echo "  1) Add repos (Chaotic-AUR + CachyOS)"
 echo "  2) Clone dotfiles and copy system config"
@@ -351,6 +363,7 @@ echo "  4) Install official packages"
 echo "  5) Install AUR packages"
 echo "  6) System configuration"
 echo "  7) System check"
+echo "  8) Restore personal files from Google Drive"
 read -rp "Choice: " choice </dev/tty
 
 case "$choice" in
@@ -361,5 +374,6 @@ case "$choice" in
     5) install_aur ;;
     6) configure_system ;;
     7) check_system ;;
+    8) clone_myfiles ;;
     *) echo "Invalid choice"; exit 1 ;;
 esac

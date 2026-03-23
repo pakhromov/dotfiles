@@ -114,15 +114,33 @@ end)
 ---@param changed Changes
 local add_dotfiles = ya.sync(function(st, cwd, home, changed)
 	st.dotfiles_dirs[cwd] = home
-	st.dotfiles_repos[home] = st.dotfiles_repos[home] or {}
+	st.dotfiles_files[home] = st.dotfiles_files[home] or {}
+
+	-- Update leaf file statuses (unknown = untracked, remove from table)
 	for path, code in pairs(changed) do
 		if code == CODES.unknown then
-			-- untracked by dotfiles: nil means "not tracked" in dotfiles_repos
-			st.dotfiles_repos[home][path] = nil
+			st.dotfiles_files[home][path] = nil
 		else
-			st.dotfiles_repos[home][path] = code
+			st.dotfiles_files[home][path] = code
 		end
 	end
+
+	-- Recompute repos[home] from ALL known leaf files so that directory
+	-- statuses always reflect the global worst status, not just the last batch.
+	st.dotfiles_repos[home] = {}
+	for path, code in pairs(st.dotfiles_files[home]) do
+		st.dotfiles_repos[home][path] = code
+		local parts = {}
+		for part in path:gmatch("[^/]+") do parts[#parts + 1] = part end
+		for i = #parts - 1, 1, -1 do
+			local dir = table.concat(parts, "/", 1, i)
+			local existing = st.dotfiles_repos[home][dir]
+			if not existing or code > existing then
+				st.dotfiles_repos[home][dir] = code
+			end
+		end
+	end
+
 	ui.render()
 end)
 
@@ -134,6 +152,7 @@ local function setup(st, opts)
 	st.standalone = {} -- repos that are themselves directory entries (viewed from outside)
 	st.dotfiles_dirs = {} -- separate state for dotfiles bare repo, never cleared by remove()
 	st.dotfiles_repos = {}
+	st.dotfiles_files = {} -- leaf file statuses only; dirs are recomputed from this
 
 	opts = opts or {}
 	opts.order = opts.order or 1500
@@ -320,9 +339,6 @@ local function fetch_dotfiles(job, cwd)
 	for path in pairs(tracked) do
 		changed[path] = raw_changed[path] or CODES.clean
 	end
-
-	-- Bubble up to parent directories
-	ya.dict_merge(changed, bubble_up(changed))
 
 	-- Mark untracked paths in current view as unknown so they show nothing
 	for _, abs_path in ipairs(abs_paths) do

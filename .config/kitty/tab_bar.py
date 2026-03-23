@@ -12,6 +12,8 @@ from kitty.rgb import to_color
 from kitty.fast_data_types import add_timer, get_boss
 from datetime import datetime
 import os
+import signal
+import subprocess
 
 TAB_BAR_BG = "#121212"
 
@@ -164,9 +166,17 @@ def _get_battery_status():
     return (icon, f'{percent}%')
 
 
+def _preexec():
+    signal.pthread_sigmask(signal.SIG_SETMASK, set())
+    os.setsid()
+
+
 def _get_updates_status():
-    with os.popen('kitty-updates 2>/dev/null') as p:
-        out = p.read().strip()
+    out = subprocess.run(
+        ['kitty-updates'],
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL, preexec_fn=_preexec
+    ).stdout.decode().strip()
     if out == 'fetch' or not out.isdigit():
         return (UPDATES_ICON, str(UPDATES_FETCH))
     return (UPDATES_ICON, out)
