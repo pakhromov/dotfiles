@@ -12,7 +12,7 @@ manly-git
 mcat-bin
 nbopen
 ocrs
-ov-bin
+lore-bin
 pdf2img-c
 python-xlsx2csv
 rar

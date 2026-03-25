@@ -22,4 +22,3 @@ wireguard-tools
 wireless_tools
 yq
 awesome-terminal-fonts
-noto-fonts-cjk

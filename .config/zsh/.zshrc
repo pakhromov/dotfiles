@@ -45,7 +45,8 @@ export FZF_CTRL_R_OPTS="--no-sort --border-label ' HISTORY '"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
-export BAT_PAGER="ov --jump-target 50% --section-delimiter '^[^\s]' --section-header"
+export BAT_PAGER="lore"
+#export BAT_PAGER="ov --jump-target 50% --section-delimiter '^[^\s]' --section-header"
 #export BAT_PAGER="/home/pavel/.config/kitty/pager.sh"
 export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
 export PYTHON_AUTO_VRUN=true

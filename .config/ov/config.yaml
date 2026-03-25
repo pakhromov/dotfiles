@@ -12,7 +12,9 @@ General:
 
   Style:
     SearchHighlight:
-      Reverse: true
+      Reverse: false
+      Background: "blue"
+      Foreground: "black"
     SectionLine:
       Background: "grey"
     SectionHeaderBorder:
@@ -94,11 +96,13 @@ KeyBind:
     next_search:
         - "n"
         - "Right"
+        - "ctrl+Down"
     next_backsearch:
         - "N"
         - "p"
         - "m"
         - "Left"
+        - "ctrl+Up"
     next_doc:
         - "]"
     previous_doc:
