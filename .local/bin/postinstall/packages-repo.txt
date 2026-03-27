@@ -67,6 +67,7 @@ qimgv-git
 qt5-wayland
 qt6-wayland
 resvg
+rclone
 ripgrep
 river
 rofi

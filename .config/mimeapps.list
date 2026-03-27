@@ -45,4 +45,5 @@ image/tiff=qimgv.desktop
 image/x-icon=qimgv.desktop
 
 x-scheme-handler/mailto=gmail
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 
