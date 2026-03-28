@@ -1,6 +1,6 @@
 [global]
 
-
+    monitor = DP2
     width = 300
     height = (70, 300)
     offset = (30, 50)

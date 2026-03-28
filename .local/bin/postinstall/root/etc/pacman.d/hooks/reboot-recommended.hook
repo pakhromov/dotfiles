@@ -1,0 +1,13 @@
+[Trigger]
+Type = File
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/modules/*/extramodules/nvidia*
+Target = usr/lib/systemd/systemd
+Target = usr/lib/libc.so.*
+
+[Action]
+Description = Reboot recommended...
+When = PostTransaction
+Exec = /bin/sh -c 'uid=$(id -u pavel); sudo -u pavel env XDG_RUNTIME_DIR=/run/user/$uid WAYLAND_DISPLAY=wayland-1 kitten notify "Reboot Recommended" "Kernel or system components were updated"'

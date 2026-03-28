@@ -224,11 +224,9 @@ upgrade() {
 
 	local selected
 	selected=$(fzf --no-sort --border-label ' SYSTEM UPDATE ' \
-		--preview "pkg=\$(echo {1} | awk -F/ '{print \$2}'); yay --color=always -Qi \$pkg | awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'" \
-		--preview-label "$_kb_upgrade" --preview-label-pos 'bottom' \
 		--bind "load:select-all" \
 		--bind "ctrl-a:toggle-all" \
-		--bind "right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null || yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+		--bind "right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
 		<<<"$formatted")
 
 	[ -z "$selected" ] && return
