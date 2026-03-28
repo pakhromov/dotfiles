@@ -38,7 +38,6 @@ clone_dotfiles() {
     update-mime-database ~/.local/share/mime
 
     echo "==> Cloning zsh plugins..."
-    git clone https://github.com/Skylor-Tang/auto-venv                     "$HOME/.config/zsh/plugins/auto-venv"
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
 
     echo "==> Cloning yazi plugins..."
