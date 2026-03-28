@@ -1,0 +1,10 @@
+[Trigger]
+Type = File
+Operation = Install
+Operation = Upgrade
+Target = opt/sublime_text/crash_handler
+
+[Action]
+Description = Disabling Sublime Text crash handler...
+When = PostTransaction
+Exec = /bin/cp /home/pavel/.local/bin/postinstall/root/opt/sublime_text/crash_handler /opt/sublime_text/crash_handler
