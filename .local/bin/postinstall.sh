@@ -249,8 +249,9 @@ check_system() {
         fi
     done
 
-    for svc in rtkit-daemon polkit.service upower.service \
-               systemd-journald systemd-journald.socket \
+    for svc in rtkit-daemon polkit.service polkit-agent-helper.socket polkit-agent-helper@.service \
+               upower.service user@.service \
+               systemd-journald systemd-journal-flush systemd-journald.socket \
                systemd-journald-dev-log.socket systemd-journald-audit.socket; do
         if [[ "$(systemctl is-enabled "$svc" 2>/dev/null)" == "masked" ]]; then
             echo -e "  $ok $svc masked"
@@ -259,35 +260,14 @@ check_system() {
         fi
     done
 
-    for svc in systemd-networkd systemd-resolved systemd-timesyncd bluetooth.service; do
+    for svc in systemd-networkd systemd-resolved systemd-timesyncd bluetooth.service \
+               systemd-userdbd.service systemd-userdbd.socket; do
         if ! systemctl is-enabled "$svc" &>/dev/null; then
             echo -e "  $ok $svc disabled"
         else
             echo -e "  $fail $svc still enabled"
         fi
     done
-
-    for f in power mount-mkdir greetd chrony vpn-shell; do
-        if sudo test -f "/etc/sudoers.d/$f"; then
-            echo -e "  $ok sudoers: $f"
-        else
-            echo -e "  $fail sudoers: $f missing"
-        fi
-    done
-
-    for f in /etc/udev/rules.d/90-backlight.rules /etc/modprobe.d/nobeep.conf; do
-        if [[ -f "$f" ]]; then
-            echo -e "  $ok $f"
-        else
-            echo -e "  $fail $f missing"
-        fi
-    done
-
-    if [[ -f /opt/sublime_text/crash_handler ]] && head -1 /opt/sublime_text/crash_handler | grep -q '^#!'; then
-        echo -e "  $ok sublime crash_handler disabled"
-    else
-        echo -e "  $fail sublime crash_handler not disabled"
-    fi
 }
 
 clone_myfiles() {
