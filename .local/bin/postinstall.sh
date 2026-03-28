@@ -97,76 +97,24 @@ configure_system() {
     sudo systemctl disable systemd-resolved.service systemd-resolved-monitor.socket systemd-resolved-varlink.socket
     sudo rm -f /etc/resolv.conf
     sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
-    sudo systemctl start iwd
-    sudo systemctl enable iwd
+    sudo systemctl enable --now iwd
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
 
-    sudo systemctl mask rtkit-daemon
-    sudo systemctl mask polkit.service
-    sudo systemctl mask polkit-agent-helper.socket
-    sudo systemctl mask polkit-agent-helper@.service
+
+    sudo systemctl mask polkit.service polkit-agent-helper.socket polkit-agent-helper@.service
+    sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
-    sudo systemctl disable systemd-userdbd.service
-    sudo systemctl disable systemd-userdbd.socket
+    sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket
     sudo systemctl mask upower.service
     sudo systemctl mask user@.service
-    sudo systemctl mask systemd-journald.socket
-    sudo systemctl mask systemd-journald-dev-log.socket
-    sudo systemctl mask systemd-journald
-    sudo systemctl mask systemd-journal-flush
-    sudo systemctl mask systemd-journald-audit.socket
+    sudo systemctl mask rtkit-daemon
     sudo systemctl enable greetd.service
 
-    sudo mkdir -p /etc/dbus-1/system-services
-    sudo tee /etc/dbus-1/system-services/org.freedesktop.UPower.service >/dev/null <<'EOF'
-[D-BUS Service]
-Name=org.freedesktop.UPower
-Exec=/bin/false
-EOF
-
-    sudo tee /etc/sudoers.d/power >/dev/null <<'EOF'
-pavel ALL=(root) NOPASSWD: /usr/bin/systemctl poweroff, /usr/bin/systemctl reboot, /usr/bin/systemctl suspend, /usr/bin/systemctl hibernate, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/chvt
-EOF
-    sudo chmod 440 /etc/sudoers.d/power
-
-    sudo tee /etc/sudoers.d/mount-mkdir >/dev/null <<'EOF'
-pavel ALL=(root) NOPASSWD: /usr/bin/mount, /usr/bin/umount, /usr/bin/mkdir, /usr/bin/rmdir
-EOF
-    sudo chmod 440 /etc/sudoers.d/mount-mkdir
-
-    echo 'pavel ALL=(root) NOPASSWD: /usr/bin/systemctl stop greetd, /usr/bin/systemctl start greetd' | sudo tee /etc/sudoers.d/greetd >/dev/null
-    sudo chmod 0440 /etc/sudoers.d/greetd
-
-    echo 'pavel ALL=(root) NOPASSWD: /usr/bin/chronyd' | sudo tee /etc/sudoers.d/chrony >/dev/null
-    sudo chmod 0440 /etc/sudoers.d/chrony
-
-    sudo tee /etc/sudoers.d/vpn-shell >/dev/null <<'EOF'
-Cmnd_Alias VPN_CMDS = \
-    /usr/bin/ip, \
-    /usr/bin/mkdir -p /etc/netns/vpn*, \
-    /usr/bin/tee /etc/netns/vpn*/resolv.conf, \
-    /usr/bin/rm -rf /etc/netns/vpn*
-pavel ALL=(root) NOPASSWD: VPN_CMDS
-EOF
-    sudo chmod 0440 /etc/sudoers.d/vpn-shell
-
-    echo 'ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness", RUN+="/bin/chgrp video /sys/class/backlight/%k/brightness"' | sudo tee /etc/udev/rules.d/90-backlight.rules >/dev/null
     sudo modprobe i2c-dev
     sudo usermod -aG i2c pavel
-
-    sudo tee /etc/modprobe.d/nobeep.conf >/dev/null <<EOF
-blacklist pcspkr
-blacklist snd_pcsp
-EOF
     sudo mkinitcpio -P
-
-    sudo mv /opt/sublime_text/crash_handler /opt/sublime_text/crash_handler.bak
-    sudo tee /opt/sublime_text/crash_handler >/dev/null <<'EOF'
-#!/bin/sh
-exit 0
-EOF
-    sudo chmod +x /opt/sublime_text/crash_handler
+    sudo systemctl daemon-reload
 }
 
 check_system() {

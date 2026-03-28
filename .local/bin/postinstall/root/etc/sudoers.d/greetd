@@ -1,0 +1,1 @@
+pavel ALL=(root) NOPASSWD: /usr/bin/systemctl stop greetd, /usr/bin/systemctl start greetd
