@@ -63,6 +63,11 @@ function onPlaylist(json) {
   var names = data.names || []
   if (!urls || urls.length === 0) return
 
+  // Server is up and serving; allow future torrent loads.
+  // The long-running server subprocess never exits so onWebtorrentExit never
+  // resets this — clearing it here ensures switching torrents works.
+  wtPending = false
+
   // Write a temporary M3U so mpv reads #EXTINF titles and shows human-readable
   // names in the playlist — same mechanism as loading /latest.m3u directly.
   var m3u = '#EXTM3U\n'

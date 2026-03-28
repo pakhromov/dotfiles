@@ -54,8 +54,6 @@ clone_dotfiles() {
     git clone https://github.com/wekauwau/yatline-tokyo-night.yazi.git    "$HOME/.config/yazi/plugins/yatline-tokyo-night.yazi"
     git clone https://github.com/imsi32/yatline.yazi.git                  "$HOME/.config/yazi/plugins/yatline.yazi"
 
-    echo "==> Copying system config files..."
-    sudo cp -rT "$DOTFILES/root" /
     sudo pacman -Syyu
 }
 
@@ -91,6 +89,8 @@ install_aur() {
 }
 
 configure_system() {
+    sudo cp -rT "$DOTFILES/root" /
+
     sudo ln -sfT /usr/bin/dash /usr/bin/sh
     sudo usermod -s /usr/bin/zsh pavel
 

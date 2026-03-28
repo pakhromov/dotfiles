@@ -46,7 +46,6 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
 export BAT_PAGER="lore"
-#export BAT_PAGER="ov --jump-target 50% --section-delimiter '^[^\s]' --section-header"
 #export BAT_PAGER="/home/pavel/.config/kitty/pager.sh"
 export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
 export PYTHON_AUTO_VRUN=true
@@ -66,13 +65,14 @@ export STARSHIP_CONFIG=/home/pavel/.config/zsh/themes/starship.toml
 eval "$(starship init zsh)"
 #eval "$(oh-my-posh init zsh --config ~/.config/zsh/themes/ohmyposh_themes/night-owl.omp.json)"
 
-source ~/.config/zsh/plugins/auto-venv/auto-venv.zsh
+
 source ~/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source ~/.config/zsh/plugins/fzf-tab-completion/fzf-zsh-completion.sh
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"
 source ~/.config/zsh/plugins/zsh-expand/zsh-expand.plugin.zsh
 source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh #make PR to fix upstream
+source ~/.config/zsh/plugins/auto-venv.plugin.zsh
 source ~/.config/zsh/plugins/zsh-history-substring-search.plugin.zsh
 source ~/.config/zsh/plugins/per-directory-history.plugin.zsh
 source ~/.config/zsh/plugins/dirhistory.plugin.zsh
