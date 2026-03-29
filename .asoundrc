@@ -1,8 +1,0 @@
-pcm.!default {
-    type plug
-    slave.pcm "dmix:Audio"
-}
-ctl.!default {
-    type hw
-    card "Audio"
-}

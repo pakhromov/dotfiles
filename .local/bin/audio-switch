@@ -1,0 +1,32 @@
+#!/bin/bash
+
+parse() {
+    grep "^card" | grep -v "Loopback" | \
+    sed -n 's/card \([0-9]*\): [^[]*\[\([^]]*\)\], device \([0-9]*\): [^[]*\[\([^]]*\)\]/card=\1 device=\3 | \2 — \4/p'
+}
+
+write_asoundrc() {
+    local card=$1 dev=$2
+    cat > ~/.asoundrc << EOF
+defaults.ctl.card $card
+defaults.pcm.card $card
+defaults.pcm.device $dev
+EOF
+}
+
+case "$1" in
+    -d)
+        selection=$(aplay -l | parse | grep -i "Sennheiser" | head -1)
+        [[ -z "$selection" ]] && { echo "Sennheiser device not found"; exit 1; }
+        ;;
+    *)
+        selection=$(aplay -l | parse | fzf --prompt="Audio output: " --height=40%)
+        [[ -z "$selection" ]] && exit 0
+        ;;
+esac
+
+card=$(echo "$selection" | grep -oP 'card=\K[0-9]+')
+dev=$(echo "$selection"  | grep -oP 'device=\K[0-9]+')
+write_asoundrc "$card" "$dev"
+echo "Set: $(echo "$selection" | cut -d'|' -f2 | xargs) (card $card, device $dev)"
+aplay -D dmix:$card -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero &
