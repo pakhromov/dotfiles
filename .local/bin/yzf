@@ -31,6 +31,11 @@ _kb_query=" ${_k}TAB${_a} select   ${_k}ESC${_a} cancel${_r} "
 _kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove   ${_k}ESC${_a} cancel${_r} "
 _kb_upgrade=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} upgrade   ${_k}ESC${_a} cancel${_r} "
 
+_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+A\033[36m all   \033[38;2;160;160;160mRIGHT\033[36m url   \033[38;2;160;160;160mENTER\033[36m update   \033[38;2;160;160;160mESC\033[36m cancel\033[m'
+_footer_plain='TAB select   CTRL+A all   RIGHT url   ENTER update   ESC cancel'
+_pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
+(( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
+
 fzf_preview() {
 	printf "yay --color=always %s {1} | " "$1"
 	printf "awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'\n"
@@ -149,6 +154,9 @@ function comp(a1, a2, i) {
 }
 BEGIN {
 	expac = "/usr/bin/expac -S \"%r %n\" -"
+	# Priority: first repo in pacman.conf wins (CachyOS repos override base repos)
+	split("cachyos-core-v3 cachyos-extra-v3 cachyos-v3 cachyos core extra multilib chaotic-aur aur local", _pr)
+	for (_i in _pr) repo_prio[_pr[_i]] = _i+0
 	while (("pacman -Qmq" | getline pkg) > 0) aur_pkgs[pkg] = 1
 	close("pacman -Qmq")
 	colors[""] = 37; colors["core"] = 31; colors["extra"] = 32
@@ -173,8 +181,10 @@ END {
 	if (NR == 0) exit
 	close(expac, "to")
 	while ((expac |& getline) > 0) {
-		repo_map[$2] = $1
-		if (length($1) > l_repo) l_repo = length($1)
+		r = $1; p = $2
+		if (!(p in repo_map) || repo_prio[r]+0 < repo_prio[repo_map[p]]+0)
+			repo_map[p] = r
+		if (length(r) > l_repo) l_repo = length(r)
 	}
 	close(expac)
 	if (length("aur") > l_repo) l_repo = length("aur")
@@ -223,7 +233,11 @@ upgrade() {
 	formatted=$(format_updates <<<"$pkgs")
 
 	local selected
+
+		#--preview "pkg=\$(echo {1} | awk -F/ '{print \$2}'); yay --color=always -Qi \$pkg | awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'" \
+		#--preview-label "$_kb_upgrade" --preview-label-pos 'bottom' \
 	selected=$(fzf --no-sort --border-label ' SYSTEM UPDATE ' \
+		--footer "$_footer" --footer-border none \
 		--bind "load:select-all" \
 		--bind "ctrl-a:toggle-all" \
 		--bind "right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \

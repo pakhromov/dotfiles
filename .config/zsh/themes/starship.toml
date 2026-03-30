@@ -1,58 +1,54 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 format = """
 [╭─](#585858)[](color_bg)\
-$os[ ](fg:color_fg bg:color_bg)\
-$directory\
-([╱ ](fg:color_fg bg:color_bg)$git_branch)$git_status$git_metrics\
+$os\
+[ ](fg:color_fg bg:color_bg)$directory\
+([ ](fg:color_fg bg:color_bg)$git_branch)$git_metrics$git_status\
+([ ](fg:color_fg bg:color_bg)$sudo)\
+([ ](fg:color_fg bg:color_bg)$jobs)\
 [](fg:color_bg)\
 $fill\
-[](fg:color_bg)\
-[ ](bg:color_bg)\
+[](fg:color_bg)[ ](bg:color_bg)\
+$status[╱ ](fg:color_fg bg:color_bg)\
+(${custom.claude}[╱ ](fg:color_fg bg:color_bg))\
+(${custom.codex}[╱ ](fg:color_fg bg:color_bg))\
+(${custom.per_dir_history}[╱ ](fg:color_fg bg:color_bg))\
+(${custom.docker}[╱ ](fg:color_fg bg:color_bg))\
+($container[╱ ](fg:color_fg bg:color_bg))\
 ($direnv[╱ ](fg:color_fg bg:color_bg))\
+($nix_shell[╱ ](fg:color_fg bg:color_bg))\
+($kubernetes[╱ ](fg:color_fg bg:color_bg))\
 ($package[╱ ](fg:color_fg bg:color_bg))\
+($python[╱ ](fg:color_fg bg:color_bg))\
+($conda[╱ ](fg:color_fg bg:color_bg))\
+($rust[╱ ](fg:color_fg bg:color_bg))\
+($golang[╱ ](fg:color_fg bg:color_bg))\
 ($c[╱ ](fg:color_fg bg:color_bg))\
 ($cpp[╱ ](fg:color_fg bg:color_bg))\
 ($cmake[╱ ](fg:color_fg bg:color_bg))\
-($conda[╱ ](fg:color_fg bg:color_bg))\
-($container[╱ ](fg:color_fg bg:color_bg))\
-($docker_context[╱ ](fg:color_fg bg:color_bg))\
+($meson[╱ ](fg:color_fg bg:color_bg))\
+($zig[╱ ](fg:color_fg bg:color_bg))\
 ($java[╱ ](fg:color_fg bg:color_bg))\
 ($lua[╱ ](fg:color_fg bg:color_bg))\
 ($nodejs[╱ ](fg:color_fg bg:color_bg))\
-($python[╱ ](fg:color_fg bg:color_bg))\
 ($ruby[╱ ](fg:color_fg bg:color_bg))\
-($rust[╱ ](fg:color_fg bg:color_bg))\
 ($haskell[╱ ](fg:color_fg bg:color_bg))\
-($zig[╱ ](fg:color_fg bg:color_bg))\
-($sudo[╱ ](fg:color_fg bg:color_bg))\
-($shell[╱ ](fg:color_fg bg:color_bg))\
 ($scala[╱ ](fg:color_fg bg:color_bg))\
 ($rlang[╱ ](fg:color_fg bg:color_bg))\
 ($php[╱ ](fg:color_fg bg:color_bg))\
 ($perl[╱ ](fg:color_fg bg:color_bg))\
-($nix_shell[╱ ](fg:color_fg bg:color_bg))\
 ($nim[╱ ](fg:color_fg bg:color_bg))\
-($netns[╱ ](fg:color_fg bg:color_bg))\
-($meson[╱ ](fg:color_fg bg:color_bg))\
-($memory_usage[╱ ](fg:color_fg bg:color_bg))\
-($localip[╱ ](fg:color_fg bg:color_bg))\
-($kubernetes[╱ ](fg:color_fg bg:color_bg))\
 ($kotlin[╱ ](fg:color_fg bg:color_bg))\
-($jobs[╱ ](fg:color_fg bg:color_bg))\
 ($gradle[╱ ](fg:color_fg bg:color_bg))\
-($golang[╱ ](fg:color_fg bg:color_bg))\
-($gcloud[╱ ](fg:color_fg bg:color_bg))\
 ($dotnet[╱ ](fg:color_fg bg:color_bg))\
 ($username$hostname[╱ ](fg:color_fg bg:color_bg))\
-$status\
-([╱ ](fg:color_fg bg:color_bg)$cmd_duration)\
+[ ](fg:248 bg:color_bg)$cmd_duration\
 [](fg:color_bg) $line_break\
 $character\
 """
 
 add_newline = false
 palette = 'dark'
-
 
 [palettes.dark]
 #color_bg = '#272727'
@@ -62,7 +58,7 @@ color_fg = '#000000'
 [cmd_duration]
 min_time = 0
 show_milliseconds = true
-format = '[ $duration ]($style)'
+format = '[$duration]($style)'
 style = 'fg:248 bg:color_bg'
 
 [status]
@@ -78,11 +74,7 @@ pipestatus_format = '[$pipestatus]($style)'
 
 [character]
 success_symbol = '[╰─](bold fg:#585858)[](bold fg:#E0F8FF)'
-error_symbol = '[╰─](bold fg:196)'
-vimcmd_symbol = '[╰─❮](bold fg:76)'
-vimcmd_replace_one_symbol = '[▶](bold fg:76)'
-vimcmd_replace_symbol = '[▶](bold fg:76)'
-vimcmd_visual_symbol = '[V](bold fg:76)'
+error_symbol = '[╰─](bold fg:#585858)[](bold fg:196)'
 
 [fill]
 symbol = '─'
@@ -91,6 +83,12 @@ style = 'fg:240'
 [os]
 format = '[$symbol]($style)'
 style = 'fg:#E0F8FF bg:color_bg'
+disabled = false
+
+[sudo]
+format = '[$symbol ]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = "󰪋 sudo"
 disabled = false
 
 [directory]
@@ -103,7 +101,14 @@ repo_root_style = 'bold fg:39 bg:color_bg'
 read_only = "󰌾 "
 home_symbol = '~'
 truncate_to_repo = false
-fish_style_pwd_dir_length = 2
+truncation_length = 5
+
+[jobs]
+symbol = ' '
+number_threshold = 2
+symbol_threshold = 1
+format = '[$symbol$number ]($style)'
+style = 'bold fg:76 bg:color_bg'
 
 [git_branch]
 format = '[$symbol$branch(:$remote_branch) ]($style)'
@@ -111,7 +116,7 @@ symbol = " "
 style = 'bold fg:76 bg:color_bg'
 
 [git_status]
-format = '([$all_status$ahead_behind]($style))'
+format = '([ $all_status$ahead_behind]($style))'
 style = 'bold fg:246 bg:color_bg'
 conflicted = '~${count} '
 stashed = '*${count} '
@@ -124,38 +129,28 @@ staged = '+${count} '
 renamed = '»${count} '
 deleted = '✘${count} '
 
-[direnv]
-format = '[$symbol$loaded/$allowed ]($style)'
-style = 'bold fg:178 bg:color_bg'
-
-[c]
-format = '[$symbol($version(-$name) )]($style)'
-style = 'bold fg:149 bg:color_bg'
-symbol = " "
-
-[cpp]
-format = '[$symbol($version(-$name) )]($style)'
-style = 'bold fg:149 bg:color_bg'
-symbol = " "
-
-[cmake]
-format = '[$symbol($version )]($style)'
-style = 'bold fg:blue bg:color_bg'
-symbol = " "
-
-[conda]
-format = '[$symbol$environment ]($style)'
-style = 'bold fg:green bg:color_bg'
-symbol = " "
+[git_metrics]
+deleted_style = 'bold fg:bold red bg:color_bg'
+added_style = 'bold fg:bold green bg:color_bg'
+format = '([ +$added ]($added_style))([-$deleted ]($deleted_style))'
+disabled = false
 
 [container]
 format = '[$symbol \[$name\] ]($style)'
 style = 'bold dimmed fg:red bg:color_bg'
+symbol = " "
 
 [docker_context]
 format = '[$symbol$context ]($style)'
 style = 'bold fg:blue bg:color_bg'
 symbol = " "
+
+[kubernetes]
+format = '[($user on )($cluster in )$context \($namespace\) ]($style)'
+style = 'bold fg:blue bg:color_bg'
+detect_files = ['k8s']
+symbol = " "
+disabled = false
 
 [username]
 format = '[$user]($style)'
@@ -167,20 +162,21 @@ format = '[$ssh_symbol$hostname]($style)'
 style = 'fg:180 bg:color_bg'
 ssh_symbol = '@'
 
-[java]
-format = '[${symbol}(${version} )]($style)'
-style = 'dimmed fg:red bg:color_bg'
-symbol = " "
+[direnv]
+disabled = false
+format = '[$symbol$loaded/$allowed ]($style)'
+style = 'bold fg:178 bg:color_bg'
+symbol = " "
 
-[lua]
-format = '[$symbol($version )]($style)'
+[meson]
+format = '[$symbol$project ]($style)'
+style = 'fg:180 bg:color_bg'
+symbol = "󱥊 "
+
+[nix_shell]
+format = '[$symbol$state ]($style)'
 style = 'bold fg:blue bg:color_bg'
-symbol = " "
-
-[nodejs]
-format = '[$symbol($version )]($style)'
-style = 'bold fg:red bg:color_bg'
-symbol = " "
+symbol = " "
 
 [os.symbols]
 Alpaquita = " "
@@ -230,9 +226,14 @@ Void = " "
 Windows = "󰍲 "
 
 [package]
-format = '[$symbol$version ]($style)'
+format = '[$symbol$version(-$name) ]($style)'
 style = 'bold fg:200 bg:color_bg'
 symbol = "󰏗 "
+
+[conda]
+format = '[$symbol$environment ]($style)'
+style = 'bold fg:green bg:color_bg'
+symbol = " "
 
 [python]
 format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
@@ -240,11 +241,126 @@ style = 'bold fg:yellow bg:color_bg'
 symbol = " "
 
 [ruby]
-format = '[$symbol($version )]($style)'
+format = '[$symbol($version(-$name) )]($style)'
 style = 'bold fg:red bg:color_bg'
-symbol = " "
+symbol = " "
 
 [rust]
-format = '[$symbol($version )]($style)'
+format = '[$symbol($version(-$name) )]($style)'
 style = 'bold fg:red bg:color_bg'
 symbol = "󱘗 "
+
+[java]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'dimmed fg:red bg:color_bg'
+symbol = " "
+
+[lua]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[nodejs]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:red bg:color_bg'
+symbol = " "
+
+[c]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:149 bg:color_bg'
+symbol = " "
+
+[cpp]
+disabled = false
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:149 bg:color_bg'
+symbol = " "
+
+[cmake]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[dotnet]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = "󰌛 "
+
+[golang]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[gradle]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[haskell]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[kotlin]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[nim]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[perl]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[php]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[rlang]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = "󰟔 "
+
+[scala]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+[zig]
+format = '[$symbol($version(-$name) )]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "
+
+
+[custom.per_dir_history]
+command = 'echo "local"'
+when = '[ "$_per_directory_history_is_global" != "true" ]'
+style = 'fg:220 bg:color_bg'
+format = '[$symbol$output ]($style)'
+symbol = " "
+
+[custom.claude]
+command = 'echo ""'
+when = '[ -d "$HOME/.claude/projects/$(echo "$PWD" | sed "s|/\\.|--|g; s|/|-|g")" ]'
+style = 'fg:#d77757 bg:color_bg'
+format = '[$symbol$output ]($style)'
+symbol = "  claude"
+
+[custom.codex]
+command = 'echo ""'
+when = "sqlite3 \"$HOME/.codex/state_5.sqlite\" \"SELECT 1 FROM threads WHERE cwd='$PWD' LIMIT 1\" 2>/dev/null | grep -q 1"
+format = '[$symbol$output ]($style)'
+style = 'fg:#74aa9c bg:color_bg'
+symbol = "  codex"
+
+[custom.docker]
+command = 'docker context show'
+when = 'test -f docker-compose.yml || test -f docker-compose.yaml || test -f compose.yml || test -f compose.yaml || test -f Dockerfile'
+format = '[$symbol$output ]($style)'
+style = 'bold fg:blue bg:color_bg'
+symbol = " "

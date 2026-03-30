@@ -1,5 +1,15 @@
 #!/bin/bash
 
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+  --no-sort --exact --reverse --no-hscroll --height=100%
+  --highlight-line --scroll-off 7 --info=inline-right
+  --border --input-border
+  --prompt '> ' --pointer '>' --gutter '┃' --marker '┃'
+  --ellipsis '  ' --scrollbar '' --separator ''
+  --color fg:242,bg:233,hl:65,fg+:222,bg+:234,hl+:108
+  --color info:108,prompt:110,spinner:150,pointer:167,marker:65
+"
+
 parse() {
     grep "^card" | grep -v "Loopback" | \
     sed -n 's/card \([0-9]*\): [^[]*\[\([^]]*\)\], device \([0-9]*\): [^[]*\[\([^]]*\)\]/card=\1 device=\3 | \2 — \4/p'
@@ -17,10 +27,14 @@ EOF
 case "$1" in
     -d)
         selection=$(aplay -l | parse | grep -i "Sennheiser" | head -1)
-        [[ -z "$selection" ]] && { echo "Sennheiser device not found"; exit 1; }
+        [[ -z "$selection" ]] && { echo "Sennheiser device not found"; cat > ~/.asoundrc << 'EOF'
+pcm.!default { type null }
+ctl.!default { type null }
+EOF
+exit 1; }
         ;;
     *)
-        selection=$(aplay -l | parse | fzf --prompt="Audio output: " --height=40%)
+        selection=$(aplay -l | parse | fzf --border-label ' AUDIO OUTPUT ')
         [[ -z "$selection" ]] && exit 0
         ;;
 esac

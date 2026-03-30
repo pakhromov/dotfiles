@@ -68,14 +68,15 @@ function per-directory-history-toggle-history() {
   if [[ $_per_directory_history_is_global == true ]]; then
     _per-directory-history-set-directory-history
     _per_directory_history_is_global=false
-    zle -I
-    echo "using local history"
   else
     _per-directory-history-set-global-history
     _per_directory_history_is_global=true
-    zle -I
-    echo "using global history"
   fi
+  local fn
+  for fn in "${precmd_functions[@]}"; do
+    "$fn"
+  done
+  zle -I
 }
 
 autoload per-directory-history-toggle-history
@@ -176,6 +177,7 @@ add-zsh-hook zshaddhistory _per-directory-history-addhistory
 add-zsh-hook precmd _per-directory-history-precmd
 
 # set initialized flag to false
+typeset -gx _per_directory_history_is_global
 _per_directory_history_initialized=false
 
 # Prevent zsh from writing history on exit (plugin handles all writing)
