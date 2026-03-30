@@ -89,9 +89,9 @@ require("yatline"):setup({
         right = {
             section_a = {
             },
-            section_b = {
-                    {type = "string", custom = false, name = "date", params = {" %d.%m.%y  %H:%M"}},
-            },
+            --section_b = {
+            --        {type = "string", custom = false, name = "date", params = {" %d.%m.%y  %H:%M"}},
+            --},
             section_c = {
                 {type = "coloreds", custom = false, name = "fs-usage"},
             }
