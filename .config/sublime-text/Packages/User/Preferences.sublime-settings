@@ -16,7 +16,7 @@
 	"show_line_column": false,
 	"show_encoding": true,
 	"hide_tab_scrolling_buttons": true,
-	"hide_new_tab_button": true,
+	"hide_new_tab_button": false,
 	"open_tabs_after_current": true,
 	"git_diff_target": "index",
 	"sublime_merge_path": "",

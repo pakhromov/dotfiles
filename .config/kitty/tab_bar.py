@@ -17,19 +17,20 @@ import subprocess
 
 TAB_BAR_BG = "#121212"
 
-TAB_ACTIVE_FG = "#A9B1D6"
-TAB_ACTIVE_BG = "#2A2F41"
-TAB_INACTIVE_FG = "#A9B1D6"
-TAB_INACTIVE_BG = "#242424"
-TAB_ACTIVE_INDEX_FG = "#2A2F41"
-TAB_ACTIVE_INDEX_BG = "#7AA2F7"
-TAB_INACTIVE_INDEX_FG = "#7AA2F7"
-TAB_INACTIVE_INDEX_BG = "#2A2F41"
+TAB_ACTIVE_INDEX_FG = "#16161e"
+TAB_ACTIVE_FG = "#a0a0a0"
+TAB_INACTIVE_INDEX_FG = "#16161e"
+TAB_INACTIVE_FG = "#a0a0a0"
 
-STATUS_FG = "#A9B1D6"
+TAB_ACTIVE_INDEX_BG = "#d77757"
+TAB_ACTIVE_BG = "#242424"
+TAB_INACTIVE_INDEX_BG = "#5e7175"
+TAB_INACTIVE_BG = "#242424"
+
+STATUS_FG = "#a0a0a0"
 STATUS_BG = "#242424"
-STATUS_INDEX_FG = "#2A2F41"
-STATUS_INDEX_BG = "#7AA2F7"
+STATUS_INDEX_FG = "#16161e"
+STATUS_INDEX_BG = "#5e7175"
 
 TAB_ACTIVE_BOLD = False
 TAB_ACTIVE_ITALIC = False
@@ -113,11 +114,11 @@ def _redraw_tab_bar(_timer_id):
         tab_manager.mark_tab_bar_dirty()
 
 
-def _draw_widget(screen, icon, text, index_bg, tab_bg, tab_fg, default_bg):
+def _draw_widget(screen, icon, text, index_fg, index_bg, tab_bg, tab_fg, default_bg):
     screen.cursor.fg = index_bg
     screen.cursor.bg = default_bg
     screen.draw(LEFT_CORNER)
-    screen.cursor.fg = default_bg
+    screen.cursor.fg = index_fg
     screen.cursor.bg = index_bg
     screen.draw(icon)
     screen.draw(' ')
@@ -133,9 +134,9 @@ def _draw_widget(screen, icon, text, index_bg, tab_bg, tab_fg, default_bg):
     screen.draw(RIGHT_CORNER)
 
 
-def _draw_widgets(screen, widgets, index_bg, tab_bg, tab_fg, default_bg):
+def _draw_widgets(screen, widgets, index_fg, index_bg, tab_bg, tab_fg, default_bg):
     for i, (icon, text) in enumerate(widgets):
-        _draw_widget(screen, icon, text, index_bg, tab_bg, tab_fg, default_bg)
+        _draw_widget(screen, icon, text, index_fg, index_bg, tab_bg, tab_fg, default_bg)
         if i < len(widgets) - 1:
             screen.cursor.fg = 0
             screen.cursor.bg = 0
@@ -243,6 +244,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
     tab_width = 6 + len(title)  # LEFT_CORNER + ICON + sp + SEP + sp + title + RIGHT_CORNER
 
     default_bg = as_rgb(color_as_int(to_color(TAB_BAR_BG))) if TAB_BAR_BG else as_rgb(int(draw_data.default_bg))
+    s_index_fg = as_rgb(color_as_int(to_color(STATUS_INDEX_FG)))
     s_index_bg = as_rgb(color_as_int(to_color(STATUS_INDEX_BG)))
     s_tab_bg   = as_rgb(color_as_int(to_color(STATUS_BG)))
     s_tab_fg   = as_rgb(color_as_int(to_color(STATUS_FG)))
@@ -250,10 +252,12 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
     if tab.is_active:
         tab_fg   = as_rgb(color_as_int(to_color(TAB_ACTIVE_FG)))
         tab_bg   = as_rgb(color_as_int(to_color(TAB_ACTIVE_BG)))
+        index_fg = as_rgb(color_as_int(to_color(TAB_ACTIVE_INDEX_FG)))
         index_bg = as_rgb(color_as_int(to_color(TAB_ACTIVE_INDEX_BG)))
     else:
         tab_fg   = as_rgb(color_as_int(to_color(TAB_INACTIVE_FG)))
         tab_bg   = as_rgb(color_as_int(to_color(TAB_INACTIVE_BG)))
+        index_fg = as_rgb(color_as_int(to_color(TAB_INACTIVE_INDEX_FG)))
         index_bg = as_rgb(color_as_int(to_color(TAB_INACTIVE_INDEX_BG)))
 
     if index == 1:
@@ -272,7 +276,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
             right_widgets = _build_widgets(STATUS_RIGHT, now)
 
             _render_right_widgets = right_widgets
-            _render_colors = (s_index_bg, s_tab_bg, s_tab_fg, default_bg)
+            _render_colors = (s_index_fg, s_index_bg, s_tab_bg, s_tab_fg, default_bg)
 
             left_w  = _widgets_width(left_widgets)
             right_w = _widgets_width(right_widgets)
@@ -288,7 +292,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
             # Center tabs relative to full window width, not the available gap.
             tab_start = max(left_w, (screen.columns - tabs_w) // 2)
 
-            _draw_widgets(screen, left_widgets, s_index_bg, s_tab_bg, s_tab_fg, default_bg)
+            _draw_widgets(screen, left_widgets, s_index_fg, s_index_bg, s_tab_bg, s_tab_fg, default_bg)
 
             gap = tab_start - screen.cursor.x
             if gap > 0:
@@ -309,7 +313,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
     screen.cursor.bg = default_bg
     screen.draw(LEFT_CORNER)
 
-    screen.cursor.fg = default_bg
+    screen.cursor.fg = index_fg
     screen.cursor.bg = index_bg
     screen.draw(get_icon(title))
     screen.draw(' ')
@@ -341,7 +345,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
         screen.cursor.bold = STATUS_BOLD
         screen.cursor.italic = STATUS_ITALIC
         if _render_right_widgets and _render_colors:
-            si_bg, st_bg, st_fg, d_bg = _render_colors
+            si_fg, si_bg, st_bg, st_fg, d_bg = _render_colors
             right_w = _widgets_width(_render_right_widgets)
             gap = screen.columns - screen.cursor.x - right_w
             if gap >= 0:
@@ -349,7 +353,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
                     screen.cursor.fg = 0
                     screen.cursor.bg = 0
                     screen.draw(' ' * gap)
-                _draw_widgets(screen, _render_right_widgets, si_bg, st_bg, st_fg, d_bg)
+                _draw_widgets(screen, _render_right_widgets, si_fg, si_bg, st_bg, st_fg, d_bg)
             else:
                 boss = get_boss()
                 for tm in boss.all_tab_managers:
