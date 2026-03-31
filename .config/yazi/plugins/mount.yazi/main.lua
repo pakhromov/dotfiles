@@ -254,7 +254,7 @@ function M.operate(type)
 	end
 	if ya.target_os() == "linux" then
 		local home = os.getenv("HOME")
-		local mnt_base = home .. "/.local/mnt"
+		local mnt_base = home .. "/mnt"
 		-- Get the device name (e.g., sda1 from /dev/sda1)
 		local dev_name = active.src:match("/dev/(.+)$")
 		local mount_point = mnt_base .. "/" .. dev_name
