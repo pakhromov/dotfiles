@@ -8,7 +8,7 @@
 	"dark_theme": "Default Dark.sublime-theme",
 	"light_theme": "Default.sublime-theme",
 	"highlight_modified_tabs": true,
-	"enable_tab_scrolling": false,
+	"enable_tab_scrolling": true,
 	"adaptive_dividers": false,
 	"show_sidebar_button": true,
 	"show_tab_close_buttons": true,
@@ -23,14 +23,14 @@
 	"console_max_history_lines": 300,
 	"fonts_list":
 	[
-		"JetBrains Mono SemiBold",
-		"DejaVu Sans Mono",
-		"FreeMono",
-		"Courier",
-		"JetBrainsMono Nerd Font"
+		"JetBrainsMonoNL Nerd Font SemiBold",
+		"Lilex Nerd Font Mono Medium",
+		"Lilex Nerd Font Mono Regular",
+		"MesloLGLDZ Nerd Font Regular",
+		"SpaceMono Nerd Font"
 	],
 	"index_files": true,
-	"font_face": "MesloLGS Nerd Font",
+	"font_face": "SpaceMono Nerd Font",
 	"font_size": 13,
 	"caret_style": "solid", //"smooth", "phase", "blink" and "solid"
 	"block_caret": false,
