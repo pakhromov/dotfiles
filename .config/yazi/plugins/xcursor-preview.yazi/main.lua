@@ -52,13 +52,28 @@ local function is_xcursor(url)
 	return magic == "Xcur"
 end
 
+-- Returns "inode:mtime" — inode catches renames, mtime catches modifications
+local function get_file_id(url)
+	local out, _ = Command("stat")
+		:arg({ "-c", "%i:%Y", tostring(url) })
+		:stdout(Command.PIPED)
+		:output()
+	return out and out.stdout:match("([^\n]+)") or ""
+end
+
 local function render_frame(url, frame)
 	ensure_cache_dir()
 	local dest = cache_png(url, frame)
+	local mf = meta_file(url)
+
 	if fs.cha(dest) then
-		local m = read_line(meta_file(url))
-		if m then set_state("meta_" .. tostring(url), m) end
-		return true
+		local stored = read_line(mf)
+		local stored_mtime = stored and stored:match("^(%S+)")
+		if stored_mtime and stored_mtime == get_file_id(url) then
+			local meta = stored:match("^%S+ (.*)")
+			if meta then set_state("meta_" .. tostring(url), meta) end
+			return true
+		end
 	end
 
 	local out, err = Command("python3")
@@ -80,7 +95,7 @@ local function render_frame(url, frame)
 	local meta = out.stderr:match("XCMETA: ([^\n]+)")
 	if meta then
 		set_state("meta_" .. tostring(url), meta)
-		write_line(meta_file(url), meta)
+		write_line(mf, get_file_id(url) .. " " .. meta)
 	end
 
 	return true
@@ -89,7 +104,8 @@ end
 local function load_meta(url)
 	local m = get_state("meta_" .. tostring(url))
 	if m then return m end
-	m = read_line(meta_file(url))
+	local stored = read_line(meta_file(url))
+	m = stored and stored:match("^%S+ (.*)")
 	if m then set_state("meta_" .. tostring(url), m) end
 	return m
 end

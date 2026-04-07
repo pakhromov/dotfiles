@@ -102,7 +102,7 @@ configure_system() {
     sudo systemctl disable bluetooth.service
 
 
-    sudo systemctl mask polkit.service polkit-agent-helper.socket polkit-agent-helper@.service
+    #sudo systemctl mask polkit.service polkit-agent-helper.socket polkit-agent-helper@.service
     sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
     sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket

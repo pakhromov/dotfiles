@@ -1,3 +1,4 @@
 [MIME Cache]
 inode/directory=xdg-yazi.desktop;
-text/markdown=mcat.desktop;
+x-scheme-handler/ccswitch=cc-switch-handler.desktop;
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop;

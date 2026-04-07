@@ -25,7 +25,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
 _k=$'\033[38;2;160;160;160m'
 _a=$'\033[36m'
 _r=$'\033[m'
-_kb_install=" ${_k}TAB${_a} select   ${_k}ENTER${_a} install   ${_k}ESC${_a} cancel${_r} "
+_kb_install=" ${_k}TAB${_a} select   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} install   ${_k}ESC${_a} cancel${_r} "
 _kb_remove=" ${_k}TAB${_a} select   ${_k}ENTER${_a} remove   ${_k}ESC${_a} cancel${_r} "
 _kb_query=" ${_k}TAB${_a} select   ${_k}ESC${_a} cancel${_r} "
 _kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove   ${_k}ESC${_a} cancel${_r} "
@@ -36,51 +36,47 @@ _footer_plain='TAB select   CTRL+A all   RIGHT url   ENTER update   ESC cancel'
 _pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
 (( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
 
+_footer_install_text="${_k}TAB${_a} select   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} install   ${_k}ESC${_a} cancel${_r}"
+_footer_install_plain='TAB select   RIGHT url   ENTER install   ESC cancel'
+_pad_install=$(( $(tput cols) - ${#_footer_install_plain} - 7 ))
+(( _pad_install > 0 )) && printf -v _footer_install '%*s%s' "$_pad_install" '' "$_footer_install_text" || _footer_install=$_footer_install_text
+
 fzf_preview() {
 	printf "yay --color=always %s {1} | " "$1"
 	printf "awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'\n"
 }
 
-install() {
-	read -ra cmd <<<"$2"
-
-	yay_sl_exit_code=$(mktemp)
+search_install() {
+	local fzf_out
 	fzf_out=$(mktemp)
 
-	cleanup() { rm -f "$yay_sl_exit_code" "$fzf_out"; }
+	cleanup() { rm -f "$fzf_out"; }
 	trap cleanup EXIT
 
-	coproc PKG_FETCH {
-		yay -Sl 2>/dev/null |
-			awk '{
-				installed = (NF > 3) ? "\033[1;33m* " : ""
-				if ($1 == "core") color = "\033[1;31m"
-				else if ($1 == "extra") color = "\033[1;32m"
-				else if ($1 == "chaotic-aur") color = "\033[1;33m"
-				else if ($1 == "cachyos-core-v3") color = "\033[1;35m"
-			else if ($1 == "cachyos-v3" || $1 == "cachyos-extra-v3" || $1 == "cachyos") color = "\033[1;34m"
-				else if ($1 == "multilib") color = "\033[1;35m"
-				else if ($1 == "aur") color = "\033[1;36m"
-				else color = "\033[0m"
-				printf "%d\t%s %s\033[0m\n", length($2), $2, installed color $1
-			}' |
-			sort -t$'\t' -k1,1n --stable |
-			cut -f2-
-		code=${PIPESTATUS[0]}
-		[ "$code" -ne 0 ] && printf "%s" "$code" >"$yay_sl_exit_code"
-	}
+	# yay -Ss output: alternating "repo/pkg version..." and "    description" lines
+	# pack into null-terminated two-line items for fzf --read0
+	yay -Ss --color=always "$@" 2>/dev/null |
+		awk '
+		/^    / && pkg { items[++n] = pkg "\n" $0; pkg = "" }
+		!/^    / && NF { if (pkg) items[++n] = pkg; pkg = $0 }
+		END            { if (pkg) items[++n] = pkg; for (i = n; i >= 1; i--) printf "%s\0", items[i] }
+		' |
+		fzf --read0 --print0 \
+			--pointer ' ' \
+			--border-label " yay $* " \
+			--footer "$_footer_install" --footer-border none \
+			--bind "right:execute-silent(pkg=\$(printf '%s' {1} | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+			>"$fzf_out"
 
-	fzf --border-label ' INSTALL PKG ' --preview "$(fzf_preview -Si)" \
-		--preview-label "$_kb_install" --preview-label-pos 'bottom' <&"${PKG_FETCH[0]}" >"$fzf_out"
-	[ -n "$PKG_FETCH_PID" ] && kill -TERM "$PKG_FETCH_PID"
+	[ ! -s "$fzf_out" ] && return
 
-	[ ! -s "$yay_sl_exit_code" ] || {
-		printf "\033[33;1mwarning:\033[0m failed to fetch the package list" >&2
-		printf " (\"yay -Sl\" failed: exit status: %s)\n" "$(cat "$yay_sl_exit_code")" >&2
-	}
-
-	awk '{print $NF "/" $1}' "$fzf_out" |
-		xargs -ro "${cmd[@]}"
+	# convert null-separated items to lines, skip description lines, strip ANSI, extract repo/pkgname
+	tr '\0' '\n' <"$fzf_out" |
+		awk '!/^[[:space:]]/ && NF {
+			gsub(/\033\[[0-9;]*m/, "")
+			if ($1 ~ /\//) print $1
+		}' |
+		xargs -ro yay -S --needed
 }
 
 query() {
@@ -278,11 +274,8 @@ Info:
     It can install, upgrade, remove, and query packages.
 
 Usage:
-    $prog       -> Default action
-    $prog [opt] -> Other options
-
-    The default action is to search for and install packages.
-    A '*' indicates that the package is already installed.
+    $prog <query> -> Search and install packages
+    $prog [opt]   -> Other options
 
 Multiple Selection:
     Tab         -> Select / Deselect
@@ -290,7 +283,6 @@ Multiple Selection:
 
 Options:
     h -> Print this message
-    p -> Print only; do not install
     u -> Upgrade upgradable packages
     r -> Remove installed packages
     R -> Remove explicitly installed packages
@@ -308,17 +300,16 @@ invalid_option() {
 	exit 2
 }
 
-[ -n "$2" ] && invalid_option
 case $1 in
-"") install ":" "yay -S --needed" ;;
--p | p) install "p" ;;
--u | u) upgrade ;;
--r | r) query "REMOVE PKG" "-Q" "sudo pacman -Rnsc" ;;
--R | R) query "REMOVE EXPLICITLY PKG" "-Qe" "sudo pacman -Rnsc" ;;
--x | x) remove_recent ;;
--o | o) remove_orphans ;;
--H | H) high_impact ;;
--q | q) query "INSTALLED PKG" "-Q" ;;
--Q | Q) query "INSTALLED EXPLICITLY PKG" "-Qe" ;;
--h | h | --help) help ;; *) invalid_option ;;
+"")          printf "usage: %s <query>\n" "$(basename "$0")" >&2 ;;
+-u | u)      [ -n "$2" ] && invalid_option; upgrade ;;
+-r | r)      [ -n "$2" ] && invalid_option; query "REMOVE PKG" "-Q" "sudo pacman -Rnsc" ;;
+-R | R)      [ -n "$2" ] && invalid_option; query "REMOVE EXPLICITLY PKG" "-Qe" "sudo pacman -Rnsc" ;;
+-x | x)      [ -n "$2" ] && invalid_option; remove_recent ;;
+-o | o)      [ -n "$2" ] && invalid_option; remove_orphans ;;
+-H | H)      [ -n "$2" ] && invalid_option; high_impact ;;
+-q | q)      [ -n "$2" ] && invalid_option; query "INSTALLED PKG" "-Q" ;;
+-Q | Q)      [ -n "$2" ] && invalid_option; query "INSTALLED EXPLICITLY PKG" "-Qe" ;;
+-h | h | --help) [ -n "$2" ] && invalid_option; help ;;
+*)           search_install "$@" ;;
 esac
