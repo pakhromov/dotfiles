@@ -71,7 +71,7 @@
 		"LiterationMono Nerd Font",
 	],
 	"index_files": true,
-	"font_face": "LiterationMono Nerd Font",
+	"font_face": "SpaceMono Nerd Font",
 	"font_size": 12,
 	"caret_style": "solid", //"smooth", "phase", "blink" and "solid"
 	"block_caret": false,
