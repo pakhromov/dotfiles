@@ -24,7 +24,6 @@ github-cli
 gpu-screen-recorder
 gpu-screen-recorder-gtk-git
 greetd
-greetd-tuigreet
 hyprlock
 hyprpicker
 img2pdf

@@ -5,15 +5,16 @@ dulcepan-git
 flow-control-bin
 fsel
 ghgrab-bin
+greetd-tuigreet-fork-bin
 iwmenu
 lazydlp-bin
 localsend-go-bin
+lore-bin
 mal
 manly-git
 mcat-bin
 nbopen
 ocrs
-lore-bin
 pdf2img-c
 python-xlsx2csv
 rar
