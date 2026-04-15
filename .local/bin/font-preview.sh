@@ -46,23 +46,13 @@ case "$1" in
       esac
     done
     export FONT_PREVIEW_TEXT="$TEXT" FONT_PREVIEW_BG="$BG" FONT_PREVIEW_FG="$FG" FONT_PREVIEW_SIZE="$SIZE"
-    sel=$(magick -list font | awk '/Font:/{print $2}' | sort -u |
-      awk -F- '
-      {
-        prefix = $1; lower = tolower($0)
-        if (lower ~ /regular/)                                              score = 0
-        else if (lower ~ /bold|italic|light|thin|medium|black|heavy|oblique|semibold|condensed/) score = 2
-        else                                                                score = 1
-        if (!(prefix in best) || score < best_score[prefix] ||
-            (score == best_score[prefix] && length($0) < length(best[prefix]))) {
-          best[prefix] = $0; best_score[prefix] = score
-        }
-      }
-      END { for (p in best) print best[p] }' | sort |
-      fzf --multi --preview "$0 --preview {}")
-    [ -n "$sel" ] && while IFS= read -r font; do
-      file=$(magick -list font | awk -v f="$font" '/Font:/{found=($2==f)} /glyphs:/ && found{print $2; exit}')
-      fc-query --format="%{family[0]}\n" "$file" 2>/dev/null | head -1
-    done <<< "$sel"
+    sel=$(magick -list font | awk '/Font:/{name=$2} /glyphs:/{print name "\t" $2}' | sort -t$'\t' -k1 | \
+      fzf --multi --delimiter=$'\t' --with-nth=1 \
+        --preview "$0 --preview {1}")
+    if [ -n "$sel" ]; then
+      while IFS=$'\t' read -r _ font_file; do
+        fc-query --format='%{fullname[0]}\n' "$font_file" 2>/dev/null || echo "$font_file"
+      done <<< "$sel"
+    fi
     ;;
 esac

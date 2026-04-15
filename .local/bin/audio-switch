@@ -18,6 +18,24 @@ parse() {
 write_asoundrc() {
     local card=$1 dev=$2
     cat > ~/.asoundrc << EOF
+pcm.!default {
+    type plug
+    slave.pcm {
+        type hw
+        card $card
+        device $dev
+    }
+}
+ctl.!default {
+    type hw
+    card $card
+}
+EOF
+}
+
+write_asoundrc_defaults() {
+    local card=$1 dev=$2
+    cat > ~/.asoundrc << EOF
 defaults.ctl.card $card
 defaults.pcm.card $card
 defaults.pcm.device $dev
@@ -41,6 +59,10 @@ esac
 
 card=$(echo "$selection" | grep -oP 'card=\K[0-9]+')
 dev=$(echo "$selection"  | grep -oP 'device=\K[0-9]+')
-write_asoundrc "$card" "$dev"
+if [[ "$1" == "-d" ]]; then
+    write_asoundrc_defaults "$card" "$dev"
+else
+    write_asoundrc "$card" "$dev"
+fi
 echo "Set: $(echo "$selection" | cut -d'|' -f2 | xargs) (card $card, device $dev)"
 aplay -D dmix:$card -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero &

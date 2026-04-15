@@ -1,9 +1,10 @@
 acestream-engine
 cclip
+ccstatusline
 dulcepan-git
 flow-control-bin
 fsel
-gitsnip
+ghgrab-bin
 iwmenu
 lazydlp-bin
 localsend-go-bin

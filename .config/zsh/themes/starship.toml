@@ -9,7 +9,6 @@ $os\
 [](fg:color_bg)\
 $fill\
 [](fg:color_bg)[ ](bg:color_bg)\
-$status[╱ ](fg:color_fg bg:color_bg)\
 (${custom.claude}[╱ ](fg:color_fg bg:color_bg))\
 (${custom.codex}[╱ ](fg:color_fg bg:color_bg))\
 (${custom.per_dir_history}[╱ ](fg:color_fg bg:color_bg))\
@@ -42,6 +41,7 @@ $status[╱ ](fg:color_fg bg:color_bg)\
 ($gradle[╱ ](fg:color_fg bg:color_bg))\
 ($dotnet[╱ ](fg:color_fg bg:color_bg))\
 ($username$hostname[╱ ](fg:color_fg bg:color_bg))\
+$status[╱ ](fg:color_fg bg:color_bg)\
 [ ](fg:248 bg:color_bg)$cmd_duration\
 [](fg:color_bg) $line_break\
 $character\

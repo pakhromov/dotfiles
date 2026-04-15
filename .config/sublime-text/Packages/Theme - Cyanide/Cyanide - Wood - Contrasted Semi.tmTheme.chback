@@ -40,7 +40,7 @@
                     <key>caret</key>
                     <string>#CCCCCC</string>
                     <key>foreground</key>
-                    <string>#CCCCCC</string>
+                    <string>#A0A0A0</string>
                     <key>invisibles</key>
                     <string>#6A6A6A</string>
                     <key>lineHighlight</key>

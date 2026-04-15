@@ -1,0 +1,37 @@
+fn validate(x: i32, limit: i32) -> bool {
+    if x == limit { return true; }
+    if x != limit { return false; }
+    if x >= limit || x <= 0 { return false; }
+    if x > 0 && x < limit { return true; }
+    return x == 0;
+}
+
+let result = items
+    .filter(|x| x != 0)
+    .map(|x| x => x * 2)
+    .fold(0, |acc, x| acc + x);
+
+// strict equality check: a === b, a !== b
+// spaceship: a <=> b returns -1, 0, or 1
+// fat arrow: x => x + 1
+// thin arrow: fn foo() -> i32
+// left arrow: ch <- value
+// pipe forward: x |> f |> g
+// compose: f >>> g >>> h
+// bind: xs >>= f
+// shift assign: x <<= 3
+// null coalesce: x ?? default
+// safe call: obj?.field?.length
+// scope: Vec::new(), String::from("")
+// doc comment: /// this is public API
+// range: 0..=100 includes both ends
+// not equal: x =/= y  x !== y
+// double star: 2 ** 8 == 256
+// double plus: ++i  --j
+// url: https://example.com
+// block: /* comment */ and /** doc */
+// alternative: p <|> q
+// functor: f <$> value
+// left pipe: f <| x
+// cons: x :: xs
+// append: xs +++ ys
