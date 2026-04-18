@@ -12,4 +12,7 @@ export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
 export NO_AT_BRIDGE=1
 export GBM_BACKEND=nvidia-drm
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
-
+export TERMINFO="$XDG_DATA_HOME"/terminfo
+export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
+export CODEX_HOME="$XDG_CONFIG_HOME"/codex
+export CARGO_HOME="$XDG_DATA_HOME"/cargo

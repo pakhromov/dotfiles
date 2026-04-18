@@ -270,6 +270,11 @@ local function fetch_dotfiles(job, cwd)
 	local git_dir = home .. "/.dotfiles-git"
 	if not fs.cha(Url(git_dir)) then return false end
 
+	-- Only process dotfiles when cwd is HOME itself or a subdirectory of it.
+	-- If we're outside (e.g. at /home), abs_paths like /home/pavel produce
+	-- empty/wrong rel_paths which corrupt the global dotfiles status state.
+	if cwd ~= home and cwd:sub(1, #home + 1) ~= home .. "/" then return false end
+
 	-- Build both absolute paths (for ls-files) and relative paths (for diff/status)
 	local abs_paths, rel_paths = {}, {}
 	for _, file in ipairs(job.files) do

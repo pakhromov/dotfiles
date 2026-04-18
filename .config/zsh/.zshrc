@@ -11,7 +11,8 @@ setopt PRINT_EXIT_VALUE
 setopt GLOB_DOTS
 zle_highlight+=(paste:none)
 
-export HISTFILE=~/.zsh_history
+export HISTFILE=~/.config/zsh/.zsh_history
+export HISTORY_BASE=~/.config/zsh/.directory_history
 export HISTSIZE=500000
 export HISTORY_START_WITH_GLOBAL=true
 export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
