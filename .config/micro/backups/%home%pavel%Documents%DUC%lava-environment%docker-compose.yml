@@ -1,0 +1,15 @@
+services:
+  lava:
+    build: .
+    container_name: lava-dev
+    volumes:
+        - ./workspace:/workspace
+        - ./lava-tutorials:/lava-tutorials
+    ports:
+        - "8888:8888" # Jupyter notebook
+        - "1883:1883" # MQTT
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    command: /bin/bash
+
