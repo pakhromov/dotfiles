@@ -353,7 +353,7 @@ symbol = "  claude"
 
 [custom.codex]
 command = 'echo ""'
-when = "sqlite3 \"$HOME/.codex/state_5.sqlite\" \"SELECT 1 FROM threads WHERE cwd='$PWD' LIMIT 1\" 2>/dev/null | grep -q 1"
+when = "sqlite3 \"$CODEX_HOME/state_5.sqlite\" \"SELECT 1 FROM threads WHERE cwd='$PWD' LIMIT 1\" 2>/dev/null | grep -q 1"
 format = '[$symbol$output ]($style)'
 style = 'fg:#74aa9c bg:color_bg'
 symbol = "  codex"
