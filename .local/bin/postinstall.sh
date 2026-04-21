@@ -39,6 +39,7 @@ clone_dotfiles() {
 
     echo "==> Cloning zsh plugins..."
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
+    git clone https://github.com/pakhromov/zsh-autosuggestions              "$HOME/.config/zsh/plugins/zsh-autosuggestions"
 
     echo "==> Cloning yazi plugins..."
     git clone https://github.com/alberti42/faster-piper.yazi.git          "$HOME/.config/yazi/plugins/faster-piper.yazi"
