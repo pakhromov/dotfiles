@@ -149,11 +149,21 @@ zle -N fancy-alt-z
 bindkey '^[z' fancy-alt-z
 
 alt-tab-fzf-widget() {
+  setopt localoptions pipefail no_aliases 2>/dev/null
   local cmd="fd --type d --hidden --follow"
   local opts='--preview "eza -1a --icons=always --color=always --group-directories-first {}"'
-  local result="$(eval "$cmd" | FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $opts" fzf)"
-  [[ -n "$result" ]] && LBUFFER+="$result"
+  local result="$(eval "$cmd" | awk '{print gsub("/","/")+0, $0}' | sort -k1,1n -k2,2 | awk '{print $2}' | FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $opts" fzf --no-sort)"
+  if [[ -z "$result" ]]; then
+    zle redisplay
+    return 0
+  fi
+  zle push-line
+  BUFFER="builtin cd -- ${(q)result:a}"
+  zle accept-line
+  local ret=$?
+  unset result
   zle reset-prompt
+  return $ret
 }
 zle -N alt-tab-fzf-widget
 bindkey '^[^I' alt-tab-fzf-widget
