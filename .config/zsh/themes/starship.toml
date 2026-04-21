@@ -238,6 +238,7 @@ symbol = " "
 [python]
 format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 style = 'bold fg:yellow bg:color_bg'
+generic_venv_names = ['venv']
 symbol = " "
 
 [ruby]
