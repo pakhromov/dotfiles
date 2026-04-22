@@ -97,7 +97,7 @@
     	},
 	],
 	"index_files": true,
-	"font_face": "ComicShannsLigaSmMod Nerd Font",
+	"font_face": "ComicShannsLigaMod Nerd Font",
 	"font_size": 13,
 	"caret_style": "solid", //"smooth", "phase", "blink" and "solid"
 	"block_caret": false,

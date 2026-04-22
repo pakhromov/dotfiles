@@ -5,13 +5,12 @@ import signal
 CONF_PATH = os.path.expanduser('~/.config/kitty/kitty.conf')
 
 FONTS = [
-    #('family="ComicShannsMono Nerd Font"', 13.2),
-    #('family="ComicShannsLigaMod Nerd Font"', 13.2),
-    ('family="ComicShannsLigaSmMod Nerd Font"', 13.2),
-    #('family="SeriousShanns Nerd Font"', 14.3),
-    #('family="SeriousShannsLigaMod Nerd Font"', 14.3),
-    ('family="SeriousShannsLigaSmMod Nerd Font"', 14.3),
-    #('family="SeriousShannsLigaSmMod Nerd Font"', 13.5),
+    ('family="ComicShannsLigaPure Nerd Font"', 13.2),
+    ('family="ComicShannsLiga Nerd Font"', 13.2),
+    ('family="ComicShannsLigaMod Nerd Font"', 13.2),
+    ('family="SeriousShannsLigaPure Nerd Font"', 14.3),
+    ('family="SeriousShannsLiga Nerd Font"', 14.3),
+    ('family="SeriousShannsLigaMod Nerd Font"', 14.3),
 ]
 
 #('family="Maple Mono NF"', 12.0),

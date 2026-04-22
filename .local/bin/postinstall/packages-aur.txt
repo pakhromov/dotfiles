@@ -19,6 +19,7 @@ pdf2img-c
 python-xlsx2csv
 rar
 rich-cli
+shanns-liga-nerd-font
 surge-bin
 sway-scroll
 waycorner
