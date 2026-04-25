@@ -292,7 +292,7 @@ desc = "Show or hide the parent pane"
 
 [[mgr.prepend_keymap]]
 on = "<C-l>"
-run = 'shell --block "$HOME/.config/yazi/scripts/localsend-send.sh %s"'
+run = "plugin localsend"
 desc = "Send via LocalSend"
 
 [[mgr.prepend_keymap]]

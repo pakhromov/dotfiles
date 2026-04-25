@@ -1,11 +1,10 @@
 main.advanced_view true
 main.audio_codec opus
-main.audio_input device:Default output
 main.av1_amd_bug_warning_shown false
 main.change_video_resolution false
 main.codec hevc
 main.color_range full
-main.fps 144
+main.fps 60
 main.framerate_mode cfr
 main.hevc_amd_bug_warning_shown false
 main.hide_window_when_recording false
