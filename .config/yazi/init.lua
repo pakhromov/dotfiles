@@ -93,7 +93,7 @@ require("yatline"):setup({
             --        {type = "string", custom = false, name = "date", params = {" %d.%m.%y  %H:%M"}},
             --},
             section_c = {
-                {type = "coloreds", custom = false, name = "fs-usage"},
+                {type = "coloreds", custom = false, name = "disk-usage"},
             }
         }
     },
@@ -125,7 +125,7 @@ require("yatline"):setup({
         }
     },
 })
-require("yatline-fs-usage"):setup()
+require("yatline-disk-usage"):setup()
 require("yatline-modtime"):setup()
 require("yatline-crtime"):setup()
 require("yatline-selected-size"):setup()

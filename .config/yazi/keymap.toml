@@ -331,7 +331,7 @@ desc= "Perform actions on selected files"
 
 [[mgr.prepend_keymap]]
 on = "<C-r>"
-run = "plugin smart-rename"
+run = "plugin batch-rename-gui"
 desc = "Smart rename: single or batch"
 
 [[mgr.prepend_keymap]]
