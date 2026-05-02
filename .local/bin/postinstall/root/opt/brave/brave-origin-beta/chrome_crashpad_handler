@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+import sys, os, time, struct
+
+for arg in sys.argv[1:]:
+    if arg.startswith('--initial-client-fd='):
+        fd = int(arg.split('=')[1])
+        try:
+            os.read(fd, 256)
+            os.write(fd, struct.pack('<II', 0, os.getpid()))
+        except:
+            pass
+
+time.sleep(86400)

@@ -16,12 +16,14 @@ mcat-bin
 nbopen
 ocrs
 pdf2img-c
+python-undervolt
 python-xlsx2csv
 rar
 rich-cli
 shanns-liga-nerd-font
 surge-bin
 sway-scroll
+tparted-bin
 waycorner
 wayscriber-bin
 wlrctl

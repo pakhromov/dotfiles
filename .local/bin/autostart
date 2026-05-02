@@ -12,17 +12,34 @@ restart() {
   "$@" >/dev/null 2>&1 &
 }
 
-start mako
-start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
-audio-switch -d &
-
-[ "${XDG_CURRENT_DESKTOP:-}" = "wayfire" ] && restart waycorner
-
-case "${XDG_CURRENT_DESKTOP:-}" in
-    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on ;;
+wayland_display() {
+  case "${XDG_CURRENT_DESKTOP:-}" in
+    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on && restart waypixel;;
     river)   wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
-    *)       ;;
+  esac
+}
+
+case "${1:-}" in
+  -w)
+    start mako
+    start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
+    wayland_display
+    ;;
+  -gw)
+    sudo mount /dev/nvme0n1p4 /home/pavel/mnt/nvme0n1p4
+    bdprochot-undervolt
+    wayland_display
+    ;;
+  -gx)
+    sudo mount /dev/nvme0n1p4 /home/pavel/mnt/nvme0n1p4
+    bdprochot-undervolt
+    xrandr --output DP-3 --mode 1920x1080 --rate 144 --output DP-2 --off
+    ;;
+  *)
+    printf 'usage: %s -w|-gw|-gx\n' "$(basename "$0")" >&2
+    exit 1
+    ;;
 esac
 
-sudo systemctl stop greetd
+audio-switch -d &
 sudo chronyd -q

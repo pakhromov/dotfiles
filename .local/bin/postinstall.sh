@@ -53,6 +53,16 @@ clone_dotfiles() {
     git clone https://github.com/imsi32/yatline-gruvbox-material.yazi.git "$HOME/.config/yazi/plugins/yatline-gruvbox-material.yazi"
     git clone https://github.com/wekauwau/yatline-tokyo-night.yazi.git    "$HOME/.config/yazi/plugins/yatline-tokyo-night.yazi"
     git clone https://github.com/imsi32/yatline.yazi.git                  "$HOME/.config/yazi/plugins/yatline.yazi"
+    git clone https://github.com/pakhromov/localsend.yazi                 "$HOME/.config/yazi/plugins/localsend.yazi"
+    git clone https://github.com/pakhromov/yatline-selected-size.yazi     "$HOME/.config/yazi/plugins/yatline-selected-size.yazi"
+    git clone https://github.com/pakhromov/yatline-disk-usage.yazi        "$HOME/.config/yazi/plugins/yatline-disk-usage.yazi"
+    git clone https://github.com/pakhromov/smart-tab.yazi                 "$HOME/.config/yazi/plugins/smart-tab.yazi"
+    git clone https://github.com/pakhromov/batch-rename-gui.yazi          "$HOME/.config/yazi/plugins/batch-rename-gui.yazi"
+    git clone https://github.com/pakhromov/goto-file-dir.yazi             "$HOME/.config/yazi/plugins/goto-file-dir.yazi"
+    git clone https://github.com/pakhromov/to-pdf-preview.yazi            "$HOME/.config/yazi/plugins/to-pdf-preview.yazi"
+    git clone https://github.com/pakhromov/autosave.yazi                  "$HOME/.config/yazi/plugins/autosave.yazi"
+    git clone https://github.com/pakhromov/paste-navigate.yazi            "$HOME/.config/yazi/plugins/paste-navigate.yazi"
+    git clone https://github.com/pakhromov/xcursor-preview.yazi           "$HOME/.config/yazi/plugins/xcursor-preview.yazi"
 
     sudo pacman -Syyu
 }
@@ -102,15 +112,12 @@ configure_system() {
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
 
-
-    #sudo systemctl mask polkit.service polkit-agent-helper.socket polkit-agent-helper@.service
     sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
     sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket
     sudo systemctl mask upower.service
     sudo systemctl mask user@.service
     sudo systemctl mask rtkit-daemon
-    sudo systemctl enable greetd.service
 
     sudo modprobe i2c-dev
     sudo usermod -aG i2c pavel
@@ -242,16 +249,14 @@ check_system() {
         echo -e "  $fail /etc/resolv.conf -> $(readlink /etc/resolv.conf)"
     fi
 
-    for svc in iwd greetd; do
-        if systemctl is-enabled "$svc" &>/dev/null; then
-            echo -e "  $ok $svc enabled"
-        else
-            echo -e "  $fail $svc not enabled"
-        fi
-    done
+    if systemctl is-enabled "iwd" &>/dev/null; then
+        echo -e "  $ok $svc enabled"
+    else
+        echo -e "  $fail $svc not enabled"
+    fi
 
-    for svc in rtkit-daemon polkit.service polkit-agent-helper.socket polkit-agent-helper@.service \
-               upower.service user@.service \
+
+    for svc in rtkit-daemon upower.service user@.service \
                systemd-journald systemd-journal-flush systemd-journald.socket \
                systemd-journald-dev-log.socket systemd-journald-audit.socket; do
         if [[ "$(systemctl is-enabled "$svc" 2>/dev/null)" == "masked" ]]; then

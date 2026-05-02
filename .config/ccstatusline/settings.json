@@ -9,9 +9,9 @@
         "rawValue": true
       },
       {
-        "id": "8532f428-46c6-4234-a7a0-19f812315d0d",
-        "type": "custom-text",
-        "customText": " "
+        "id": "0b1aa817-bcd6-4286-a0fb-0bd2934e188d",
+        "type": "separator",
+        "character": " "
       },
       {
         "id": "066b087e-b770-4164-9945-695d90f9f723",
@@ -19,9 +19,9 @@
         "rawValue": true
       },
       {
-        "id": "fc12a84b-a124-44c7-bfd7-445c06818d8b",
-        "type": "custom-text",
-        "customText": " "
+        "id": "dd745f4f-ec34-4cb9-9cf0-23763d54d68a",
+        "type": "separator",
+        "character": " "
       },
       {
         "id": "591bf5cb-ca05-4138-92aa-9e76bff2ce89",
@@ -63,11 +63,21 @@
         }
       },
       {
+        "id": "d59c2c1f-91a2-4b88-acaf-b35f4e6a20e9",
+        "type": "separator",
+        "character": " "
+      },
+      {
         "id": "31dc0012-c066-41dc-a964-6911044cc5c0",
         "type": "git-status",
         "metadata": {
           "hideNoGit": "true"
         }
+      },
+      {
+        "id": "a14351c9-a48c-465e-8401-b9f4ed712c07",
+        "type": "separator",
+        "character": " "
       },
       {
         "id": "6a126bbb-8ee6-41ba-b04a-bc5357c4e116",
@@ -77,20 +87,16 @@
         }
       },
       {
+        "id": "e1a544e9-cb67-46a3-9116-b640854296ed",
+        "type": "separator",
+        "character": " "
+      },
+      {
         "id": "536361e4-13b7-4bdb-af85-2358b8412bcf",
         "type": "git-changes",
         "metadata": {
           "hideNoGit": "true"
         }
-      },
-      {
-        "id": "0b1aa817-bcd6-4286-a0fb-0bd2934e188d",
-        "type": "separator"
-      },
-      {
-        "id": "1403b472-dad4-437d-92a7-69c1f631085d",
-        "type": "session-cost",
-        "rawValue": true
       }
     ],
     [
@@ -120,6 +126,23 @@
           "mode": "list",
           "hideWhenEmpty": "false"
         }
+      },
+      {
+        "id": "ccfc635d-b389-447c-b304-6c8eba3c219c",
+        "type": "separator"
+      },
+      {
+        "id": "814c5881-5afd-4a48-9a2c-f43b34484270",
+        "type": "compaction-counter"
+      },
+      {
+        "id": "8c45b551-fa16-432a-8899-d56079977c13",
+        "type": "separator"
+      },
+      {
+        "id": "d1529eff-3bc9-46aa-997b-fae74f73d1b3",
+        "type": "session-cost",
+        "rawValue": true
       }
     ],
     [

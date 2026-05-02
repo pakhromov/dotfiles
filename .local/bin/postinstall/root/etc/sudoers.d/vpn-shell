@@ -1,6 +1,1 @@
-Cmnd_Alias VPN_CMDS = \
-    /usr/bin/ip, \
-    /usr/bin/mkdir -p /etc/netns/vpn*, \
-    /usr/bin/tee /etc/netns/vpn*/resolv.conf, \
-    /usr/bin/rm -rf /etc/netns/vpn*
-pavel ALL=(root) NOPASSWD: VPN_CMDS
+pavel ALL=(root) NOPASSWD: SETENV: /home/pavel/.local/bin/vpn-shell

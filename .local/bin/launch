@@ -20,7 +20,7 @@ DBUS_SESSION_BUS_ADDRESS="$(sed -n '1p' "$dbus_env")"
 export DBUS_SESSION_BUS_ADDRESS
 
 case "$compositor" in
-    river) setsid river -no-xwayland </dev/null &>/dev/null & ;;
-    sway)  setsid sway --unsupported-gpu </dev/null &>/dev/null & ;;
-    *)     setsid "$compositor" </dev/null &>/dev/null & ;;
+    river) exec river -no-xwayland -c anvl </dev/null >/dev/null 2>&1 ;;
+    sway)  exec sway --unsupported-gpu </dev/null >/dev/null 2>&1 ;;
+    *)     exec "$compositor" </dev/null >/dev/null 2>&1 ;;
 esac

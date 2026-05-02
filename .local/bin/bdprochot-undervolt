@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+[[ $EUID -ne 0 ]] && exec sudo "$0" "$@"
+
 /sbin/modprobe msr
 
 RDMSR=/usr/sbin/rdmsr

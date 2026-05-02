@@ -1,1 +1,0 @@
-pavel ALL=(root) NOPASSWD: /usr/bin/mount, /usr/bin/umount, /usr/bin/mkdir, /usr/bin/rmdir

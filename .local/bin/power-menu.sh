@@ -17,21 +17,21 @@ choice=$(echo -e "$options" | fzf)
 
 case "$choice" in
     "󰐥 shutdown")
-        sudo systemctl poweroff
+        systemctl poweroff
         ;;
     " reboot")
-        sudo systemctl reboot
+        systemctl reboot
         ;;
     "󰍃 logout")
-        sudo loginctl terminate-session ${XDG_SESSION_ID-}
+        loginctl terminate-session ${XDG_SESSION_ID-}
         ;;
     "󰒲 suspend")
-        sudo systemctl suspend
+        systemctl suspend
         ;;
     "󰋊 hibernate")
-        sudo systemctl hibernate
+        systemctl hibernate
         ;;
     "󰌾 lock")
-        hyprlock
+        hyprlock -q
         ;;
 esac

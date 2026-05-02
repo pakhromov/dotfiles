@@ -120,7 +120,7 @@ remove_recent() {
 	} | awk '
 		NF == 1 && !sep { explicit[$1] = 1; next }
 		NF == 0 { sep = 1; next }
-		$4 in explicit {
+		$4 in explicit && !seen[$4]++ {
 			gsub(/\[|\]/, "", $1)
 			split($1, dt, "T")
 			gsub(/\(|\)/, "", $5)

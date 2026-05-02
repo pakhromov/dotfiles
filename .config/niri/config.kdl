@@ -79,7 +79,6 @@ layout {
 }
 
 
-spawn-at-startup "waycorner"
 environment {
     DISPLAY ":0"
 }
@@ -120,8 +119,8 @@ binds {
     // shows a list of important hotkeys.
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    Mod+T hotkey-overlay-title="Open kitty" { spawn "kitty"; }
-    Mod+D hotkey-overlay-title="Run nwg-drawer" { spawn "nwg-drawer"; }
+    Mod+T hotkey-overlay-title="Open kitty" { spawn "kitty" "--single-instance"; }
+    Mod+D hotkey-overlay-title="Run nwg-drawer" { spawn "kitty" "--single-instance" "fsel" "--detach"; }
     Mod+Shift+A hotkey-overlay-title="Run Flameshot" { spawn "bash" "-c" "flameshot gui"; }
     Mod+Shift+D hotkey-overlay-title="screenshot" { spawn "bash" "-c" "dulcepan -o ~/Pictures/Screenshots/1.png"; }
 
