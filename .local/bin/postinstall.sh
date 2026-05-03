@@ -111,6 +111,7 @@ configure_system() {
     sudo systemctl enable --now iwd
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
+    sudo systemctl disable getty@tty1.service
 
     sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
@@ -210,7 +211,7 @@ check_system() {
     echo "==> Root dotfiles"
     while IFS= read -r f; do
         system_path="/${f#$DOTFILES/root/}"
-        if [[ ! -f "$system_path" ]]; then
+        if ! sudo test -f "$system_path"; then
             echo -e "  $fail missing: $system_path"
         elif ! sudo diff -q "$f" "$system_path" &>/dev/null; then
             echo -e "  $fail differs: $system_path"
@@ -232,7 +233,7 @@ check_system() {
     echo ""
     echo "==> System configuration"
 
-    if [[ "$(getent passwd pavel | cut -d: -f7)" == "/usr/bin/zsh" ]]; then
+    if [[ "$(readlink -f "$(getent passwd pavel | cut -d: -f7)")" == "$(readlink -f /usr/bin/zsh)" ]]; then
         echo -e "  $ok default shell: zsh"
     else
         echo -e "  $fail default shell: $(getent passwd pavel | cut -d: -f7)"
@@ -270,8 +271,9 @@ check_system() {
     done
 
     for svc in systemd-networkd systemd-resolved systemd-timesyncd bluetooth.service \
-               systemd-userdbd.service systemd-userdbd.socket; do
-        if ! systemctl is-enabled "$svc" &>/dev/null; then
+               systemd-userdbd.service systemd-userdbd.socket getty@tty1.service; do
+        state=$(systemctl is-enabled "$svc" 2>/dev/null)
+        if [[ "$state" == "disabled" || "$state" == "indirect" ]]; then
             echo -e "  $ok $svc disabled"
         else
             echo -e "  $fail $svc still enabled"

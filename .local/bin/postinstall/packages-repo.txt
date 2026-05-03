@@ -3,7 +3,6 @@ alsa-utils
 base
 base-devel
 bat
-bibata-cursor-theme
 bottom
 brave-origin-beta-bin
 brightnessctl
