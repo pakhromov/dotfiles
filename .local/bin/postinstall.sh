@@ -1,4 +1,4 @@
-+#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 if [[ $EUID -eq 0 ]]; then
     echo "Do not run this script as root"

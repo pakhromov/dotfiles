@@ -61,4 +61,4 @@ else
     write_asoundrc "$card" "$dev"
 fi
 echo "Set: $(echo "$selection" | cut -d'|' -f2 | xargs) (card $card, device $dev)"
-aplay -D dmix:$card -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero &
+aplay -D dmix:$card -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero
