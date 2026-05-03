@@ -41,5 +41,5 @@ case "${1:-}" in
     ;;
 esac
 
-audio-switch -d &
-sudo chronyd -q
+#audio-switch -d &
+#sudo chronyd -q

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
++#!/usr/bin/env bash
 
 if [[ $EUID -eq 0 ]]; then
     echo "Do not run this script as root"
@@ -109,6 +109,7 @@ configure_system() {
     sudo rm -f /etc/resolv.conf
     sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
     sudo systemctl enable --now iwd
+    sudo systemctl enable --now audio-switch chronyd-sync
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
 
@@ -249,11 +250,13 @@ check_system() {
         echo -e "  $fail /etc/resolv.conf -> $(readlink /etc/resolv.conf)"
     fi
 
-    if systemctl is-enabled "iwd" &>/dev/null; then
-        echo -e "  $ok $svc enabled"
-    else
-        echo -e "  $fail $svc not enabled"
-    fi
+    for svc in iwd audio-switch chronyd-sync; do
+        if systemctl is-enabled "$svc" &>/dev/null; then
+            echo -e "  $ok $svc enabled"
+        else
+            echo -e "  $fail $svc not enabled"
+        fi
+    done
 
 
     for svc in rtkit-daemon upower.service user@.service \

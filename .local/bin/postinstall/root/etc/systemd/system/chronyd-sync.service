@@ -1,0 +1,10 @@
+[Unit]
+Description=One-shot clock sync
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/chronyd -q
+
+[Install]
+WantedBy=multi-user.target
