@@ -14,7 +14,7 @@ restart() {
 
 wayland_display() {
   case "${XDG_CURRENT_DESKTOP:-}" in
-    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on && restart waypixel;;
+    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on; restart waypixel;;
     river)   wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
   esac
 }
