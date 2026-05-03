@@ -109,12 +109,12 @@ configure_system() {
     sudo rm -f /etc/resolv.conf
     sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
     sudo systemctl enable --now iwd
-    sudo systemctl enable --now audio-switch chronyd-sync
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
 
     sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
+    sudo systemctl enable --now chronyd-sync
     sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket
     sudo systemctl mask upower.service
     sudo systemctl mask user@.service
@@ -250,7 +250,7 @@ check_system() {
         echo -e "  $fail /etc/resolv.conf -> $(readlink /etc/resolv.conf)"
     fi
 
-    for svc in iwd audio-switch chronyd-sync; do
+    for svc in iwd chronyd-sync; do
         if systemctl is-enabled "$svc" &>/dev/null; then
             echo -e "  $ok $svc enabled"
         else
