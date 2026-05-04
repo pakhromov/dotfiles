@@ -5,7 +5,7 @@ set -eu
 
 if [[ $EUID -ne 0 ]]; then
     export _ORIG_PATH="$PATH"
-    exec sudo -E "$(readlink -f "$0")" "$@"
+    exec /usr/bin/sudo -E "$(readlink -f "$0")" "$@"
 fi
 _USER="${SUDO_USER:-$USER}"
 

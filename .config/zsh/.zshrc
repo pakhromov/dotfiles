@@ -243,10 +243,9 @@ bindkey '^V' paste-from-clipboard
 
 unalias -a
 alias clear="printf '\x1b[2J\x1b[3J\x1b[H'; _PROMPT_COUNT=0"
-alias f="fastfetch"
 alias r="sudo pacman -Rns"
 alias i="yay -S"
-alias l="launch"
+alias e="exec launch"
 alias rr="yzf -x"
 alias ro="yzf -o"
 alias ls="eza -1a --icons=always --group-directories-first --hyperlink"
