@@ -1,0 +1,77 @@
+/** Import Lepton stylesheet (Chrome) *****************************************/
+@import url("css/leptonChrome.css");
+
+
+/** Add your custom styles below **********************************************/
+
+/* Workaround: all bookmarks going to overflow/chevron after exiting DOM fullscreen
+   (e.g. YouTube). Firefox 141+ regression — XUL flex sizing of PlacesToolbarItems
+   breaks when position:fixed is applied during fullscreen transitions.
+   https://github.com/black7375/Firefox-UI-Fix/issues/1135 */
+#PlacesToolbar {
+  display: flex !important;
+}
+#PlacesToolbarItems {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* Autohide all left-side URL bar icons — show on urlbar hover/focus */
+#trust-icon-container,
+#tracking-protection-icon-container,
+#identity-box {
+  max-width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: max-width 50ms var(--animation-easing-function) 900ms,
+              opacity 1.5s var(--animation-easing-function) 600ms !important;
+}
+#urlbar-container:is(:hover, :focus-within) :is(
+  #trust-icon-container,
+  #tracking-protection-icon-container,
+  #identity-box
+) {
+  max-width: 400px !important;
+  opacity: 1 !important;
+  transition-delay: 0s !important;
+}
+
+/* Hide unwanted URL bar page action icons */
+#reader-mode-button,
+#picture-in-picture-button,
+#split-view-button {
+  display: none !important;
+}
+
+/* Hide back and forward buttons */
+#back-button,
+#forward-button {
+  display: none !important;
+}
+
+/* Hide tab bar scroll arrows — mouse wheel scrolling still works */
+#scrollbutton-up,
+#scrollbutton-up ~ spacer,
+#scrollbutton-down {
+  display: none !important;
+}
+
+/* Enable option to edit bookmark URLs under Add Bookmark (blue star) menu */
+/*
+.editBMPanel_locationRow {
+  display: initial !important;
+}
+*/
+
+/* Disable Email Image/Audio/Video and Set as Desktop Background context menu items */
+/*
+#context-sendimage,
+#context-sendvideo,
+#context-sendaudio,
+#context-sep-setbackground,
+#context-setDesktopBackground {
+  display: none !important;
+}
+*/
