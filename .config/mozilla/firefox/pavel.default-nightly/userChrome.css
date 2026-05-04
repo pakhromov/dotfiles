@@ -4,6 +4,22 @@
 
 /** Add your custom styles below **********************************************/
 
+
+/* Fix semi-transparent inactive tabs in fullscreen */
+:root[sizemode="fullscreen"]:not([inDOMFullscreen="true"]) #TabsToolbar {
+  background-color: Window !important;
+}
+
+/* Hide close window button in fullscreen. */
+:root[sizemode="fullscreen"] .titlebar-buttonbox-container {
+  display: none !important;
+}
+
+/* Faster fullscreen toolbar */
+#navigator-toolbox {
+  transition: margin-top 0.2s ease !important;
+}
+
 /* Workaround: all bookmarks going to overflow/chevron after exiting DOM fullscreen
    (e.g. YouTube). Firefox 141+ regression — XUL flex sizing of PlacesToolbarItems
    breaks when position:fixed is applied during fullscreen transitions.
@@ -55,6 +71,249 @@
 #scrollbutton-up,
 #scrollbutton-up ~ spacer,
 #scrollbutton-down {
+  display: none !important;
+}
+
+/* ===== Page context menu ===================================================*/
+
+/* Navigation */
+#context-navigation,
+#context-sep-navigation {
+  display: none !important;
+}
+
+/* Link items — keep only openlinkprivate and stripOnShareLink */
+#context-openlinkincurrent,
+#context-openlinkincontainertab,
+#context-openlinkintab,
+#context-openlinkinsplitview,
+#context-openlinkinusercontext-menu,
+#context-openlink,
+#context-previewlink,
+#context-bookmarklink,
+#context-savelink,
+#context-copyemail,
+#context-copyphone,
+#context-sendlinktodevice,
+#context-sep-open,
+#context-sep-copylink,
+#context-sep-sendlinktodevice {
+  display: none !important;
+}
+
+/* Media items — keep playbackrate, loop, video-fullscreen, saveimage, savevideo,
+   saveaudio, copyimage-contents, copyvideourl, copyaudiourl, visual-search */
+#context-media-play,
+#context-media-pause,
+#context-media-mute,
+#context-media-unmute,
+#context-leave-dom-fullscreen,
+#context-media-hidecontrols,
+#context-media-showcontrols,
+#context-media-sep-video-commands,
+#context-viewvideo,
+#context-video-pictureinpicture,
+#context-media-sep-commands,
+#context-reloadimage,
+#context-viewimage,
+#context-video-saveimage,
+#context-copyimage,
+#context-sendimage,
+#context-sendvideo,
+#context-sendaudio,
+#context-imagetext,
+#context-viewimageinfo,
+#context-viewimagedesc,
+#context-sep-setbackground,
+#context-setDesktopBackground {
+  display: none !important;
+}
+
+/* Text/editing */
+#context-undo,
+#context-redo,
+#context-sep-redo,
+#context-cut,
+#context-copy,
+#context-paste,
+#context-paste-no-formatting,
+#context-delete,
+#context-selectall,
+#context-sep-selectall,
+#context-reveal-password,
+#context-print-selection {
+  display: none !important;
+}
+
+/* Text highlights */
+#context-copy-link-to-highlight,
+#context-copy-clean-link-to-highlight,
+#context-remove-highlight,
+#context-sep-highlights {
+  display: none !important;
+}
+
+/* General — keep only savepage and translate-selection */
+#context-take-screenshot,
+#context-searchselect,
+#context-searchselect-private,
+#context-ask-chat,
+#context-add-engine,
+#context-viewpartialsource-selection,
+#context-viewsource,
+#context-inspect,
+#context-inspect-a11y,
+#context-sendpagetodevice,
+#context-sep-screenshots,
+#context-sep-sendpagetodevice,
+#context-sep-sharing {
+  display: none !important;
+}
+
+/* Frames */
+#context-showonlythisframe,
+#context-openframeintab,
+#context-openframe,
+#context-reloadframe,
+#context-bookmarkframe,
+#context-saveframe,
+#context-printframe,
+#context-viewframesource,
+#context-viewframeinfo,
+#context-frameOsPid {
+  display: none !important;
+}
+
+/* ===== Tab context menu ====================================================*/
+
+/* Tab groups and split view */
+#context_openANewTab,
+#context_moveTabToNewGroup,
+#context_moveSplitViewToNewGroup,
+#context_moveTabToGroup,
+#context_ungroupTab,
+#context_ungroupSplitView,
+#context_moveTabToSplitView,
+#context_separateSplitView,
+#context_reverseSplitView {
+  display: none !important;
+}
+
+/* Tab actions — keep toggleMuteTab, toggleMuteSelectedTabs, unloadTab */
+#context_reloadTab,
+#context_reloadSelectedTabs,
+#context_playTab,
+#context_playSelectedTabs,
+#context_pinTab,
+#context_unpinTab,
+#context_pinSelectedTabs,
+#context_unpinSelectedTabs,
+#context_duplicateTab,
+#context_duplicateTabs {
+  display: none !important;
+}
+
+/* AI */
+#context_askChat {
+  display: none !important;
+}
+
+/* Bookmarks — keep only bookmarkSelectedTabs (shown natively only when multiple tabs selected) */
+#context_bookmarkTab,
+#context_addNote,
+#context_updateNote {
+  display: none !important;
+}
+
+/* Moving — keep only selectAllTabs */
+#context_moveTabOptions,
+#context_reopenInContainer {
+  display: none !important;
+}
+
+/* Closing */
+#context_closeTab,
+#context_closeDuplicateTabs,
+#context_closeTabOptions,
+#context_undoCloseTab,
+#context_sendTabToDeviceSeparator {
+  display: none !important;
+}
+
+/* Fullscreen */
+#context_fullscreenAutohide,
+#context_fullscreenExit,
+menuseparator[contexttype="fullscreen"] {
+  display: none !important;
+}
+
+/* Hide anonymous separators that become orphaned */
+#tabContextMenu > menuseparator:not([id]) {
+  display: none !important;
+}
+
+/* ===== Toolbar context menu ================================================*/
+
+#toggle_toolbar-menubar,
+#toggle_PersonalToolbar,
+#toolbar-context-report-extension,
+#toolbar-context-openANewTab,
+#toolbar-context-reloadSelectedTab,
+#toolbar-context-reloadSelectedTabs,
+#toolbar-context-bookmarkSelectedTab,
+#toolbar-context-bookmarkSelectedTabs,
+#toolbar-context-selectAllTabs,
+#toolbar-context-undoCloseTab,
+#toolbar-context-customize-sidebar,
+#toolbar-context-toggle-vertical-tabs,
+#toolbar-context-move-to-panel,
+#toolbar-context-autohide-downloads-button,
+#toolbar-context-always-show-extensions-button,
+#toolbar-context-always-open-downloads-panel,
+#toolbar-context-full-screen-autohide,
+#toolbar-context-full-screen-exit,
+#toolbarNavigatorItemsMenuSeparator,
+#tabbarItemsMenuSeparator,
+#sidebarRevampSeparator,
+#toolbarDownloadsAnchorMenuSeparator,
+#customizationMenuSeparator,
+#viewToolbarsMenuSeparator,
+#blockedRedirectSeparator,
+#toolbar-context-menu > menuseparator:not([id]),
+menuseparator[contexttype="fullscreen"] {
+  display: none !important;
+}
+
+/* ===== Extension button context menu =======================================*/
+
+#unified-extensions-context-menu-move-widget-up,
+#unified-extensions-context-menu-move-widget-down,
+#unified-extensions-context-menu-report-extension {
+  display: none !important;
+}
+
+/* ===== Bookmark/Places context menu ========================================*/
+
+/* Open — keep only Open All in Tabs / Open All Bookmarks */
+#placesContext_open,
+#placesContext_open\:newtab,
+#placesContext_open\:newcontainertab,
+#placesContext_open\:newwindow,
+#placesContext_open\:newprivatewindow,
+#placesContext_showInFolder,
+/* Edit — remove Sort by Name */
+#placesContext_sortBy\:name,
+/* Clipboard */
+#placesContext_cut,
+#placesContext_copy,
+#placesContext_paste_group,
+#placesContext_paste,
+/* Create */
+#placesContext_new\:bookmark,
+#placesContext_new\:folder,
+#placesContext_new\:separator,
+/* All separators */
+#placesContext > menuseparator {
   display: none !important;
 }
 

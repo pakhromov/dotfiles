@@ -37,6 +37,13 @@ clone_dotfiles() {
     git --git-dir="$GIT_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
     update-mime-database ~/.local/share/mime
 
+    echo "==> Cloning Firefox Lepton theme..."
+    PROFILE_DIR="$HOME/.config/mozilla/firefox/pavel.default-nightly"
+    git clone https://github.com/black7375/Firefox-UI-Fix "$PROFILE_DIR/chrome" -b photon-style
+    cp "$PROFILE_DIR/userChrome.css" "$PROFILE_DIR/chrome/userChrome.css"
+    cp "$PROFILE_DIR/prefs-initial.js" "$PROFILE_DIR/prefs.js"
+    cat "$PROFILE_DIR/chrome/user.js" "$PROFILE_DIR/user-overrides.js" > "$PROFILE_DIR/user.js"
+
     echo "==> Cloning zsh plugins..."
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
     git clone https://github.com/pakhromov/zsh-autosuggestions              "$HOME/.config/zsh/plugins/zsh-autosuggestions"
@@ -76,7 +83,7 @@ install_gpu_drivers() {
     case "$gpu" in
         1)
             echo "==> Installing NVIDIA drivers..."
-            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils
+            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver
             ;;
         2)
             echo "==> Installing AMD drivers..."
@@ -170,7 +177,7 @@ check_system() {
 
     echo ""
     echo "==> GPU drivers"
-    local nvidia_pkgs=(nvidia-open nvidia-utils lib32-nvidia-utils)
+    local nvidia_pkgs=(nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver)
     local amd_pkgs=(mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon)
     local nvidia_installed=0 amd_installed=0
     local nvidia_missing=() amd_missing=()

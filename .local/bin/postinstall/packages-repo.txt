@@ -18,6 +18,7 @@ dua-cli
 expac
 eza
 fd
+firefox-wayland-cachy-hg
 fzf
 git
 github-cli

@@ -6,7 +6,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export EDITOR="subl"
 export VISUAL="$EDITOR"
 export TERMINAL="kitty"
-export BROWSER="brave-origin-beta"
+export BROWSER="firefox"
 
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
