@@ -1,0 +1,327 @@
+/** Import Lepton stylesheet (Chrome) *****************************************/
+@import url("css/leptonChrome.css");
+
+
+/** Add your custom styles below **********************************************/
+
+
+/* Fix semi-transparent inactive tabs in fullscreen */
+:root[sizemode="fullscreen"]:not([inDOMFullscreen="true"]) #TabsToolbar {
+  background-color: Window !important;
+}
+
+/* Hide close window button in fullscreen. */
+:root[sizemode="fullscreen"] .titlebar-buttonbox-container {
+  display: none !important;
+}
+
+/* Faster fullscreen toolbar */
+#navigator-toolbox {
+  transition: margin-top 0.2s ease !important;
+}
+
+/* Workaround: all bookmarks going to overflow/chevron after exiting DOM fullscreen
+   (e.g. YouTube). Firefox 141+ regression — XUL flex sizing of PlacesToolbarItems
+   breaks when position:fixed is applied during fullscreen transitions.
+   https://github.com/black7375/Firefox-UI-Fix/issues/1135 */
+#PlacesToolbar {
+  display: flex !important;
+}
+#PlacesToolbarItems {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* Autohide all left-side URL bar icons — show on urlbar hover/focus */
+#trust-icon-container,
+#tracking-protection-icon-container,
+#identity-box {
+  max-width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: max-width 50ms var(--animation-easing-function) 900ms,
+              opacity 1.5s var(--animation-easing-function) 600ms !important;
+}
+#urlbar-container:is(:hover, :focus-within) :is(
+  #trust-icon-container,
+  #tracking-protection-icon-container,
+  #identity-box
+) {
+  max-width: 400px !important;
+  opacity: 1 !important;
+  transition-delay: 0s !important;
+}
+
+/* Hide unwanted URL bar page action icons */
+#reader-mode-button,
+#picture-in-picture-button,
+#split-view-button {
+  display: none !important;
+}
+
+/* Hide link URL status panel (bottom-left hover tooltip) */
+#statuspanel {
+  display: none !important;
+}
+
+/* Hide back and forward buttons */
+#back-button,
+#forward-button {
+  display: none !important;
+}
+
+/* Hide all separators in all context menus */
+#contentAreaContextMenu menuseparator,
+#tabContextMenu menuseparator,
+#toolbar-context-menu menuseparator,
+#placesContext menuseparator,
+#PlacesChevronPopup menuseparator,
+#unified-extensions-context-menu menuseparator {
+  display: none !important;
+}
+
+/* Hide tab bar scroll arrows — mouse wheel scrolling still works */
+#scrollbutton-up,
+#scrollbutton-up ~ spacer,
+#scrollbutton-down {
+  display: none !important;
+}
+
+/* ===== Page context menu ===================================================*/
+
+/* Navigation */
+#context-navigation {
+  display: none !important;
+}
+
+/* Link items — keep only openlinkprivate and stripOnShareLink */
+#context-openlinkincurrent,
+#context-openlinkincontainertab,
+#context-openlinkintab,
+#context-openlinkinsplitview,
+#context-openlinkinusercontext-menu,
+#context-openlink,
+#context-previewlink,
+#context-bookmarklink,
+#context-savelink,
+#context-copyemail,
+#context-copyphone,
+#context-sendlinktodevice {
+  display: none !important;
+}
+
+/* Media items — keep playbackrate, loop, video-fullscreen, saveimage, savevideo,
+   saveaudio, copyimage-contents, copyvideourl, copyaudiourl, visual-search */
+#context-media-play,
+#context-media-pause,
+#context-media-mute,
+#context-media-unmute,
+#context-leave-dom-fullscreen,
+#context-media-hidecontrols,
+#context-media-showcontrols,
+#context-viewvideo,
+#context-video-pictureinpicture,
+#context-reloadimage,
+#context-viewimage,
+#context-video-saveimage,
+#context-copyimage,
+#context-sendimage,
+#context-sendvideo,
+#context-sendaudio,
+#context-imagetext,
+#context-viewimageinfo,
+#context-viewimagedesc,
+#context-setDesktopBackground {
+  display: none !important;
+}
+
+/* Text/editing */
+#context-undo,
+#context-redo,
+#context-cut,
+#context-copy,
+#context-paste,
+#context-paste-no-formatting,
+#context-delete,
+#context-selectall,
+#context-reveal-password,
+#context-print-selection {
+  display: none !important;
+}
+
+/* Text highlights */
+#context-copy-link-to-highlight,
+#context-copy-clean-link-to-highlight,
+#context-remove-highlight {
+  display: none !important;
+}
+
+/* General — keep only savepage and translate-selection */
+#context-take-screenshot,
+#context-searchselect,
+#context-searchselect-private,
+#context-ask-chat,
+#context-add-engine,
+#context-viewpartialsource-selection,
+#context-viewsource,
+#context-inspect,
+#context-inspect-a11y,
+#context-sendpagetodevice {
+  display: none !important;
+}
+
+/* Frames */
+#frame {
+  display: none !important;
+}
+
+/* ===== Tab context menu ====================================================*/
+
+/* Tab groups and split view */
+#context_openANewTab,
+#context_moveTabToNewGroup,
+#context_moveSplitViewToNewGroup,
+#context_moveTabToGroup,
+#context_ungroupTab,
+#context_ungroupSplitView,
+#context_moveTabToSplitView,
+#context_separateSplitView,
+#context_reverseSplitView {
+  display: none !important;
+}
+
+/* Tab actions — keep toggleMuteTab, toggleMuteSelectedTabs, unloadTab, pin/unpin */
+#context_reloadTab,
+#context_reloadSelectedTabs,
+#context_playTab,
+#context_playSelectedTabs,
+#context_duplicateTab,
+#context_duplicateTabs {
+  display: none !important;
+}
+
+/* AI */
+#context_askChat {
+  display: none !important;
+}
+
+/* Bookmarks — keep only bookmarkSelectedTabs (shown natively only when multiple tabs selected) */
+#context_bookmarkTab,
+#context_addNote,
+#context_updateNote {
+  display: none !important;
+}
+
+/* Moving — keep only selectAllTabs */
+#context_moveTabOptions,
+#context_reopenInContainer {
+  display: none !important;
+}
+
+/* Closing */
+#context_closeTab,
+#context_closeDuplicateTabs,
+#context_closeTabOptions,
+#context_undoCloseTab,
+#context_sendTabToDeviceSeparator {
+  display: none !important;
+}
+
+/* Fullscreen */
+#context_fullscreenAutohide,
+#context_fullscreenExit,
+menuseparator[contexttype="fullscreen"] {
+  display: none !important;
+}
+
+/* ===== Toolbar context menu ================================================*/
+
+#toggle_toolbar-menubar,
+#toggle_PersonalToolbar,
+#toolbar-context-report-extension,
+#toolbar-context-openANewTab,
+#toolbar-context-reloadSelectedTab,
+#toolbar-context-reloadSelectedTabs,
+#toolbar-context-bookmarkSelectedTab,
+#toolbar-context-bookmarkSelectedTabs,
+#toolbar-context-selectAllTabs,
+#toolbar-context-undoCloseTab,
+#toolbar-context-customize-sidebar,
+#toolbar-context-toggle-vertical-tabs,
+#toolbar-context-move-to-panel,
+#toolbar-context-autohide-downloads-button,
+#toolbar-context-always-show-extensions-button,
+#toolbar-context-always-open-downloads-panel,
+#toolbar-context-full-screen-autohide,
+#toolbar-context-full-screen-exit,
+menuseparator[contexttype="fullscreen"] {
+  display: none !important;
+}
+
+/* ===== Extension button context menu =======================================*/
+
+#unified-extensions-context-menu-move-widget-up,
+#unified-extensions-context-menu-move-widget-down,
+#unified-extensions-context-menu-report-extension {
+  display: none !important;
+}
+
+/* ===== Bookmark/Places context menu ========================================*/
+
+/* Open — keep only Open All in Tabs / Open All Bookmarks */
+#placesContext_open,
+#placesContext_open\:newtab,
+#placesContext_open\:newcontainertab,
+#placesContext_open\:newwindow,
+#placesContext_open\:newprivatewindow,
+#placesContext_showInFolder,
+/* Edit — remove Sort by Name */
+#placesContext_sortBy\:name,
+/* Clipboard */
+#placesContext_cut,
+#placesContext_copy,
+#placesContext_paste_group,
+#placesContext_paste,
+/* Create */
+#placesContext_new\:bookmark,
+#placesContext_new\:folder,
+#placesContext_new\:separator {
+  display: none !important;
+}
+
+/* ===== URL bar context menu ==================================*/
+
+.textbox-contextmenu > menuitem[cmd="cmd_undo"],
+.textbox-contextmenu > menuitem[cmd="cmd_redo"],
+.textbox-contextmenu > menuitem[cmd="cmd_cut"],
+.textbox-contextmenu > menuitem[cmd="cmd_paste"],
+.textbox-contextmenu > menuitem[cmd="cmd_delete"],
+.textbox-contextmenu > menuitem[cmd="cmd_selectAll"],
+.textbox-contextmenu > menuitem[anonid="spell-no-suggestions"],
+.textbox-contextmenu > menuitem[anonid="spell-add-to-dictionary"],
+.textbox-contextmenu > menuitem[anonid="spell-undo-add-to-dictionary"],
+.textbox-contextmenu > menuitem[anonid="spell-check-enabled"],
+.textbox-contextmenu > menu[anonid="spell-dictionaries"],
+.textbox-contextmenu > menuseparator {
+  display: none !important;
+}
+
+/* Enable option to edit bookmark URLs under Add Bookmark (blue star) menu */
+/*
+.editBMPanel_locationRow {
+  display: initial !important;
+}
+*/
+
+/* Disable Email Image/Audio/Video and Set as Desktop Background context menu items */
+/*
+#context-sendimage,
+#context-sendvideo,
+#context-sendaudio,
+#context-sep-setbackground,
+#context-setDesktopBackground {
+  display: none !important;
+}
+*/
