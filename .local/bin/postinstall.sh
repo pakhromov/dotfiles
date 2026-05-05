@@ -38,7 +38,7 @@ clone_dotfiles() {
     update-mime-database ~/.local/share/mime
 
     echo "==> Cloning Firefox Lepton theme..."
-    PROFILE_DIR="$HOME/.config/mozilla/firefox/pavel.default-nightly"
+    PROFILE_DIR="$HOME/.config/mozilla/firefox/pavel.default"
     git clone https://github.com/black7375/Firefox-UI-Fix "$PROFILE_DIR/chrome" -b photon-style
     cp "$PROFILE_DIR/userChrome.css" "$PROFILE_DIR/chrome/userChrome.css"
     cp "$PROFILE_DIR/prefs-initial.js" "$PROFILE_DIR/prefs.js"
