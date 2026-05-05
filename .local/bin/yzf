@@ -25,19 +25,19 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
 _k=$'\033[38;2;160;160;160m'
 _a=$'\033[36m'
 _r=$'\033[m'
-_kb_install=" ${_k}TAB${_a} select   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} install   ${_k}ESC${_a} cancel${_r} "
-_kb_remove=" ${_k}TAB${_a} select   ${_k}ENTER${_a} remove   ${_k}ESC${_a} cancel${_r} "
-_kb_query=" ${_k}TAB${_a} select   ${_k}ESC${_a} cancel${_r} "
-_kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove   ${_k}ESC${_a} cancel${_r} "
-_kb_upgrade=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} upgrade   ${_k}ESC${_a} cancel${_r} "
+_kb_install=" ${_k}TAB${_a} select   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} install${_r} "
+_kb_remove=" ${_k}TAB${_a} select   ${_k}ENTER${_a} remove${_r} "
+_kb_query=" ${_k}TAB${_a} select${_r} "
+_kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove${_r} "
+_kb_upgrade=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} upgrade${_r} "
 
-_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+A\033[36m all   \033[38;2;160;160;160mRIGHT\033[36m url   \033[38;2;160;160;160mENTER\033[36m update   \033[38;2;160;160;160mESC\033[36m cancel\033[m'
-_footer_plain='TAB select   CTRL+A all   RIGHT url   ENTER update   ESC cancel'
+_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+A\033[36m all   \033[38;2;160;160;160mCTRL+RIGHT\033[36m url   \033[38;2;160;160;160mENTER\033[36m update\033[m'
+_footer_plain='TAB select   CTRL+A all   CTRL+RIGHT url   ENTER update'
 _pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
 (( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
 
-_footer_install_text="${_k}TAB${_a} select   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} install   ${_k}ESC${_a} cancel${_r}"
-_footer_install_plain='TAB select   RIGHT url   ENTER install   ESC cancel'
+_footer_install_text="${_k}TAB${_a} select   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} install${_r}"
+_footer_install_plain='TAB select   CTRL+RIGHT url   ENTER install'
 _pad_install=$(( $(tput cols) - ${#_footer_install_plain} - 7 ))
 (( _pad_install > 0 )) && printf -v _footer_install '%*s%s' "$_pad_install" '' "$_footer_install_text" || _footer_install=$_footer_install_text
 
@@ -65,7 +65,7 @@ search_install() {
 			--pointer ' ' \
 			--border-label " yay $* " \
 			--footer "$_footer_install" --footer-border none \
-			--bind "right:execute-silent(pkg=\$(printf '%s' {1} | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+			--bind "ctrl-right:execute-silent(pkg=\$(printf '%s' {1} | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
 			>"$fzf_out"
 
 	[ ! -s "$fzf_out" ] && return
@@ -236,7 +236,7 @@ upgrade() {
 		--footer "$_footer" --footer-border none \
 		--bind "load:select-all" \
 		--bind "ctrl-a:toggle-all" \
-		--bind "right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+		--bind "ctrl-right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
 		<<<"$formatted")
 
 	[ -z "$selected" ] && return

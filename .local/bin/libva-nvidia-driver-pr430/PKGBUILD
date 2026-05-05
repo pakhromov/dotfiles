@@ -1,0 +1,24 @@
+pkgname=libva-nvidia-driver-pr430
+pkgver=0.0.16.r8
+pkgrel=1
+pkgdesc='VA-API implementation using NVIDIA NVDEC (PR#430 chrome fix branch)'
+arch=('x86_64')
+url='https://github.com/elFarto/nvidia-vaapi-driver'
+license=('MIT')
+depends=('libva' 'nvidia-utils')
+makedepends=('git' 'meson' 'ffnvcodec-headers')
+provides=('libva-nvidia-driver')
+conflicts=('libva-nvidia-driver' 'libva-nvidia-driver-git')
+source=("nvidia-vaapi-driver-pr430.tar.gz::https://github.com/imperishableSecret/nvidia-vaapi-driver/archive/288a7ba79d47219ea6dea737ec8d684b53a8de36.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  arch-meson nvidia-vaapi-driver-288a7ba79d47219ea6dea737ec8d684b53a8de36 build
+  meson compile -C build
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+  install -Dm644 "$srcdir/nvidia-vaapi-driver-288a7ba79d47219ea6dea737ec8d684b53a8de36/COPYING" \
+    "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}

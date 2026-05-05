@@ -34,7 +34,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
 _k=$'\033[38;2;160;160;160m'
 _a=$'\033[36m'
 _r=$'\033[m'
-_kb=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}RIGHT${_a} url   ${_k}ENTER${_a} pull   ${_k}ESC${_a} cancel${_r} "
+_kb=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} pull${_r} "
 
 mapfile -t all_repos < <(find . -name '.git' -printf '%h\n' 2>/dev/null)
 
@@ -54,7 +54,7 @@ mapfile -t repos < <(printf '%s\n' "${outdated[@]}" | fzf --border-label ' GIT P
   --preview "git -C {} rev-list HEAD..@{u} | while read h; do git -C {} log --color=always --oneline -1 \$h; git -C {} diff --color=always \$h^ \$h -- '*.md' 2>/dev/null; done" \
   --bind "ctrl-a:toggle-all" \
   --bind "load:select-all" \
-  --bind "right:execute-silent(url=\$(git -C {} config --get remote.origin.url); url=\${url%.git}; url=\${url/#git@github.com:/https://github.com/}; [ -n \"\$url\" ] && xdg-open \"\$url\")")
+  --bind "ctrl-right:execute-silent(url=\$(git -C {} config --get remote.origin.url); url=\${url%.git}; url=\${url/#git@github.com:/https://github.com/}; [ -n \"\$url\" ] && xdg-open \"\$url\")")
 
 (( ${#repos[@]} > 0 )) || exit
 

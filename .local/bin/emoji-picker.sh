@@ -1,7 +1,7 @@
 #!/bin/bash
 
-_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mESC\033[36m cancel\033[m'
-_footer_plain='TAB select   ENTER copy   ESC cancel'
+_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mENTER\033[36m copy\033[m'
+_footer_plain='TAB select   ENTER copy'
 _pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
 (( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
 

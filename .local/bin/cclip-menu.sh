@@ -1,7 +1,7 @@
 #!/bin/bash
 
-_footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+DEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mESC\033[36m cancel\033[m'
-_footer_plain='TAB select   CTRL+DEL delete   ENTER copy   ESC cancel'
+_footer_text=$'\033[38;2;160;160;160mDEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mCTRL+SPACE\033[36m spaced   \033[38;2;160;160;160mALT+,\033[36m comma   \033[38;2;160;160;160mCTRL+ALT+,\033[36m comma+space\033[m'
+_footer_plain='DEL delete   ENTER copy   CTRL+SPACE spaced   ALT+, comma   CTRL+ALT+, comma+space'
 _pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
 (( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
 
@@ -49,21 +49,30 @@ case "$1" in
     fi
     ;;
   *)
-    sel=$($0 --list | fzf \
-      --bind "ctrl-delete:execute-silent($0 --delete {+1})+reload($0 --list)")
-    if [ -n "$sel" ]; then
+    output=$($0 --list | fzf \
+      --expect ctrl-space,alt-,,alt-space \
+      --bind "delete:execute-silent($0 --delete {+1})+reload($0 --list)")
+    [ -z "$output" ] && exit
+    key=$(head -1 <<< "$output")
+    sel=$(tail -n +2 <<< "$output")
+    [ -z "$sel" ] && exit
+    if [ "$(wc -l <<< "$sel")" -eq 1 ]; then
+      id="${sel%%$'\t'*}"
+      cclip copy "$id"
+    else
+      sep=$'\n'
+      [ "$key" = "ctrl-space" ] && sep=' '
+      [ "$key" = "alt-," ] && sep=','
+      [ "$key" = "alt-space" ] && sep=', '
       combined=""
       while IFS=$'\t' read -r id _; do
         entry=$(cclip get "$id" 2>/dev/null)
-        if [ -z "$combined" ]; then
-          combined="$entry"
-        else
-          combined="$combined
-$entry"
-        fi
+        combined="${combined:+$combined$sep}$entry"
       done <<< "$sel"
-      setsid wl-copy -- "$combined" >/dev/null 2>&1 &
-      touch /tmp/.cclip_ok
+      printf '%s' "$combined" | wl-copy
+      sleep 0.1
+      cclip copy "$(cclip list id | head -1)"
     fi
+    touch /tmp/.cclip_ok
     ;;
 esac

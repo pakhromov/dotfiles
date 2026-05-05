@@ -240,14 +240,12 @@ import sys
 page = sys.argv[1] if len(sys.argv) > 1 else '1'
 cols = ${_cols}
 
-r_text = ('\033[38;2;160;160;160mCTRL+\u2190\033[36m prev   '
-          '\033[38;2;160;160;160mCTRL+\u2192\033[36m next   '
+r_text = ('\033[38;2;160;160;160mCTRL+LEFT\033[36m prev   '
+          '\033[38;2;160;160;160mCTRL+RIGHT\033[36m next   '
           '\033[38;2;160;160;160mTAB\033[36m select   '
-          '\033[38;2;160;160;160m\u2192\033[36m play   '
           '\033[38;2;160;160;160mALT+ENTER\033[36m open   '
-          '\033[38;2;160;160;160mENTER\033[36m download   '
-          '\033[38;2;160;160;160mESC\033[36m cancel\033[m')
-r_plain = 'CTRL+\u2190 prev   CTRL+\u2192 next   TAB select   \u2192 play   ALT+ENTER open   ENTER download   ESC cancel'
+          '\033[38;2;160;160;160mENTER\033[36m download\033[m')
+r_plain = 'CTRL+LEFT prev   CTRL+RIGHT next   TAB select   ALT+ENTER open   ENTER download'
 
 l_text = '\033[38;2;160;160;160mPage \033[36m' + page + '\033[m'
 l_vis  = len('Page ') + len(page)
@@ -291,7 +289,6 @@ selected=$(printf '%s\n' "$results" | fzf --ansi \
   --header-lines=1 \
   --bind "ctrl-right:execute-silent(${_update_page} 1)+reload(${_fetch_reload})+transform(${_ftr_cmd})+first" \
   --bind "ctrl-left:execute-silent(${_update_page} -1)+reload(${_fetch_reload})+transform(${_ftr_cmd})+first" \
-  --bind "right:execute-silent(magnet={2}; if [ -n \"\${VPN_MPV_FIFO:-}\" ]; then printf '%s\n' \"\$magnet\" >>\"\${VPN_MPV_FIFO}\"; else mpv \"\$magnet\" &; fi)" \
   --bind "alt-enter:execute-silent(printf '%s\n' {+8} | xargs -d '\n' -I@ xdg-open @)") || exit 0
 
 mkdir -p ~/Videos
