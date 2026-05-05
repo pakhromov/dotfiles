@@ -61,9 +61,24 @@
   display: none !important;
 }
 
+/* Hide link URL status panel (bottom-left hover tooltip) */
+#statuspanel {
+  display: none !important;
+}
+
 /* Hide back and forward buttons */
 #back-button,
 #forward-button {
+  display: none !important;
+}
+
+/* Hide all separators in all context menus */
+#contentAreaContextMenu menuseparator,
+#tabContextMenu menuseparator,
+#toolbar-context-menu menuseparator,
+#placesContext menuseparator,
+#PlacesChevronPopup menuseparator,
+#unified-extensions-context-menu menuseparator {
   display: none !important;
 }
 
@@ -77,8 +92,7 @@
 /* ===== Page context menu ===================================================*/
 
 /* Navigation */
-#context-navigation,
-#context-sep-navigation {
+#context-navigation {
   display: none !important;
 }
 
@@ -94,10 +108,7 @@
 #context-savelink,
 #context-copyemail,
 #context-copyphone,
-#context-sendlinktodevice,
-#context-sep-open,
-#context-sep-copylink,
-#context-sep-sendlinktodevice {
+#context-sendlinktodevice {
   display: none !important;
 }
 
@@ -110,10 +121,8 @@
 #context-leave-dom-fullscreen,
 #context-media-hidecontrols,
 #context-media-showcontrols,
-#context-media-sep-video-commands,
 #context-viewvideo,
 #context-video-pictureinpicture,
-#context-media-sep-commands,
 #context-reloadimage,
 #context-viewimage,
 #context-video-saveimage,
@@ -124,7 +133,6 @@
 #context-imagetext,
 #context-viewimageinfo,
 #context-viewimagedesc,
-#context-sep-setbackground,
 #context-setDesktopBackground {
   display: none !important;
 }
@@ -132,14 +140,12 @@
 /* Text/editing */
 #context-undo,
 #context-redo,
-#context-sep-redo,
 #context-cut,
 #context-copy,
 #context-paste,
 #context-paste-no-formatting,
 #context-delete,
 #context-selectall,
-#context-sep-selectall,
 #context-reveal-password,
 #context-print-selection {
   display: none !important;
@@ -148,8 +154,7 @@
 /* Text highlights */
 #context-copy-link-to-highlight,
 #context-copy-clean-link-to-highlight,
-#context-remove-highlight,
-#context-sep-highlights {
+#context-remove-highlight {
   display: none !important;
 }
 
@@ -163,24 +168,12 @@
 #context-viewsource,
 #context-inspect,
 #context-inspect-a11y,
-#context-sendpagetodevice,
-#context-sep-screenshots,
-#context-sep-sendpagetodevice,
-#context-sep-sharing {
+#context-sendpagetodevice {
   display: none !important;
 }
 
 /* Frames */
-#context-showonlythisframe,
-#context-openframeintab,
-#context-openframe,
-#context-reloadframe,
-#context-bookmarkframe,
-#context-saveframe,
-#context-printframe,
-#context-viewframesource,
-#context-viewframeinfo,
-#context-frameOsPid {
+#frame {
   display: none !important;
 }
 
@@ -199,15 +192,11 @@
   display: none !important;
 }
 
-/* Tab actions — keep toggleMuteTab, toggleMuteSelectedTabs, unloadTab */
+/* Tab actions — keep toggleMuteTab, toggleMuteSelectedTabs, unloadTab, pin/unpin */
 #context_reloadTab,
 #context_reloadSelectedTabs,
 #context_playTab,
 #context_playSelectedTabs,
-#context_pinTab,
-#context_unpinTab,
-#context_pinSelectedTabs,
-#context_unpinSelectedTabs,
 #context_duplicateTab,
 #context_duplicateTabs {
   display: none !important;
@@ -247,11 +236,6 @@ menuseparator[contexttype="fullscreen"] {
   display: none !important;
 }
 
-/* Hide anonymous separators that become orphaned */
-#tabContextMenu > menuseparator:not([id]) {
-  display: none !important;
-}
-
 /* ===== Toolbar context menu ================================================*/
 
 #toggle_toolbar-menubar,
@@ -272,14 +256,6 @@ menuseparator[contexttype="fullscreen"] {
 #toolbar-context-always-open-downloads-panel,
 #toolbar-context-full-screen-autohide,
 #toolbar-context-full-screen-exit,
-#toolbarNavigatorItemsMenuSeparator,
-#tabbarItemsMenuSeparator,
-#sidebarRevampSeparator,
-#toolbarDownloadsAnchorMenuSeparator,
-#customizationMenuSeparator,
-#viewToolbarsMenuSeparator,
-#blockedRedirectSeparator,
-#toolbar-context-menu > menuseparator:not([id]),
 menuseparator[contexttype="fullscreen"] {
   display: none !important;
 }
@@ -311,9 +287,24 @@ menuseparator[contexttype="fullscreen"] {
 /* Create */
 #placesContext_new\:bookmark,
 #placesContext_new\:folder,
-#placesContext_new\:separator,
-/* All separators */
-#placesContext > menuseparator {
+#placesContext_new\:separator {
+  display: none !important;
+}
+
+/* ===== URL bar context menu ==================================*/
+
+.textbox-contextmenu > menuitem[cmd="cmd_undo"],
+.textbox-contextmenu > menuitem[cmd="cmd_redo"],
+.textbox-contextmenu > menuitem[cmd="cmd_cut"],
+.textbox-contextmenu > menuitem[cmd="cmd_paste"],
+.textbox-contextmenu > menuitem[cmd="cmd_delete"],
+.textbox-contextmenu > menuitem[cmd="cmd_selectAll"],
+.textbox-contextmenu > menuitem[anonid="spell-no-suggestions"],
+.textbox-contextmenu > menuitem[anonid="spell-add-to-dictionary"],
+.textbox-contextmenu > menuitem[anonid="spell-undo-add-to-dictionary"],
+.textbox-contextmenu > menuitem[anonid="spell-check-enabled"],
+.textbox-contextmenu > menu[anonid="spell-dictionaries"],
+.textbox-contextmenu > menuseparator {
   display: none !important;
 }
 
