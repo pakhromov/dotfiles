@@ -5,10 +5,11 @@
 /** Add your custom styles below **********************************************/
 
 
-/* Fix semi-transparent inactive tabs in fullscreen */
+/* Fix semi-transparent inactive tabs in fullscreen
 :root[sizemode="fullscreen"]:not([inDOMFullscreen="true"]) #TabsToolbar {
   background-color: Window !important;
 }
+*/
 
 /* Hide close window button in fullscreen. */
 :root[sizemode="fullscreen"] .titlebar-buttonbox-container {
@@ -19,6 +20,12 @@
 #navigator-toolbox {
   transition: margin-top 0.2s ease !important;
 }
+
+/* Hide tab title tooltip on hover
+#tabbrowser-tab-tooltip {
+  display: none !important;
+}
+*/
 
 /* Workaround: all bookmarks going to overflow/chevron after exiting DOM fullscreen
    (e.g. YouTube). Firefox 141+ regression — XUL flex sizing of PlacesToolbarItems
@@ -61,14 +68,25 @@
   display: none !important;
 }
 
+/* Search engine switcher popup — remove header and footer */
+.searchmode-switcher-popup-description,
+.searchmode-switcher-popup-footer-separator,
+.searchmode-switcher-popup-search-settings-button {
+  display: none !important;
+}
+
 /* Hide link URL status panel (bottom-left hover tooltip) */
 #statuspanel {
   display: none !important;
 }
 
-/* Hide back and forward buttons */
-#back-button,
-#forward-button {
+/* Hide search engine button while current tab is loading */
+#navigator-toolbox:has(.tabbrowser-tab[visuallyselected][busy]) .searchmode-switcher {
+  display: none !important;
+}
+
+/* Hide back button */
+#back-button{
   display: none !important;
 }
 
@@ -78,7 +96,8 @@
 #toolbar-context-menu menuseparator,
 #placesContext menuseparator,
 #PlacesChevronPopup menuseparator,
-#unified-extensions-context-menu menuseparator {
+#unified-extensions-context-menu menuseparator,
+.searchmode-switcher-popup menuseparator {
   display: none !important;
 }
 
@@ -87,6 +106,12 @@
 #scrollbutton-up ~ spacer,
 #scrollbutton-down {
   display: none !important;
+}
+
+/* Hide left separator on the first tab */
+#pinned-tabs-container > .tabbrowser-tab:first-child .tab-stack::before,
+#tabbrowser-arrowscrollbox > .tabbrowser-tab:first-child .tab-stack::before {
+  opacity: 0 !important;
 }
 
 /* ===== Page context menu ===================================================*/
@@ -133,9 +158,13 @@
 #context-imagetext,
 #context-viewimageinfo,
 #context-viewimagedesc,
+#context-sep-setbackground,
 #context-setDesktopBackground {
   display: none !important;
 }
+
+
+
 
 /* Text/editing */
 #context-undo,
@@ -146,7 +175,6 @@
 #context-paste-no-formatting,
 #context-delete,
 #context-selectall,
-#context-reveal-password,
 #context-print-selection {
   display: none !important;
 }
@@ -158,7 +186,8 @@
   display: none !important;
 }
 
-/* General — keep only savepage and translate-selection */
+/* General — keep only translate-selection */
+#context-savepage,
 #context-take-screenshot,
 #context-searchselect,
 #context-searchselect-private,
@@ -166,7 +195,6 @@
 #context-add-engine,
 #context-viewpartialsource-selection,
 #context-viewsource,
-#context-inspect,
 #context-inspect-a11y,
 #context-sendpagetodevice {
   display: none !important;
@@ -176,6 +204,7 @@
 #frame {
   display: none !important;
 }
+
 
 /* ===== Tab context menu ====================================================*/
 
@@ -309,19 +338,6 @@ menuseparator[contexttype="fullscreen"] {
 }
 
 /* Enable option to edit bookmark URLs under Add Bookmark (blue star) menu */
-/*
 .editBMPanel_locationRow {
   display: initial !important;
 }
-*/
-
-/* Disable Email Image/Audio/Video and Set as Desktop Background context menu items */
-/*
-#context-sendimage,
-#context-sendvideo,
-#context-sendaudio,
-#context-sep-setbackground,
-#context-setDesktopBackground {
-  display: none !important;
-}
-*/
