@@ -1,4 +1,3 @@
-"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
 # Arrow key navigation that preserves filters
 [[mgr.prepend_keymap]]
@@ -43,7 +42,7 @@ desc = "Navigate to hovered file's directory"
 # Smart tab navigation
 [[mgr.prepend_keymap]]
 on   = "<C-Right>"
-run  = [ "plugin smart-tab", "plugin autosave" ]
+run  = [ "plugin custom-filter -- clear", "plugin smart-tab", "plugin autosave" ]
 desc = "Go to next tab or create new tab if on last"
 
 # ALL letter keys for immediate filtering
@@ -370,8 +369,8 @@ desc = "Toggle media preview metadata"
 keymap = [
 
     # Navigation history
-    { on = "[", run = "back", desc = "Go back to previous directory" },
-    { on = "]", run = "forward", desc = "Go forward to next directory" },
+    { on = "<A-Left>", run = "back", desc = "Go back to previous directory" },
+    { on = "<A-Right>", run = "forward", desc = "Go forward to next directory" },
 
     { on = "<Esc>", run = ["escape", "unyank", "plugin custom-filter -- clear"],             desc = "Exit visual mode, clear selection, or cancel search" },
     { on = "<C-q>",     run = "quit",               desc = "Quit the process" },
@@ -414,7 +413,7 @@ keymap = [
     { on = [ ",", "s" ], run = [ "sort size --reverse", "linemode size" ],      desc = "Sort by size" },
 
     # Tabs
-    { on = "<C-Left>", run = [ "tab_switch -1 --relative", "plugin autosave" ], desc = "Switch to previous tab" },
+    { on = "<C-Left>", run = [ "plugin custom-filter -- clear", "tab_switch -1 --relative", "plugin autosave" ], desc = "Switch to previous tab" },
     { on = "<C-S-Left>", run = [ "tab_swap -1", "plugin autosave" ], desc = "Swap current tab with previous tab" },
     { on = "<C-S-Right>", run = [ "tab_swap 1", "plugin autosave" ],  desc = "Swap current tab with next tab" },
     { on = "<C-w>", run = [ "close", "plugin autosave" ],              desc = "Close the current tab, or quit if it's last" },

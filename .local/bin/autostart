@@ -22,7 +22,7 @@ wayland_display() {
 case "${1:-}" in
   -w)
     start mako
-    start cclipd -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
+    start cclipd -c 5000 -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
     wayland_display
     ;;
   -gw)

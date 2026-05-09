@@ -1,5 +1,3 @@
-"$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
-
 [mgr]
 ratio          = [ 1, 4, 3 ]
 sort_by        = "natural"
@@ -12,7 +10,6 @@ show_hidden    = true
 show_symlink   = true
 scrolloff      = 10
 mouse_events   = [ "click", "scroll", "touch", "move", "drag" ]
-title_format   = "Yazi"
 
 [preview]
 wrap            = "no"
@@ -65,8 +62,11 @@ rules = [
 ]
 
 [tasks]
-micro_workers    = 12
-macro_workers    = 12
+file_workers     = 12
+plugin_workers   = 12
+fetch_workers    = 12
+preload_workers  = 12
+process_workers  = 12
 bizarre_retry    = 3
 image_alloc      = 1073741824
 image_bound      = [ 0, 0 ]
@@ -76,22 +76,22 @@ suppress_preload = true
 
 
 [[plugin.prepend_fetchers]]
-id  = "git"
+group = "git"
 url = "*"
 run = "git"
 
 [[plugin.prepend_fetchers]]
-id  = "git"
+group = "git"
 url = "*/"
 run = "git"
 
 [[plugin.prepend_fetchers]]
-id  = "myfiles"
+group = "myfiles"
 url = "*"
 run = "myfiles"
 
 [[plugin.prepend_fetchers]]
-id  = "myfiles"
+group = "myfiles"
 url = "*/"
 run = "myfiles"
 

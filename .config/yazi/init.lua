@@ -1,3 +1,8 @@
+ps.sub("ind-app-title", function(args)
+	args.value = "Yazi"
+	return args
+end)
+
 require("custom-filter"):setup()
 require("recycle-bin"):setup()
 require("autosave"):setup({})
