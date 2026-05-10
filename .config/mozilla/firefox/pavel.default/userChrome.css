@@ -5,11 +5,11 @@
 /** Add your custom styles below **********************************************/
 
 
-/* Fix semi-transparent inactive tabs in fullscreen
+/* Fix semi-transparent inactive tabs in fullscreen */
 :root[sizemode="fullscreen"]:not([inDOMFullscreen="true"]) #TabsToolbar {
   background-color: Window !important;
 }
-*/
+
 
 /* Hide close window button in fullscreen. */
 :root[sizemode="fullscreen"] .titlebar-buttonbox-container {
