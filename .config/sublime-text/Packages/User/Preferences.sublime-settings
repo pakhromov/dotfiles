@@ -3,8 +3,8 @@
 	"hardware_acceleration": "none", //opengl, none
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
-	"theme": "GitHub Adaptive.sublime-theme",
-	"color_scheme": "Packages/Theme - Cyanide/Cyanide - Wood - Contrasted.tmTheme",
+	"theme": "Custom.sublime-theme",
+	"color_scheme": "Packages/Colorscheme/Cyanide - Wood - Contrasted.tmTheme",
 	"dark_theme": "Default Dark.sublime-theme",
 	"light_theme": "Default.sublime-theme",
 	"highlight_modified_tabs": true,

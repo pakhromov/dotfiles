@@ -1,27 +1,21 @@
 {
 	"bootstrapped": true,
+	"submit_usage": false,
+	"auto_upgrade_frequency": 24,
 	"in_process_packages":
 	[
 	],
 	"installed_packages":
 	[
-		"Add Folder To Project",
 		"All Autocomplete",
 		"AlternativeAutocompletion",
 		"BracketHighlighter",
-		"Clickable URLs",
 		"Compare Side-By-Side",
-		"FileTabRename",
 		"FontCycler",
-		"GitHub Theme",
+		"INI",
 		"KDL",
 		"Package Control",
-		"QColor",
 		"SideBarTools",
-		"Splunk Conf File Syntax Highlighting",
-		"Status Bar File Size",
-		"Statusbar Path",
-		"Theme - Cyanide",
-		"WordingStatus",
+		"WordHighlight",
 	],
 }

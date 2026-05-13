@@ -42,7 +42,6 @@ clone_dotfiles() {
     git clone https://github.com/black7375/Firefox-UI-Fix "$PROFILE_DIR/chrome" -b photon-style
     cp "$PROFILE_DIR/userChrome.css" "$PROFILE_DIR/chrome/userChrome.css"
     cp "$PROFILE_DIR/prefs-initial.js" "$PROFILE_DIR/prefs.js"
-    cat "$PROFILE_DIR/chrome/user.js" "$PROFILE_DIR/user-overrides.js" > "$PROFILE_DIR/user.js"
 
     echo "==> Cloning zsh plugins..."
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"

@@ -1,4 +1,7 @@
 // SideBarTools Settings - User
 {
     "difftool": false,
+    "tab_context": true,
+    "edit_command": false,
+    "posix_copy_command": true
 }

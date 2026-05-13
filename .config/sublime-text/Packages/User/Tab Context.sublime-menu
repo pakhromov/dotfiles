@@ -1,0 +1,4 @@
+[
+	{ "command": "toggle_inline_diff_by_index", "args": {"group": -1, "index": -1}, "caption": "Show Unsaved Changes" },
+	{ "command": "open_dir", "args": {"dir": "$file_path", "file": "$file_name"}, "caption": "Open Containing Folder…" },
+]

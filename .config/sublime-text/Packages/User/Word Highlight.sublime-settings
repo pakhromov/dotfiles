@@ -1,0 +1,8 @@
+{
+    "mark_occurrences_on_gutter" : false,
+    "draw_outlined" : true,
+    "show_word_highlight_status_bar_message_length" : 10,
+    "highlight_when_selection_is_empty": true,
+    "highlight_word_under_cursor_when_selection_is_empty": false,
+    "highlight_non_word_characters": true,
+}

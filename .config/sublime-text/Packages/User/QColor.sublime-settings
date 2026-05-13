@@ -1,3 +1,7 @@
 {
-	"phantoms_enabled": true
+	"phantoms_enabled": true,
+	"show_on_minimap": false,
+	"underline_style": "stippled",
+  	"underline_color": "green",
+  	"named_colors": true
 }
