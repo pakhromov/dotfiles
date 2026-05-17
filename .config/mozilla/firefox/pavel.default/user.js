@@ -137,6 +137,7 @@ user_pref("userContent.page.proton",           true); // Need proton_color
 user_pref("media.ffmpeg.vaapi.enabled",                   true);
 user_pref("media.hardware-video-decoding.force-enabled",  true);
 
+//personal settings
 user_pref("identity.fxaccounts.enabled", true);
 user_pref("browser.download.autohideButton",        false);
 user_pref("browser.tabs.tabMinWidth",               100);
@@ -179,10 +180,7 @@ user_pref("browser.download.useDownloadDir",            true);
 user_pref("browser.download.start_downloads_in_tmp_dir", true);
 user_pref("browser.download.open_pdf_attachments_inline", true);
 user_pref("permissions.default.desktop-notification", 1);
-user_pref("permissions.default.shortcuts", 2);
-user_pref("media.hardwaremediakeys.enabled", false);
 user_pref("media.eme.enabled", true);
-
 
 user_pref("browser.tabs.dragDrop.createGroup.enabled", false);
 user_pref("browser.tabs.groups.smart.enabled", false);
@@ -296,17 +294,17 @@ user_pref("network.connectivity-service.enabled", false);
 
 
 //smoothfox
-//user_pref("apz.overscroll.enabled", true);
-//user_pref("general.smoothScroll", true);
-//user_pref("general.smoothScroll.msdPhysics.continuousMotionMaxDeltaMS", 12);
-//user_pref("general.smoothScroll.msdPhysics.enabled", true);
-//user_pref("general.smoothScroll.msdPhysics.motionBeginSpringConstant", 600);
-//user_pref("general.smoothScroll.msdPhysics.regularSpringConstant", 650);
-//user_pref("general.smoothScroll.msdPhysics.slowdownMinDeltaMS", 25);
-//user_pref("general.smoothScroll.msdPhysics.slowdownMinDeltaRatio", "2");
-//user_pref("general.smoothScroll.msdPhysics.slowdownSpringConstant", 250);
-//user_pref("general.smoothScroll.currentVelocityWeighting", "1");
-//user_pref("general.smoothScroll.stopDecelerationWeighting", "1");
+user_pref("apz.overscroll.enabled", true);
+user_pref("general.smoothScroll", true);
+user_pref("general.smoothScroll.msdPhysics.continuousMotionMaxDeltaMS", 12);
+user_pref("general.smoothScroll.msdPhysics.enabled", true);
+user_pref("general.smoothScroll.msdPhysics.motionBeginSpringConstant", 600);
+user_pref("general.smoothScroll.msdPhysics.regularSpringConstant", 650);
+user_pref("general.smoothScroll.msdPhysics.slowdownMinDeltaMS", 25);
+user_pref("general.smoothScroll.msdPhysics.slowdownMinDeltaRatio", "2");
+user_pref("general.smoothScroll.msdPhysics.slowdownSpringConstant", 250);
+user_pref("general.smoothScroll.currentVelocityWeighting", "1");
+user_pref("general.smoothScroll.stopDecelerationWeighting", "1");
 
 
 
@@ -362,6 +360,8 @@ user_pref("layers.gpu-process.enabled", false);
 user_pref("network.process.enabled", false);
 user_pref("dom.ipc.keepProcessesAlive.privilegedabout", 0);
 user_pref("dom.ipc.processPrelaunch.enabled", true);
-//user_pref("browser.opaqueResponseBlocking", false);
-//user_pref("browser.opaqueResponseBlocking.javascriptValidator", false);
+user_pref("browser.opaqueResponseBlocking", false);
+user_pref("browser.opaqueResponseBlocking.javascriptValidator", false);
+// Allow unsigned local extensions (required for profile/extensions/ auto-install)
+user_pref("xpinstall.signatures.required",               false);
 

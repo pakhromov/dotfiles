@@ -11,7 +11,6 @@ hidden_file_extensions:
   - gitmodules
   - gitattributes
   - env
-first_line_match: '^(\s*#|\[[^\]]+\]|\w[\w.\-]*\s*[=:])'
 scope: source.config
 
 contexts:
