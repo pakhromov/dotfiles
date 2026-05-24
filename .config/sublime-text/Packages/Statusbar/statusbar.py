@@ -1,5 +1,4 @@
 from datetime import datetime
-import os
 import sublime
 import sublime_plugin
 
@@ -10,28 +9,12 @@ def plugin_loaded():
             StatusBarPlugin().on_activated(view)
 
 
-def _fmt_size(n):
-    for unit in ('B', 'KB', 'MB', 'GB', 'TB'):
-        if n < 1024 or unit == 'TB':
-            return f'{int(n)} {unit}' if unit == 'B' else f'{n:.1f} {unit}'
-        n /= 1024
-
-
 class StatusBarPlugin(sublime_plugin.EventListener):
     _ticking = set()
 
     def on_activated(self, view):
-        view.erase_status('  time')
-        view.erase_status('z_path')
-        view.erase_status('WordCountStatus')
         self._render(view)
         self._ensure_ticking(view)
-
-    def on_load(self, view):
-        self._render(view)
-
-    def on_modified(self, view):
-        self._render(view)
 
     def on_post_save(self, view):
         self._render(view)
@@ -52,21 +35,10 @@ class StatusBarPlugin(sublime_plugin.EventListener):
         sublime.set_timeout(lambda: self._tick(view), 60000)
 
     def _render(self, view):
-        time_str = datetime.now().strftime("%H:%M")
-        lines = view.rowcol(view.size())[0] + 1
-
-        path = view.file_name()
-        size_str = ''
-        if path:
-            try:
-                size_str = _fmt_size(os.path.getsize(path))
-            except OSError:
-                pass
-
         sep = '     '
-        stats = f'{lines} Lines, {size_str}' if size_str else f'{lines} Lines'
-        parts = [f' {time_str}', stats]
+        time_str = datetime.now().strftime("%H:%M")
+        path = view.file_name()
         if path:
-            parts.append(path + '     ')
-
-        view.set_status('  statusbar', sep.join(parts))
+            view.set_status('  statusbar', f'  {time_str}{sep}{path}{sep}')
+        else:
+            view.set_status('  statusbar', f'  {time_str}')

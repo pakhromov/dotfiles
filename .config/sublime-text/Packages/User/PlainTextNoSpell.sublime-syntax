@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-name: Plain Text (no spellcheck)
+name: Plain Text
 file_extensions:
   - nt
 scope: text.nospell

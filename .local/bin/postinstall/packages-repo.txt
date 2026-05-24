@@ -81,9 +81,9 @@ telegram-desktop
 tesseract-data-swe
 trash-cli
 tree
-wayfire
-wayfire-plugins-extra
-wcm
+wayfire-git
+wayfire-plugins-extra-git
+wcm-git
 wget
 wireplumber
 wl-clipboard
