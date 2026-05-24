@@ -120,18 +120,6 @@
         "type": "separator"
       },
       {
-        "id": "6a1a89c3-b24f-4898-8afc-fbe42f30d82e",
-        "type": "skills",
-        "metadata": {
-          "mode": "list",
-          "hideWhenEmpty": "false"
-        }
-      },
-      {
-        "id": "44ca6fed-1874-43d6-9331-5b61574cb90e",
-        "type": "separator"
-      },
-      {
         "id": "814c5881-5afd-4a48-9a2c-f43b34484270",
         "type": "compaction-counter"
       },
@@ -140,9 +128,23 @@
         "type": "separator"
       },
       {
-        "id": "d1529eff-3bc9-46aa-997b-fae74f73d1b3",
-        "type": "session-cost",
-        "rawValue": true
+        "id": "6f905f92-d7bf-4ac2-9bcf-3af44b66d587",
+        "type": "extra-usage-remaining",
+        "metadata": {
+          "hideIfDisabled": "true"
+        }
+      },
+      {
+        "id": "1b1a2c42-fc71-4baa-9f46-bdc8a1e866f3",
+        "type": "separator"
+      },
+      {
+        "id": "20ed2650-d899-4c84-b86e-74fbacf88f0a",
+        "type": "extra-usage-utilization",
+        "metadata": {
+          "display": "time",
+          "hideIfDisabled": "true"
+        }
       }
     ],
     [
@@ -165,6 +167,15 @@
       {
         "id": "7900cd6f-8185-4260-b423-6666f1934b07",
         "type": "weekly-reset-timer"
+      },
+      {
+        "id": "3ae10996-dce5-4e9f-9da9-9cf720cc807e",
+        "type": "separator"
+      },
+      {
+        "id": "cd078637-24a6-4d79-a586-0772aa4e38fc",
+        "type": "session-cost",
+        "rawValue": true
       }
     ]
   ],

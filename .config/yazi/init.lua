@@ -30,9 +30,6 @@ require("git"):setup {
     -- Order of status signs showing in the linemode
     order = 1600,
 }
-require("myfiles"):setup {
-    order = 1500,
-}
 
 local tokyo_night_theme = require("yatline-tokyo-night"):setup("night") -- storm moon
 local gruvbox_material_theme = require("yatline-gruvbox-material"):setup({ mode = "dark", toughness = "hard" })  -- "hard" | "soft" | "medium"

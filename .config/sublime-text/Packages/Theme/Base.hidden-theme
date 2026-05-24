@@ -1,5 +1,85 @@
 {
     "extends": "Adaptive.sublime-theme",
+    "variables": {
+        "accent": "var(--accent)",
+        "background": "var(--background)",
+        "foreground": "var(--foreground)",
+        "fontSizeSm": 11,
+        "fontSizeMd": 12,
+        "fontSizeLg": 14,
+        "fontSizeHuge": 24,
+        "fontFace": "system",
+        "titleBarBackground": "var(--background)",
+        "titleBarForeground": "var(--foreground)",
+        "tooltipBackground": "var(foreground)",
+        "tooltipForeground": "var(background)",
+        "sidebarLabelFontSize": 13,
+        "sidebarLabelPadding": [16, 6],
+        "sidebarBackground": "color(var(foreground) blend(var(background) 5%))",
+        "sidebarBorder": "color(var(background) blend(var(foreground) 90%))",
+        "sidebarHeadingForeground": "var(--foreground)",
+        "sidebarLabelForeground": "var(--foreground)",
+        "sidebarLabelHoverForeground": "var(--foreground)",
+        "sidebarLabelSelectedForeground": "var(--foreground)",
+        "sidebarFolderForeground": "var(--foreground)",
+        "sidebarFolderExpandedForeground": "var(accent)",
+        "treeActiveSelectionBackground": "color(var(background) blend(var(foreground) 90%))",
+        "tabBold": false,
+        "tabLabelFontSize": 12,
+        "tabInactiveForeground": "var(--foreground)",
+        "tabInactiveBackground": "color(var(foreground) blend(var(background) 5%))",
+        "tabBorder": "color(var(background) blend(var(foreground) 90%))",
+        "tabActiveForeground": "var(--foreground)",
+        "tabActiveBackground": "var(--background)",
+        "tabSelectedBorderBorder": "var(--accent)",
+        "tabButtonForeground": "var(--foreground)",
+        "gridBorder": "color(var(background) blend(var(foreground) 90%))",
+        "overlayBorder": "var(--background)",
+        "overlayControlBorder": "color(var(background) blend(var(foreground) 90%))",
+        "panelControlBackground": "color(var(foreground) blend(var(background) 5%))",
+        "panelControlForeground": "var(--foreground)",
+        "panelControlBorder": "color(var(background) blend(var(foreground) 90%))",
+        "panelRowBackground": "color(var(foreground) blend(var(background) 5%))",
+        "panelRowForeground": "var(--foreground)",
+        "panelRowLabelForeground": "var(--foreground)",
+        "panelRowSelectedBackground": "color(var(background) blend(var(foreground) 90%))",
+        "panelRowSelectedForeground": "var(--foreground)",
+        "panelRowMatchForeground": "var(--accent)",
+        "panelRowSelectedMatchForeground": "var(--accent)",
+        "panelRowLinkForeground": "var(--accent)",
+        "autoCompleteBackground": "color(var(foreground) blend(var(background) 5%))",
+        "autoCompleteForeground": "var(--foreground)",
+        "autoCompleteSelectedBackground": "#3392FF44",
+        "autoCompleteSelectedForeground": "var(--foreground)",
+        "autoCompleteMatchForeground": "var(accent)",
+        "autoCompleteSelectedMatchForeground": "var(accent)",
+        "inputBackground": "color(var(foreground) blend(var(background) 5%))",
+        "inputBorder": "color(var(background) blend(var(foreground) 90%))",
+        "inputForeground": "var(--foreground)",
+        "buttonForeground": "var(--foreground)",
+        "buttonBackground": "color(var(--foreground) alpha(0.02))",
+        "buttonBorder": "color(var(background) blend(var(foreground) 90%))",
+        "buttonHoverBackground": "color(var(--foreground) alpha(0.1))",
+        "buttonPressedBackground": "color(var(--foreground) alpha(0.2))",
+        "buttonSelectedBackground": "color(var(--foreground) alpha(0.08))",
+        "buttonIconForeground": "var(foreground)",
+        "buttonIconSelectedForeground": "var(accent)",
+        "statusBarForeground": "var(--foreground)",
+        "statusBarHoverForeground": "var(--foreground)",
+        "statusBarBackground": "var(--background)",
+        "statusBarBorder": "color(var(background) blend(var(foreground) 90%))",
+        "progressBarBackground": "var(--accent)",
+        "scrollBar": "#484F5833",
+        "scrollTrack": "#484F5855",
+        "vcsAnnotationBorder": "color(var(background) blend(var(foreground) 90%))",
+        "vcsUntracked": "#57ab5a",
+        "vcsModified": "#c69026",
+        "vcsDeleted": "#e5534b",
+        "vcsIgnored": "color(var(foreground) blend(var(background) 50%))",
+        "vcsUnmerged": "#cc6b2c",
+        "vcsStaged": "#966600",
+        "vcsMissing": "#cc6b2c"
+    },
     "rules": [
         {
             "class": "title_bar",
@@ -143,28 +223,7 @@
         },
         {
             "class": "show_tabs_dropdown_button",
-            "layer0.texture": "Theme/textures/navigation/more.png",
-            "layer0.tint": "var(tabButtonForeground)",
-            "layer0.opacity": {
-                "target": 0.5,
-                "speed": 5,
-                "interpolation": "smoothstep"
-            },
-            "content_margin": [
-                15,
-                12
-            ]
-        },
-        {
-            "class": "show_tabs_dropdown_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.opacity": {
-                "target": 1,
-                "speed": 5,
-                "interpolation": "smoothstep"
-            }
+            "content_margin": 0
         },
         {
             "class": "tabset_control",
@@ -184,7 +243,7 @@
             "tint_index": 0,
             "tab_overlap": 1,
             "tab_width": 80,
-            "tab_height": 40,
+            "tab_height": 35,
             "mouse_wheel_switch": false,
             "tint_modifier": "var(tabInactiveBackground)"
         },
@@ -219,7 +278,7 @@
             "tint_modifier": "var(tabInactiveBackground)",
             "content_margin": [
                 20,
-                0
+                2
             ]
         },
         {
@@ -259,6 +318,20 @@
             ]
         },
         {
+            "class": "tab_control",
+            "attributes": [
+                "dirty"
+            ],
+            "layer3.tint": "var(vcsModified)",
+            "layer3.inner_margin": [
+                0,
+                1,
+                0,
+                0
+            ],
+            "layer3.opacity": 1
+        },
+        {
             "class": "tab_label",
             "font.face": "var(fontFace)",
             "font.size": "var(tabLabelFontSize)",
@@ -278,128 +351,8 @@
             "fg": "var(tabActiveForeground)"
         },
         {
-            "class": "tab_control",
-            "settings": [
-                "!show_tab_close_buttons_on_left"
-            ],
-            "content_margin": [
-                20,
-                4,
-                10,
-                4
-            ]
-        },
-        {
-            "class": "tab_control",
-            "close_button_side": "left",
-            "settings": [
-                "show_tab_close_buttons_on_left"
-            ],
-            "content_margin": [
-                10,
-                4,
-                20,
-                4
-            ]
-        },
-        {
-            "class": "tab_control",
-            "settings": [
-                "!show_tab_close_buttons"
-            ],
-            "content_margin": [
-                20,
-                4
-            ]
-        },
-        {
             "class": "tab_close_button",
-            "settings": [
-                "show_tab_close_buttons"
-            ],
-            "content_margin": [
-                8,
-                8
-            ],
-            "layer0.texture": "Theme/textures/actions/close.png",
-            "layer0.tint": "var(tabInactiveForeground)",
-            "layer0.inner_margin": [
-                4,
-                4
-            ]
-        },
-        {
-            "class": "tab_close_button",
-            "settings": [
-                "show_tab_close_buttons"
-            ],
-            "parents": [
-                {
-                    "class": "tab_control",
-                    "attributes": [
-                        "selected"
-                    ]
-                }
-            ],
-            "layer0.tint": "var(tabActiveForeground)"
-        },
-        {
-            "class": "tab_close_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.tint": "var(accent)"
-        },
-        {
-            "class": "tab_close_button",
-            "attributes": [
-                "!hover"
-            ],
-            "parents": [
-                {
-                    "class": "tab_control",
-                    "attributes": [
-                        "dirty"
-                    ]
-                }
-            ],
-            "layer0.texture": "Theme/textures/tab/dirty_dot.png"
-        },
-        {
-            "class": "tab_close_button",
-            "parents": [
-                {
-                    "class": "tab_control",
-                    "attributes": [
-                        "added"
-                    ]
-                }
-            ],
-            "layer0.tint": "var(vcsUntracked)"
-        },
-        {
-            "class": "tab_close_button",
-            "parents": [
-                {
-                    "class": "tab_control",
-                    "attributes": [
-                        "modified"
-                    ]
-                }
-            ],
-            "layer0.tint": "var(vcsModified)"
-        },
-        {
-            "class": "tab_close_button",
-            "parents": [
-                {
-                    "class": "tab_control",
-                    "attributes": [
-                        "deleted"
-                    ]
-                }
-            ],
-            "layer0.tint": "var(vcsDeleted)"
+            "content_margin": 0
         },
         {
             "class": "grid_layout_control",

@@ -25,8 +25,10 @@
 				<string>#6A6A6A</string>
 				<key>lineHighlight</key>
 				<string>#111111</string>
+				<key>find_highlight</key>
+				<string>#c69026</string>
 				<key>selection</key>
-				<string>#252525</string>
+				<string>#264F78</string>
 			</dict>
 		</dict>
 		<dict>

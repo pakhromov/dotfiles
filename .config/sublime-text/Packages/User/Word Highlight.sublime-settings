@@ -5,4 +5,8 @@
     "highlight_when_selection_is_empty": true,
     "highlight_word_under_cursor_when_selection_is_empty": false,
     "highlight_non_word_characters": true,
+    "highlight_on_multiple_selections": false,
+    "highlight_on_multiline_selection": false,
+    "min_selection_length": 2,
+    "color_scope_name": "region.yellowish",
 }

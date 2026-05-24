@@ -3,7 +3,7 @@
 	"hardware_acceleration": "none", //opengl, none
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
-	"theme": "Custom.sublime-theme",
+	"theme": "Base.hidden-theme",
 	"color_scheme": "Packages/Colorscheme/Cyanide - Wood - Contrasted.tmTheme",
 	"dark_theme": "Default.sublime-theme",
 	"light_theme": "Adaptive.sublime-theme",
@@ -13,9 +13,9 @@
 	"show_sidebar_button": true,
 	"show_tab_close_buttons": true,
 	"show_line_endings": true,
-	"show_line_column": false,
-	"fold_buttons": false,
-	"margin": 6,
+	"show_line_column": "disabled",
+	"fade_fold_buttons": true,
+	"margin": 4,
 	"show_encoding": true,
 	"hide_tab_scrolling_buttons": true,
 	"hide_new_tab_button": false,
@@ -107,12 +107,13 @@
 	"caret_extra_bottom": 4,
 	"caret_extra_width": 1,
 	"highlight_line": true,
+	"match_selection": false,
 	"line_padding_bottom": 0,
 	"line_padding_top": 0,
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": "all",
 	"trim_only_modified_white_space": false,
-	"ensure_newline_at_eof_on_save": true,
+	"ensure_newline_at_eof_on_save": false,
 	"bold_folder_labels": true,
 	"word_separators": "./\\()\"':,.;<>~!@#$%^&*|+=[]{}`~?",
 	"sub_word_separators": "_",
@@ -122,9 +123,9 @@
 	"match_brackets_angle": true,
 	"word_wrap": true,
 	"wrap_width": 0,
-	"spell_check": false,
-	"show_spelling_errors": true,
-	"spelling_selector": "markup.raw, source string.quoted - punctuation - meta.preprocessor.include, source comment - source comment.block.preprocessor, -(source, constant, keyword, storage, support, variable, markup.underline.link, meta.tag)",
+	"spell_check": true,
+	"show_spelling_errors": false,
+	"spelling_selector": "(text.html.markdown, text.tex.latex, text.plain, text.restructuredtext, text.html.textile, text.git-commit) - (markup.raw, markup.underline.link, meta.tag, support.function, constant.character)",
 	"auto_complete_delay": 50,
 	"tab_completion": true,
 	"auto_complete": true,
@@ -135,6 +136,7 @@
 	"auto_complete_use_history": false,
 	"auto_complete_preserve_order": "some",
 	"hide_pointer_while_typing": true,
+	"copy_with_empty_selection": false,
 	"close_find_after_find_all": false,
 	"close_find_after_replace_all": false,
 	"drag_text": false,
@@ -142,74 +144,4 @@
 	[
 		"Vintage",
 	],
-	/*"gnc_001": false,*/
-	/*"gnc_002": true,*/
-	/*"gn_overlay_scroll_bars": true,*/
-	/*"gn_title_bar": true,*/
-	/*"gnc_001": false,*/
-	/*"gnc_002": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m09": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnwidg1": true,*/
-	/*"gn_hide_tab_dropdown": true,*/
-	/*"gn_sidebar_box": true,*/
-	/*"gnwidgo": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m01": true,*/
-	/*"gnc_w5m12": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m09": true,*/
-	/*"gnc_w5m12": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m00": true,*/
-	/*"gnc_w5m13": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m02": true,*/
-	/*"gnc_w5m13": true,*/
-	/*"gnc_001": false,*/
-	/*"gnc_002": false,*/
-	/*"gnc_m05": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_w5m13": true,*/
-	/*"gnc_h14": true,*/
-	/*"gnc_m07": true,*/
-	/*"gnc_w5m13": true,*/
-	/*"gnc_001": false,*/
-	/*"gnc_002": false,*/
-	/*"gnc_m01": true,*/
-	/*"gnc_w5m14": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m06": true,*/
-	/*"gnc_w5m10": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m07": true,*/
-	/*"gnc_w5m10": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m09": true,*/
-	/*"gnc_w5m10": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m00": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m00": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m03": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_m04": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m05": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m06": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_h16": true,*/
-	/*"gnc_m07": true,*/
-	/*"gnc_w5m11": true,*/
-	/*"gnc_h01": true,*/
-	/*"gnc_m00": true,*/
-	/*"gnc_w6m13": true,*/
 }

@@ -1,23 +1,12 @@
-import subprocess
-import threading
+import webbrowser
 import sublime
 import sublime_plugin
 
 
 URL_REGEX = r'\bhttps?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;\']*[-A-Za-z0-9+&@#/%=~_(|]'
 _urls_for_view = {}
+_pending_open = {}
 
-
-def open_url(url):
-    def _run():
-        p = subprocess.Popen(
-            ['sh', '-c', 'xdg-open "$1" &', '_', url],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        p.wait()
-    threading.Thread(target=_run, daemon=True).start()
 
 
 class UrlHighlighter(sublime_plugin.EventListener):
@@ -27,6 +16,33 @@ class UrlHighlighter(sublime_plugin.EventListener):
 
     def on_close(self, view):
         _urls_for_view.pop(view.id(), None)
+        _pending_open.pop(view.id(), None)
+
+    def on_selection_modified(self, view):
+        if view.id() in _pending_open and not all(s.empty() for s in view.sel()):
+            _pending_open.pop(view.id(), None)
+
+    def on_post_text_command(self, view, command_name, args):
+        if command_name != 'drag_select':
+            return
+        vid = view.id()
+        _pending_open.pop(vid, None)
+        if args and (args.get('extend') or args.get('additive') or args.get('by')):
+            return
+        if not view.sel():
+            return
+        pt = view.sel()[0].begin()
+        for region in _urls_for_view.get(vid, []):
+            if region.begin() < pt < region.end():
+                url = view.substr(region)
+                _pending_open[vid] = url
+                sublime.set_timeout(lambda: self._open_pending(vid, url), 300)
+                return
+
+    def _open_pending(self, vid, url):
+        if _pending_open.get(vid) == url:
+            _pending_open.pop(vid, None)
+            webbrowser.open(url)
 
     def _update(self, view):
         if view.size() > 1048576:
@@ -50,6 +66,6 @@ class OpenUrlAtCursorCommand(sublime_plugin.TextCommand):
             return
         pt = self.view.sel()[0].begin()
         for region in _urls_for_view.get(self.view.id(), []):
-            if region.begin() <= pt < region.end():
-                open_url(self.view.substr(region))
+            if region.begin() < pt < region.end():
+                webbrowser.open(self.view.substr(region))
                 return
