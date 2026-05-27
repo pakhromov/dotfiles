@@ -591,7 +591,10 @@ function remove_playlist_keybinds()
         "pl_up", "pl_down", "pl_up_shift", "pl_down_shift",
         "pl_up_ctrl", "pl_down_ctrl", "pl_select", "pl_select_right",
         "pl_to_navigator", "pl_close", "pl_backspace", "pl_clear", "pl_handle_input",
-        "pl_wheel_up", "pl_wheel_down", "pl_rclick"
+        "pl_wheel_up", "pl_wheel_down",
+        "pl_ctrl_wheel_up", "pl_ctrl_wheel_down",
+        "pl_shift_wheel_up", "pl_shift_wheel_down",
+        "pl_rclick"
     }
     for _, b in pairs(binds) do mp.remove_key_binding(b) end
 end
@@ -665,9 +668,13 @@ function open_playlist()
         pl_pattern = ""; render_playlist()
     end)
     mp.add_forced_key_binding("any_unicode", "pl_handle_input", pl_handle_input, { repeatable = true, complex = true })
-    mp.add_forced_key_binding("wheel_up",    "pl_wheel_up",     function() pl_navigate(-1) end, { repeatable = true })
-    mp.add_forced_key_binding("wheel_down",  "pl_wheel_down",   function() pl_navigate(1) end,  { repeatable = true })
-    mp.add_forced_key_binding("MBTN_RIGHT",  "pl_rclick",       pl_select)
+    mp.add_forced_key_binding("wheel_up",        "pl_wheel_up",         function() pl_navigate(-1) end,          { repeatable = true })
+    mp.add_forced_key_binding("wheel_down",      "pl_wheel_down",       function() pl_navigate(1) end,           { repeatable = true })
+    mp.add_forced_key_binding("Ctrl+wheel_up",   "pl_ctrl_wheel_up",   function() pl_navigate(-1, "ctrl") end,  { repeatable = true })
+    mp.add_forced_key_binding("Ctrl+wheel_down", "pl_ctrl_wheel_down", function() pl_navigate(1,  "ctrl") end,  { repeatable = true })
+    mp.add_forced_key_binding("Shift+wheel_up",  "pl_shift_wheel_up",  function() pl_navigate(-1, "shift") end)
+    mp.add_forced_key_binding("Shift+wheel_down","pl_shift_wheel_down",function() pl_navigate(1,  "shift") end)
+    mp.add_forced_key_binding("MBTN_RIGHT",      "pl_rclick",          pl_select)
 end
 
 favcursor = 0
@@ -714,9 +721,13 @@ function add_keybinds()
     mp.add_forced_key_binding("BS",          "nav_backspace",    backspace,    { repeatable = true })
     mp.add_forced_key_binding("Ctrl+u",      "nav_clear",        clear_search)
     mp.add_forced_key_binding("any_unicode", "nav_handle_input", handle_input, { repeatable = true, complex = true })
-    mp.add_forced_key_binding("wheel_up",    "nav_wheel_up",     navup,        { repeatable = true })
-    mp.add_forced_key_binding("wheel_down",  "nav_wheel_down",   navdown,      { repeatable = true })
-    mp.add_forced_key_binding("MBTN_RIGHT",  "nav_rclick",       opendir)
+    mp.add_forced_key_binding("wheel_up",        "nav_wheel_up",         navup,                              { repeatable = true })
+    mp.add_forced_key_binding("wheel_down",      "nav_wheel_down",       navdown,                            { repeatable = true })
+    mp.add_forced_key_binding("Ctrl+wheel_up",   "nav_ctrl_wheel_up",   function() navigate(-1, "ctrl") end, { repeatable = true })
+    mp.add_forced_key_binding("Ctrl+wheel_down", "nav_ctrl_wheel_down", function() navigate(1,  "ctrl") end, { repeatable = true })
+    mp.add_forced_key_binding("Shift+wheel_up",  "nav_shift_wheel_up",  function() navigate(-1, "shift") end)
+    mp.add_forced_key_binding("Shift+wheel_down","nav_shift_wheel_down",function() navigate(1,  "shift") end)
+    mp.add_forced_key_binding("MBTN_RIGHT",      "nav_rclick",          opendir)
 end
 
 function suspend_navigator()
@@ -731,7 +742,10 @@ function suspend_navigator()
             'nav_up_shift', 'nav_down_shift',
             'nav_up_ctrl', 'nav_down_ctrl',
             'nav_backspace', 'nav_clear', 'nav_handle_input',
-            'nav_wheel_up', 'nav_wheel_down', 'nav_rclick'
+            'nav_wheel_up', 'nav_wheel_down',
+            'nav_ctrl_wheel_up', 'nav_ctrl_wheel_down',
+            'nav_shift_wheel_up', 'nav_shift_wheel_down',
+            'nav_rclick'
         }
         for _, bind in pairs(binds) do mp.remove_key_binding(bind) end
     end
