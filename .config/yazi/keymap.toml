@@ -250,6 +250,11 @@ run  = [ "cd ~/.config", "plugin autosave" ]
 desc = "Go to .config directory"
 
 [[mgr.prepend_keymap]]
+on   = "<A-S-c>"
+run  = [ "cd ~/.cache", "plugin autosave" ]
+desc = "Go to .cache directory"
+
+[[mgr.prepend_keymap]]
 on   = "D"
 run  = [ "cd ~/Downloads", "plugin autosave" ]
 desc = "Go to Downloads directory"
@@ -280,6 +285,21 @@ run  = [ "cd ~/.local", "plugin autosave" ]
 desc = "Go to .local directory"
 
 [[mgr.prepend_keymap]]
+on   = "T"
+run  = [ "cd /tmp", "plugin autosave" ]
+desc = "Go to /tmp directory"
+
+[[mgr.prepend_keymap]]
+on   = "B"
+run  = [ "cd ~/.local/bin", "plugin autosave" ]
+desc = "Go to .local/bin directory"
+
+[[mgr.prepend_keymap]]
+on   = "S"
+run  = [ "cd ~/.local/share", "plugin autosave" ]
+desc = "Go to .local/share directory"
+
+[[mgr.prepend_keymap]]
 on   = "O"
 run  = "plugin toggle-pane max-preview"
 desc = "Maximize or restore the preview pane"
@@ -305,7 +325,7 @@ run = "plugin recycle-bin -- restore"
 desc = "Restore from Trash"
 
 [[mgr.prepend_keymap]]
-on   = "T"
+on   = "<A-S-t>"
 run  = [ "cd ~/.local/share/Trash/files", "plugin autosave" ]
 desc = "Go to Trash directory"
 

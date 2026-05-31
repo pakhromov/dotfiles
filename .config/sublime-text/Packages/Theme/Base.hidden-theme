@@ -332,6 +332,20 @@
             "layer3.opacity": 1
         },
         {
+            "class": "tab_control",
+            "attributes": [
+                "deleted"
+            ],
+            "layer3.tint": "var(vcsDeleted)",
+            "layer3.inner_margin": [
+                0,
+                1,
+                0,
+                0
+            ],
+            "layer3.opacity": 1
+        },
+        {
             "class": "tab_label",
             "font.face": "var(fontFace)",
             "font.size": "var(tabLabelFontSize)",

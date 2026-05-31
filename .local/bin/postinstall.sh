@@ -72,7 +72,7 @@ clone_dotfiles() {
 
     echo "==> Cloning Sublime Text plugins..."
     git clone https://github.com/pakhromov/ClickableLinks                 "$HOME/.config/sublime-text/Packages/ClickableLinks"
-    git clone https://github.com/pakhromov/TabBarTools                    "$HOME/.config/sublime-text/Packages/TabBarTools"
+    git clone --branch personal https://github.com/pakhromov/TabBarTools  "$HOME/.config/sublime-text/Packages/TabBarTools"
     git clone https://github.com/pakhromov/ConfigHighlight                "$HOME/.config/sublime-text/Packages/ConfigHighlight"
     git clone https://github.com/pakhromov/WordHighlight                  "$HOME/.config/sublime-text/Packages/WordHighlight"
     git clone https://github.com/pakhromov/QColor                         "$HOME/.config/sublime-text/Packages/QColor"
