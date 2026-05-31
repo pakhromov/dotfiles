@@ -1,6 +1,7 @@
 {
 	"enable_telemetry": false,
 	"hardware_acceleration": "none", //opengl, none
+	"ui_scale": 1.0,
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
 	"theme": "Base.hidden-theme",

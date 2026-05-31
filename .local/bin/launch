@@ -21,7 +21,7 @@ export DBUS_SESSION_BUS_ADDRESS
 
 case "$compositor" in
     jay)   exec jay run </dev/null >/dev/null 2>&1 ;;
-    river) exec river -no-xwayland -c anvl </dev/null >/dev/null 2>&1 ;;
+    river) exec river -no-xwayland </dev/null >/dev/null 2>&1 ;;
     sway)  exec sway --unsupported-gpu </dev/null >/dev/null 2>&1 ;;
     *)     exec "$compositor" </dev/null >/dev/null 2>&1 ;;
 esac

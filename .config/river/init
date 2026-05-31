@@ -12,7 +12,7 @@ wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007
 
 # Super+Shift+Return to start an instance of foot (https://codeberg.org/dnkl/foot)
 riverctl map normal Super return spawn 'kitty --single-instance'
-riverctl map normal Super+Shift return spawn 'autostart_river'
+riverctl map normal Super+Shift return spawn 'autostart -w'
 riverctl map normal Super Z spawn subl
 
 # Super+D to launch rofi
