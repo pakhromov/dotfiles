@@ -59,9 +59,9 @@ output eDP-1 disable
 
 ### Windows defaults
 #default_border csd
-default_border pixel 2
-gaps inner 4
-gaps outer 20
+default_border pixel 0
+gaps inner 0
+gaps outer 0
 client.focused #15439e #4b4b4b #e0e0e0 #2e9ef4 #15439e
 client.focused_inactive #595959 #3b3b3b #e0e0e0 #2e9ef4 #595959
 client.unfocused #595959 #1b1b1b #e0e0e0 #2e9ef4 #595959
@@ -74,7 +74,7 @@ client.unfocused #595959 #1b1b1b #e0e0e0 #2e9ef4 #595959
 for_window [all] inhibit_idle fullscreen
 
 # Layout settings
-layout_default_width 0.5
+layout_default_width 1.0
 layout_default_height 1.0
 layout_widths [0.33333333 0.5 0.666666667 1.0]
 layout_heights [0.33333333 0.5 0.666666667 1.0]
@@ -118,12 +118,9 @@ animations {
     bindsym $mod+Return exec $term
 
     # Kill focused window
-    bindsym $mod+Backspace kill
+    bindsym $mod+q kill
     bindsym $mod+Shift+Backspace kill unfocused
     bindsym $mod+Ctrl+Backspace kill all
-
-    # Start your launcher
-    bindsym $mod+r exec $menu
 
     bindsym $mod+e exec $filemanager
 
@@ -135,10 +132,8 @@ animations {
     floating_modifier $mod normal
 
     # Reload the configuration file
-    bindsym $mod+Shift+c reload
+    bindsym $mod+r reload
 
-    # Exit scroll (logs you out of your Wayland session)
-    bindsym $mod+Shift+x exec scrollnag -t warning -m 'You pressed the exit shortcut. Do you really want to exit scroll? This will end your Wayland session.' -B 'Yes, exit scroll' 'scrollmsg exit' -w 500 -e center -y overlay
 
     # Layout mode
     bindsym $mod+bracketleft set_mode h
