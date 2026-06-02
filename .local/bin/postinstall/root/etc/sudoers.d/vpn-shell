@@ -1,1 +1,1 @@
-pavel ALL=(root) NOPASSWD: SETENV: /home/pavel/.local/bin/vpn-shell
+pavel ALL=(root) NOPASSWD: SETENV: /home/pavel/.local/bin/vpn-shell, /usr/bin/vpn-shell

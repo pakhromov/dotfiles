@@ -5,7 +5,7 @@
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
 	"theme": "Base.hidden-theme",
-	"color_scheme": "GitHub Dark Colorblind.sublime-color-scheme",
+	"color_scheme": "Packages/Colorscheme/Cyanide - Wood - Contrasted.tmTheme",
 	"dark_theme": "Default.sublime-theme",
 	"light_theme": "Adaptive.sublime-theme",
 	"highlight_modified_tabs": true,
