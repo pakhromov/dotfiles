@@ -6,7 +6,6 @@
         "foreground": "var(--foreground)",
         "fontSizeSm": 11,
         "fontSizeMd": 12,
-        "fontSizeLg": 14,
         "fontSizeHuge": 24,
         "fontFace": "system",
         "titleBarBackground": "var(--background)",
@@ -108,72 +107,8 @@
             "fg": "var(tooltipForeground)"
         },
         {
-            "class": "scroll_tabs_left_button",
-            "layer0.texture": "Theme/textures/navigation/arrow-small-left.png",
-            "layer0.opacity": {
-                "target": 0.5,
-                "speed": 4,
-                "interpolation": "smoothstep"
-            },
-            "layer0.tint": "var(tabButtonForeground)",
-            "content_margin": [
-                10,
-                10
-            ]
-        },
-        {
-            "class": "scroll_tabs_left_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.opacity": {
-                "target": 1,
-                "speed": 4,
-                "interpolation": "smoothstep"
-            }
-        },
-        {
-            "class": "scroll_tabs_left_button",
-            "settings": [
-                "hide_tab_scrolling_buttons"
-            ],
-            "content_margin": 0
-        },
-        {
-            "class": "scroll_tabs_right_button",
-            "layer0.texture": "Theme/textures/navigation/arrow-small-right.png",
-            "layer0.opacity": {
-                "target": 0.5,
-                "speed": 4,
-                "interpolation": "smoothstep"
-            },
-            "layer0.tint": "var(tabButtonForeground)",
-            "content_margin": [
-                10,
-                10
-            ]
-        },
-        {
-            "class": "scroll_tabs_right_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.opacity": {
-                "target": 1,
-                "speed": 4,
-                "interpolation": "smoothstep"
-            }
-        },
-        {
-            "class": "scroll_tabs_right_button",
-            "settings": [
-                "hide_tab_scrolling_buttons"
-            ],
-            "content_margin": 0
-        },
-        {
             "class": "new_tab_button",
-            "layer0.texture": "Theme - Default/common/new_tab.png",
+            "layer0.texture": "Theme/textures/actions/new_tab.png",
             "layer0.tint": "var(tabButtonForeground)",
             "layer0.opacity": {
                 "target": 0.5,
@@ -184,13 +119,13 @@
                 21,
                 0,
                 0,
-                0
+                23
             ],
             "content_margin": [
                 12,
-                12,
+                17,
                 10,
-                12
+                18
             ]
         },
         {
@@ -475,7 +410,7 @@
                     ]
                 }
             ],
-            "color": "color(var(vcsIgnored)"
+            "color": "color(var(vcsIgnored))"
         },
         {
             "class": "sidebar_label",
@@ -985,10 +920,6 @@
         },
         {
             "class": "quick_panel_row",
-            "layer0.opacity": 1
-        },
-        {
-            "class": "quick_panel_row",
             "layer0.tint": "var(panelRowBackground)",
             "layer0.opacity": 1
         },
@@ -1214,60 +1145,6 @@
                 "pressed"
             ],
             "layer0.tint": "var(buttonPressedBackground)"
-        },
-        {
-            "class": "close_button",
-            "layer0.texture": "Theme/textures/actions/close.png",
-            "layer0.opacity": 1,
-            "layer0.inner_margin": [
-                3,
-                3
-            ],
-            "content_margin": [
-                8,
-                8
-            ]
-        },
-        {
-            "class": "close_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.tint": "var(accent)"
-        },
-        {
-            "class": "close_button",
-            "attributes": [
-                "!hover",
-                "dirty"
-            ],
-            "layer0.texture": "Theme/textures/tab/dirty_dot.png",
-            "layer0.tint": "var(foreground)",
-            "layer0.inner_margin": [
-                4,
-                4
-            ]
-        },
-        {
-            "class": "close_button",
-            "attributes": [
-                "added"
-            ],
-            "layer0.tint": "var(vcsUntracked)"
-        },
-        {
-            "class": "close_button",
-            "attributes": [
-                "modified"
-            ],
-            "layer0.tint": "var(vcsModified)"
-        },
-        {
-            "class": "close_button",
-            "attributes": [
-                "deleted"
-            ],
-            "layer0.tint": "var(vcsDeleted)"
         },
         {
             "class": "icon_button_group",
