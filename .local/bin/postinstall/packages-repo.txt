@@ -65,6 +65,7 @@ sqlitebrowser
 sshfs
 starship
 sublime-text-4
+swappy
 sxwm
 telegram-desktop
 tesseract-data-swe

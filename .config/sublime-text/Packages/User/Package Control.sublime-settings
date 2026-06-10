@@ -10,6 +10,7 @@
 		"All Autocomplete",
 		"AlternativeAutocompletion",
 		"BracketHighlighter",
+		"Clickable URLs",
 		"Compare Side-By-Side",
 		"FontCycler",
 		"Generic Config",
@@ -17,6 +18,6 @@
 		"KDL",
 		"Package Control",
 		"Sequoia Color Scheme",
-		"Statusbar Path",
+		"WordingStatus",
 	],
 }

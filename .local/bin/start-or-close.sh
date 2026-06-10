@@ -3,5 +3,5 @@ TABS=$(kitty @ --to unix:@mykitty ls 2>/dev/null | jq -r '.[] | select(.wm_class
 if [ -n "$TABS" ]; then
     echo "$TABS" | xargs -I{} kitty @ --to unix:@mykitty close-tab --match "id:{}"
 else
-    kitty --single-instance --class float-half --session ~/.config/kitty/session.conf &
+    kitty --single-instance --listen-on=unix:@mykitty --class float-half --session ~/.config/kitty/session.conf &
 fi

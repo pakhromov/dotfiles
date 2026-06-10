@@ -71,7 +71,6 @@ clone_dotfiles() {
     git clone https://github.com/pakhromov/xcursor-preview.yazi           "$HOME/.config/yazi/plugins/xcursor-preview.yazi"
 
     echo "==> Cloning Sublime Text plugins..."
-    git clone https://github.com/pakhromov/ClickableUrls                  "$HOME/.config/sublime-text/Packages/ClickableUrls"
     git clone --branch personal https://github.com/pakhromov/TabBarTools  "$HOME/.config/sublime-text/Packages/TabBarTools"
     git clone https://github.com/pakhromov/WordHighlight                  "$HOME/.config/sublime-text/Packages/WordHighlight"
     git clone https://github.com/pakhromov/QColor                         "$HOME/.config/sublime-text/Packages/QColor"

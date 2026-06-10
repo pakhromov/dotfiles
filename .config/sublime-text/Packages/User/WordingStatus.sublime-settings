@@ -1,0 +1,4 @@
+{
+    "whitelist_syntaxes" : ["plain text", "markdown", "latex"],
+    "status_order_prefix" : "za"
+}

@@ -19,9 +19,9 @@ python-xlsx2csv
 rar
 rich-cli
 shanns-liga-nerd-font
+shmooz
 surge-bin
 tparted-bin
 vpn-shell
-wayscriber-bin
 wlrctl
 xytz-bin
