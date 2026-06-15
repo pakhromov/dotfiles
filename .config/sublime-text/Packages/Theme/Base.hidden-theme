@@ -26,10 +26,10 @@
         "tabBold": false,
         "tabLabelFontSize": 12,
         "tabInactiveForeground": "var(--foreground)",
-        "tabInactiveBackground": "color(var(foreground) blend(var(background) 5%))",
+        "tabActiveBackground": "color(var(foreground) blend(var(background) 5%))",
         "tabBorder": "color(var(background) blend(var(foreground) 90%))",
         "tabActiveForeground": "var(--foreground)",
-        "tabActiveBackground": "var(--background)",
+        "tabInactiveBackground": "var(--background)",
         "tabSelectedBorderBorder": "var(--accent)",
         "tabButtonForeground": "var(--foreground)",
         "gridBorder": "color(var(background) blend(var(foreground) 90%))",
@@ -68,8 +68,8 @@
         "statusBarBackground": "var(--background)",
         "statusBarBorder": "color(var(background) blend(var(foreground) 90%))",
         "progressBarBackground": "var(--accent)",
-        "scrollBar": "#484F5833",
-        "scrollTrack": "#484F5855",
+        "scrollBar": "#00000000",
+        "scrollTrack": "#FFFFFF40",
         "vcsAnnotationBorder": "color(var(background) blend(var(foreground) 90%))",
         "vcsUntracked": "#57ab5a",
         "vcsModified": "#c69026",
@@ -108,53 +108,12 @@
         },
         {
             "class": "new_tab_button",
-            "layer0.texture": "Theme/textures/actions/new_tab.png",
-            "layer0.tint": "var(tabButtonForeground)",
-            "layer0.opacity": {
-                "target": 0.5,
-                "speed": 5,
-                "interpolation": "smoothstep"
-            },
-            "layer0.inner_margin": [
-                21,
-                0,
-                0,
-                23
-            ],
+            "layer0.tint": "var(tabInactiveBackground)",
+            "layer0.opacity": 1,
             "content_margin": [
-                12,
-                17,
-                10,
-                18
+                2,
+                17
             ]
-        },
-        {
-            "class": "new_tab_button",
-            "settings": [
-                "!enable_tab_scrolling"
-            ],
-            "content_margin": [
-                15,
-                12
-            ]
-        },
-        {
-            "class": "new_tab_button",
-            "settings": [
-                "hide_new_tab_button"
-            ],
-            "content_margin": 0
-        },
-        {
-            "class": "new_tab_button",
-            "attributes": [
-                "hover"
-            ],
-            "layer0.opacity": {
-                "target": 1,
-                "speed": 5,
-                "interpolation": "smoothstep"
-            }
         },
         {
             "class": "show_tabs_dropdown_button",
@@ -178,7 +137,7 @@
             "tint_index": 0,
             "tab_overlap": 1,
             "tab_width": 80,
-            "tab_height": 40,
+            "tab_height": 34,
             "mouse_wheel_switch": false,
             "tint_modifier": "var(tabInactiveBackground)"
         },
@@ -236,21 +195,6 @@
             ],
             "layer3.tint": "var(tabSelectedBorderBorder)",
             "tint_modifier": "transparent"
-        },
-        {
-            "class": "tab_control",
-            "attributes": [
-                "left"
-            ],
-            "settings": [
-                "hide_tab_scrolling_buttons"
-            ],
-            "layer2.inner_margin": [
-                0,
-                1,
-                1,
-                0
-            ]
         },
         {
             "class": "tab_control",
@@ -545,20 +489,6 @@
         },
         {
             "class": "scroll_area_control",
-            "settings": [
-                "overlay_scroll_bars"
-            ],
-            "overlay": true
-        },
-        {
-            "class": "scroll_area_control",
-            "settings": [
-                "!overlay_scroll_bars"
-            ],
-            "overlay": false
-        },
-        {
-            "class": "scroll_area_control",
             "parents": [
                 {
                     "class": "sidebar_container"
@@ -574,15 +504,8 @@
         {
             "class": "scroll_bar_control",
             "layer0.opacity": 1,
-            "content_margin": 4,
+            "content_margin": 3,
             "tint_index": 0
-        },
-        {
-            "class": "scroll_bar_control",
-            "settings": [
-                "overlay_scroll_bars"
-            ],
-            "layer0.opacity": 0
         },
         {
             "class": "scroll_bar_control",
@@ -669,7 +592,7 @@
             "content_margin": [
                 4,
                 4,
-                3,
+                2,
                 4
             ]
         },

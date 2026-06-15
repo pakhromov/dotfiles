@@ -172,6 +172,7 @@ user_pref("dom.forms.autocomplete.formautofill", true);
 user_pref("browser.warnOnQuitShortcut", false);
 user_pref("general.autoScroll", true);
 user_pref("widget.gtk.overlay-scrollbars.enabled", false);
+//user_pref("widget.non-native-theme.scrollbar.size.override", 11);
 user_pref("browser.shell.checkDefaultBrowser",          false);
 user_pref("browser.link.open_newwindow",                3);
 user_pref("browser.tabs.loadInBackground",              true);
@@ -309,8 +310,8 @@ user_pref("general.smoothScroll.stopDecelerationWeighting", "1");
 
 
 //fastfox
-user_pref("nglayout.initialpaint.delay", 100);
-user_pref("nglayout.initialpaint.delay_in_oopif", 100);
+user_pref("nglayout.initialpaint.delay", 0);
+user_pref("nglayout.initialpaint.delay_in_oopif", 0);
 user_pref("gfx.content.skia-font-cache-size", 50);
 user_pref("content.notify.ontimer", false);
 user_pref("content.notify.interval", 700000);
@@ -341,7 +342,7 @@ user_pref("browser.sessionhistory.max_entries", 10);
 user_pref("browser.sessionhistory.max_total_viewers", 10);
 user_pref("browser.cache.memory.max_entry_size", 131072);
 user_pref("browser.cache.memory.capacity", 4194304);
-user_pref("browser.sessionstore.max_tabs_undo", 0);
+user_pref("browser.sessionstore.max_tabs_undo", 20);
 user_pref("browser.cache.disk.smart_size.enabled", false);
 user_pref("browser.cache.disk.capacity", 4194304);
 user_pref("browser.cache.disk.metadata_memory_limit", 131072);

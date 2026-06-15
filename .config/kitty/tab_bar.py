@@ -1,6 +1,7 @@
 from kitty.tab_bar import as_rgb
 from kitty.utils import color_as_int
 from kitty.rgb import to_color
+from kitty.fast_data_types import get_boss
 import os
 
 TAB_ACTIVE_INDEX_FG = "#16161e"
@@ -32,21 +33,60 @@ TITLE_ICONS = {
     "pacseek": " ",
     "pacsea": " ",
     "impala": " ",
-    "yay": " ",
+    "yay": " ",
     "codex": "󱚠 ",
+    "claude": "󱚠 ",
 }
 
 MAX_TITLE_LENGTH = 10
 
+# Interpreters whose argv[0] doesn't reflect the actual program name;
+# for these we look at the script path in argv[1] instead.
+SCRIPT_INTERPRETERS = {"node", "bun", "deno", "ruby", "perl", "lua"}
+SCRIPT_EXTENSIONS = (".js", ".mjs", ".cjs", ".ts", ".py", ".rb", ".pl", ".lua")
+
+
+def foreground_program_name(tab_id):
+    try:
+        tab_obj = get_boss().tab_for_id(tab_id)
+        if tab_obj is None or tab_obj.active_window is None:
+            return None
+        child = tab_obj.active_window.child
+        if child.child_fd is None:
+            return None
+        pgrp = os.tcgetpgrp(child.child_fd)
+        if pgrp == child.pid:
+            # The shell's own process group still has the terminal; no foreground
+            # job. Transient helpers (e.g. starship, git, sh -c for prompt
+            # rendering) run inside the shell's group too and are ignored here.
+            return None
+        cmdline = child.cmdline_of_pid(pgrp)
+        if not cmdline:
+            return None
+        name = os.path.basename(cmdline[0])
+        if (name in SCRIPT_INTERPRETERS or name.startswith("python")) and len(cmdline) > 1:
+            script = os.path.basename(cmdline[1])
+            for ext in SCRIPT_EXTENSIONS:
+                if script.endswith(ext):
+                    script = script[:-len(ext)]
+                    break
+            name = script
+        return name
+    except Exception:
+        return None
 
 
 def transform_title(tab):
-    title = tab.title
-    if title == '~':
-        title = os.path.basename(os.path.expanduser('~'))
-    if '/' in title or title.startswith('...'):
-        last_part = os.path.basename(title.rstrip('/'))
-        title = last_part if last_part else title
+    program = foreground_program_name(tab.tab_id)
+    if program:
+        title = program
+    else:
+        title = tab.title
+        if title == '~':
+            title = os.path.basename(os.path.expanduser('~'))
+        if '/' in title or title.startswith('...'):
+            last_part = os.path.basename(title.rstrip('/'))
+            title = last_part if last_part else title
     if MAX_TITLE_LENGTH is not None and len(title) > MAX_TITLE_LENGTH:
         title = title[:MAX_TITLE_LENGTH - 1] + '…'
     return title

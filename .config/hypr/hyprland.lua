@@ -190,20 +190,29 @@ hl.bind(M .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(M .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(M .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
----- Hyprtasking overview
---hl.bind("mouse:276", function() hl.plugin.hyprtasking.toggle("cursor") end)
---
----- Hyprtasking directional navigation
---hl.bind(M .. " + left",  function() hl.plugin.hyprtasking.move("left") end)
---hl.bind(M .. " + right", function() hl.plugin.hyprtasking.move("right") end)
---hl.bind(M .. " + up",    function() hl.plugin.hyprtasking.move("up") end)
---hl.bind(M .. " + down",  function() hl.plugin.hyprtasking.move("down") end)
---
----- Hyprtasking move window to adjacent workspace
---hl.bind(M .. " + SHIFT + left",  function() hl.plugin.hyprtasking.movewindow("left") end)
---hl.bind(M .. " + SHIFT + right", function() hl.plugin.hyprtasking.movewindow("right") end)
---hl.bind(M .. " + SHIFT + up",    function() hl.plugin.hyprtasking.movewindow("up") end)
---hl.bind(M .. " + SHIFT + down",  function() hl.plugin.hyprtasking.movewindow("down") end)
+-- Hyprtasking overview
+hl.bind("mouse:276", function()
+    hl.plugin.hyprtasking.toggle("cursor")
+end)
+
+-- Hyprtasking directional navigation
+hl.bind(M .. " + left",  function() hl.plugin.hyprtasking.move("left") end)
+hl.bind(M .. " + right", function() hl.plugin.hyprtasking.move("right") end)
+hl.bind(M .. " + up",    function() hl.plugin.hyprtasking.move("up") end)
+hl.bind(M .. " + down",  function() hl.plugin.hyprtasking.move("down") end)
+
+-- Hyprtasking move window to adjacent workspace
+hl.bind(M .. " + SHIFT + left",  function() hl.plugin.hyprtasking.movewindow("left") end)
+hl.bind(M .. " + SHIFT + right", function() hl.plugin.hyprtasking.movewindow("right") end)
+hl.bind(M .. " + SHIFT + up",    function() hl.plugin.hyprtasking.movewindow("up") end)
+hl.bind(M .. " + SHIFT + down",  function() hl.plugin.hyprtasking.movewindow("down") end)
+
+
+
+--hl.bind("mouse:276", function()
+--    hl.plugin.hyprexpo.expo("toggle")
+--end)
+
 
 -- Multimedia keys
 hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("volume.sh up"),                                  { locked = true, repeating = true })
@@ -317,43 +326,60 @@ hl.window_rule({
 ---- PLUGINS ----
 --------------------
 
+hl.config({
+    plugin = {
+        hyprtasking = {
+            drag_button            = 0x111,
+            select_button          = 0x110,
+            bg_color               = 0xff111111,
+            layout                 = "grid",
+            gap_size               = 4,
+            border_size            = 1,
+            exit_on_hovered        = false,
+            warp_on_move_window    = 1,
+            close_overview_on_reload = true,
+            full_render = true,
+
+            gestures = {
+                enabled       = true,
+                move_fingers  = 3,
+                move_distance = 300,
+                open_fingers  = 4,
+                open_distance = 300,
+                open_positive = true,
+            },
+
+            grid = {
+                rows                  = 3,
+                cols                  = 3,
+                loop                  = false,
+                layers                = 1,
+                loop_layers           = true,
+                gaps_use_aspect_ratio = false,
+            },
+
+            linear = {
+                top          = false,
+                height       = 400,
+                scroll_speed = 1.0,
+                blur         = false,
+            },
+        },
+    },
+})
+
 --hl.config({
 --    plugin = {
---        hyprtasking = {
---            drag_button            = 0x111,
---            select_button          = 0x110,
---            bg_color               = 0xff111111,
---            layout                 = "grid",
---            gap_size               = 4,
---            border_size            = 1,
---            exit_on_hovered        = false,
---            warp_on_move_window    = 1,
---            close_overview_on_reload = true,
---
---            gestures = {
---                enabled       = true,
---                move_fingers  = 3,
---                move_distance = 300,
---                open_fingers  = 4,
---                open_distance = 300,
---                open_positive = true,
---            },
---
---            grid = {
---                rows                  = 3,
---                cols                  = 3,
---                loop                  = false,
---                layers                = 1,
---                loop_layers           = true,
---                gaps_use_aspect_ratio = false,
---            },
---
---            linear = {
---                top          = false,
---                height       = 400,
---                scroll_speed = 1.0,
---                blur         = false,
---            },
+--        hyprexpo = {
+--            columns = 3,
+--            gaps_in = 5,
+--            gaps_out = 0,
+--            bg_col = "rgb(111111)",
+--            workspace_method = "first 1",
+--            gesture_distance = 200,
+--            cancel_key = "escape",
+--            show_cursor = 1,
+--            keynav_enable = 0,
 --        },
 --    },
 --})

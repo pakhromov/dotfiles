@@ -1,0 +1,1008 @@
+{
+  "AudioAutoGainDrc": false,
+  "actionIndicatorActionSeek": false,
+  "actionIndicatorActionSeekBasedOnPlaybackRate": false,
+  "actionIndicatorIconHidden": false,
+  "actionIndicatorTextBackground": "",
+  "actionIndicatorTextColor": "",
+  "actionIndicatorTextHidden": false,
+  "actionIndicatorTextOffsetX": "",
+  "actionIndicatorTextOffsetY": "",
+  "actionIndicatorTextPosition": false,
+  "adsAutoSkip": false,
+  "adsAutoSkipDelay": 5,
+  "adsBlackout": false,
+  "adsSetVolumeMuted": false,
+  "audioAutoGain": false,
+  "audioAutoGainBoostThreshold": -3,
+  "audioAutoGainMode": "boost",
+  "audioBoostGain": 0,
+  "audioBoostGainEnabled": false,
+  "audioCompressor": false,
+  "audioCompressorKnee": 20,
+  "audioCompressorRatio": 12,
+  "audioCompressorThreshold": -50,
+  "audioCompressorVolumeOnChanged": false,
+  "audioCompressorVolumeOnDisabled": 50,
+  "audioCompressorVolumeOnEnabled": 10,
+  "audioHPF": false,
+  "audioHPFFrequency": 200,
+  "audioLPF": false,
+  "audioLPFFrequency": 12000,
+  "audioMonoMix": false,
+  "audioMonoMixSource": "left+right",
+  "audioPan": 0,
+  "audioProcessingOnYtMusic": false,
+  "autoPip": false,
+  "autoclickAdSkipButton": false,
+  "backToTop": false,
+  "backToTopPosition": "center",
+  "channelFullTagline": false,
+  "channelPageBanner": "hidden",
+  "channelTrailerAutoplay": false,
+  "channelTrailerHidden": true,
+  "chaptersAutoShowList": false,
+  "chatVisibility": "auto-hide",
+  "cinemaMode": false,
+  "cinemaModeHiddenMasthead": true,
+  "cinemaModeHiddenScrollbar": true,
+  "cleanEmbeddedPlayer": true,
+  "cleanPlayer": true,
+  "cleanPlayerAdOverlay": false,
+  "cleanPlayerAutonavToggle": false,
+  "cleanPlayerCE": true,
+  "cleanPlayerChannelWattermark": false,
+  "cleanPlayerChapterButton": false,
+  "cleanPlayerCinematics": false,
+  "cleanPlayerEmbeddedPauseOverlay": true,
+  "cleanPlayerEndScreen": true,
+  "cleanPlayerFullscreenButton": false,
+  "cleanPlayerFullscreenQuickActions": true,
+  "cleanPlayerLargePlayButton": false,
+  "cleanPlayerLoadingSpinner": false,
+  "cleanPlayerMiniplayerButton": false,
+  "cleanPlayerMulticamButton": false,
+  "cleanPlayerMuteButton": false,
+  "cleanPlayerNextButton": false,
+  "cleanPlayerPaidContentOverlay": false,
+  "cleanPlayerPipButton": false,
+  "cleanPlayerPlayButton": false,
+  "cleanPlayerPreviousButton": false,
+  "cleanPlayerProgressBarHeatmap": false,
+  "cleanPlayerRemoteButton": false,
+  "cleanPlayerScrollForDetails": true,
+  "cleanPlayerSettingsButton": false,
+  "cleanPlayerSizeButton": false,
+  "cleanPlayerSubtitlesButton": false,
+  "cleanPlayerSuggestedAction": false,
+  "cleanPlayerTimeDisplay": false,
+  "cleanPlayerTop": false,
+  "cleanPlayerTopCardsButton": false,
+  "cleanPlayerTopCardsTeaser": false,
+  "cleanPlayerTopPlaylistMenuButton": false,
+  "cleanPlayerTopShareButton": false,
+  "cleanPlayerTopTitles": false,
+  "cleanPlayerTopWatchLaterButton": false,
+  "cleanPlayerVideoAnnotations": false,
+  "cleanPlayerVolumeSlider": false,
+  "cleanSite": true,
+  "cleanSiteAds": false,
+  "cleanSiteAnnoyances": false,
+  "cleanSiteDrawerFooter": true,
+  "cleanSiteHeaderCreateButton": true,
+  "cleanSiteHeaderLogoYoodle": true,
+  "cleanSiteHeaderNotificationsButton": false,
+  "cleanSiteHeaderVoiceSearchButton": true,
+  "cleanSiteHeaderYouTubeLogo": false,
+  "cleanSiteHomeHeaderChips": false,
+  "cleanSiteHomeSections": false,
+  "cleanSiteNotificationToast": false,
+  "cleanSitePromos": true,
+  "cleanSiteSidebarDonationShelf": true,
+  "cleanSiteThumbnailHoverOverlays": false,
+  "cleanSiteThumbnailLiveBadge": false,
+  "cleanSiteWatchChaptersSyncToVideoTime": false,
+  "cleanSiteWatchClarifyBox": true,
+  "cleanSiteWatchCommentInput": false,
+  "cleanSiteWatchDescription": false,
+  "cleanSiteWatchExpandableMetadata": true,
+  "cleanSiteWatchInfoMenu": false,
+  "cleanSiteWatchInfoMenuDownload": true,
+  "cleanSiteWatchJoin": true,
+  "cleanSiteWatchLaterAndQueueLabels": false,
+  "cleanSiteWatchRelatedVideosChips": false,
+  "cleanSiteWatchSubscribe": false,
+  "cleanSiteWatchTitleHashtag": false,
+  "commentsAutoReadMore": true,
+  "commentsInSidebar": false,
+  "commentsInSidebarDisableMainComments": false,
+  "commentsInSidebarPermanent": false,
+  "commentsInputFocusAndPaste": false,
+  "commentsInputTimeCorrection": 0,
+  "commentsSectionHidden": false,
+  "commentsSortBy": false,
+  "contentFilters": true,
+  "contentFiltersCollaborationsSubscriptionsPage": false,
+  "contentFiltersFeaturedSectionsSearch": false,
+  "contentFiltersFeaturedSectionsSubscriptions": false,
+  "contentFiltersLiveHomePage": false,
+  "contentFiltersLiveRelatedVideos": false,
+  "contentFiltersLiveSubscriptionsPage": false,
+  "contentFiltersMembersOnly": true,
+  "contentFiltersMembersOnlyChannelPage": true,
+  "contentFiltersMixHomePage": false,
+  "contentFiltersMixRelatedVideos": false,
+  "contentFiltersMixSearchPage": false,
+  "contentFiltersShortsButtons": true,
+  "contentFiltersShortsHomePage": false,
+  "contentFiltersShortsRelatedVideos": false,
+  "contentFiltersShortsSearch": false,
+  "contentFiltersShortsSubscriptionsPage": false,
+  "contentFiltersStreamedSubscriptionsPage": false,
+  "contentFiltersStreamedSubscriptionsPageString": "streamed",
+  "contentFiltersUpcomingChannelPage": true,
+  "contentFiltersUpcomingHomePage": true,
+  "contentFiltersUpcomingSubscriptionsPage": true,
+  "contentFiltersWatchedVideosChannelPage": false,
+  "contentFiltersWatchedVideosHomePage": false,
+  "contentFiltersWatchedVideosRelatedVideos": false,
+  "contentFiltersWatchedVideosSearchPage": false,
+  "contentFiltersWatchedVideosSubscriptionsPage": false,
+  "contextMenusSearch": false,
+  "convertChannelNameToURL": false,
+  "copyVideoURLDomain": "long",
+  "copyVideoURLExcludePlaylist": false,
+  "copyVideoURLTime": "s",
+  "customCSS": true,
+  "customCSSCode": "",
+  "customJS": true,
+  "customJSCode": "",
+  "cvfFilename": "",
+  "cvfIncludeSubtitles": false,
+  "cvfQuality": 0.92,
+  "cvfType": "JPEG",
+  "documentPipHeight": 240,
+  "documentPipPreferInitialWindowPlacement": false,
+  "downloadButton": false,
+  "downloadButtonBackgroundMode": "site",
+  "downloadButtonKey1Url": "",
+  "downloadButtonKey2Url": "",
+  "downloadButtonKey3Url": "",
+  "embedModeWindow": "current",
+  "extensionOptionsPageLayout": "vertical",
+  "extensionSettingsPushedToSupabase": 0,
+  "extensionShortcutsAdditiveDelay": 250,
+  "extensionShortcutsAdjustPlaybackRateByValue": 0.25,
+  "extensionShortcutsAdjustVolumeByValue": 5,
+  "extensionShortcutsSeekByAdditive": false,
+  "extensionShortcutsSeekByAdditiveValues": "5s, chapter, 10%",
+  "extensionShortcutsSeekByValue": 5,
+  "fullVideoTitle": false,
+  "fullVideoTitleChannelsPages": true,
+  "fullVideoTitleOtherPages": true,
+  "fullVideoTitleWatchPage": true,
+  "gotoChapterStart": false,
+  "hotkeys": {
+    "adjustAudioPanLeft": null,
+    "adjustAudioPanRight": null,
+    "focusCommentInputOrAddTimestamp": null,
+    "backToComment": null,
+    "captureVideoFrame": null,
+    "captureVideoFramePNG": null,
+    "captureVideoFrameToClipboard": null,
+    "captureVideoFrameToClipboardAndSave": null,
+    "cycleCommentsSortBy": null,
+    "cycleMouseControlActive": null,
+    "cycleSubtitlesPosition": null,
+    "cycleYtpControlsMode": null,
+    "embedMode": null,
+    "enterPictureInPicture": null,
+    "focusSearchBox": null,
+    "getVideoDownloadLink": null,
+    "increaseSubtitlesOffsetY": null,
+    "decreaseSubtitlesOffsetY": null,
+    "toggleAudioAutoGain": null,
+    "toggleAudioCompressor": null,
+    "toggleAudioHPF": null,
+    "toggleAudioMonoMix": null,
+    "toggleCinemaMode": null,
+    "toggleContentFilters": null,
+    "toggleCleanPlayer": null,
+    "toggleCleanSite": null,
+    "toggleCommentsVisibility": null,
+    "toggleSidebarVisibility": null,
+    "toggleSkipVideoBlockGlobal": null,
+    "toggleSkipVideoBlockIndividual": null,
+    "toggleSubtitlesDisabled": null,
+    "toggleVideoDimmer": null,
+    "toggleVideoPlaybackInfo": null,
+    "toggleYtpControlsHidden": null
+  },
+  "individualSettings": [],
+  "initialAutoPlay": false,
+  "initialChannelPageTab": "videos",
+  "initialFullscreen": false,
+  "initialLoop": false,
+  "initialLoopDisabledOnPlaylist": false,
+  "initialMute": false,
+  "initialMuteValue": false,
+  "initialPlaybackRate": false,
+  "initialPlaybackRateLevel": 1,
+  "initialPlaybackRateLevelGenreAutosVehicles": "",
+  "initialPlaybackRateLevelGenreComedy": "",
+  "initialPlaybackRateLevelGenreEducation": "",
+  "initialPlaybackRateLevelGenreEntertainment": "",
+  "initialPlaybackRateLevelGenreFilmAnimation": "",
+  "initialPlaybackRateLevelGenreGaming": "",
+  "initialPlaybackRateLevelGenreHowtoStyle": "",
+  "initialPlaybackRateLevelGenreMusic": "",
+  "initialPlaybackRateLevelGenreNewsPolitics": "",
+  "initialPlaybackRateLevelGenreNonprofitsActivism": "",
+  "initialPlaybackRateLevelGenrePeopleBlogs": "",
+  "initialPlaybackRateLevelGenrePetsAnimals": "",
+  "initialPlaybackRateLevelGenreScienceTechnology": "",
+  "initialPlaybackRateLevelGenreSports": "",
+  "initialPlaybackRateLevelGenreTravelEvents": "",
+  "initialPlaybackRatePerGenre": false,
+  "initialSubtitles": "off",
+  "initialTheatreMode": "default-view",
+  "initialTheme": false,
+  "initialVolume": false,
+  "initialVolumeLevel": 50,
+  "inlinePlayback": "enabled",
+  "inlinePlaybackRoundCorners": false,
+  "instantFullscreen": false,
+  "instantFullscreenDelay": "0",
+  "instantFullscreenSmooth": false,
+  "instantTogglePlay": false,
+  "interactionZonesMouseButton": 1,
+  "interactionZonesMouseButtonPresets": [
+    {
+      "name": "Default",
+      "type": "mouseButton",
+      "gridColumns": 3,
+      "gridRows": 1,
+      "gridColumnsRatios": [
+        3,
+        6,
+        3
+      ],
+      "gridRowsRatios": [
+        12
+      ],
+      "actionMap": [
+        {
+          "key": "mousedown0+g020B",
+          "action": "setPlaybackRate",
+          "payload": 1
+        },
+        {
+          "key": "mousedown2+g020B",
+          "action": "captureVideoFrame"
+        },
+        {
+          "key": "mousedown0+g9B0B",
+          "action": "toggleMute"
+        },
+        {
+          "key": "mousedown2+g9B0B",
+          "action": "save"
+        }
+      ]
+    },
+    {
+      "actionMap": [
+        {
+          "key": "mousedown0+gAB0B",
+          "action": "toggleFullscreen"
+        },
+        {
+          "key": "mousedown2+gAB0B",
+          "action": "togglePlayerSettings"
+        },
+        {
+          "key": "mousedown1+gAB0B",
+          "action": "seekTo",
+          "payload": "100%"
+        },
+        {
+          "key": "mousedown1+g010B",
+          "action": "seekTo",
+          "payload": "0%"
+        },
+        {
+          "key": "mousedown2+g290B",
+          "action": "setPlaybackRate",
+          "payload": 1
+        }
+      ],
+      "name": "3x1 Grid",
+      "type": "mouseButton",
+      "gridColumns": 3,
+      "gridRows": 1,
+      "gridColumnsRatios": [
+        2,
+        8,
+        2
+      ],
+      "gridRowsRatios": [
+        12
+      ]
+    },
+    {
+      "name": "3x3 Grid",
+      "type": "mouseButton",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "gridColumnsRatios": [
+        3,
+        6,
+        3
+      ],
+      "gridRowsRatios": [
+        4,
+        4,
+        4
+      ],
+      "actionMap": [
+        {
+          "action": "toggleMute",
+          "key": "mousedown0+g9B03"
+        },
+        {
+          "action": "toggleCommentsInSidebar",
+          "key": "mousedown2+g9B03"
+        },
+        {
+          "action": "toggleMute",
+          "key": "mousedown0+g9B47"
+        },
+        {
+          "action": "togglePlayerSettings",
+          "key": "mousedown2+g9B47"
+        },
+        {
+          "action": "toggleMute",
+          "key": "mousedown0+g9B8B"
+        },
+        {
+          "action": "save",
+          "key": "mousedown2+g9B8B"
+        },
+        {
+          "action": "setPlaybackRate",
+          "key": "mousedown0+g0203",
+          "payload": 1
+        },
+        {
+          "action": "enterPictureInPicture",
+          "key": "mousedown2+g0203"
+        },
+        {
+          "action": "setPlaybackRate",
+          "key": "mousedown0+g0247",
+          "payload": 1
+        },
+        {
+          "action": "toggleAppDrawer",
+          "key": "mousedown2+g0247"
+        },
+        {
+          "action": "setPlaybackRate",
+          "key": "mousedown0+g028B",
+          "payload": 1
+        },
+        {
+          "action": "captureVideoFrame",
+          "key": "mousedown2+g028B"
+        }
+      ]
+    },
+    {
+      "actionMap": [],
+      "gridColumns": 1,
+      "gridColumnsRatios": [
+        12
+      ],
+      "gridRows": 1,
+      "gridRowsRatios": [
+        12
+      ],
+      "name": "Empty",
+      "type": "mouseButton"
+    }
+  ],
+  "interactionZonesMouseWheel": 3,
+  "interactionZonesMouseWheelPresets": [
+    {
+      "name": "Default",
+      "type": "mouseWheel",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "gridColumnsRatios": [
+        3,
+        6,
+        3
+      ],
+      "gridRowsRatios": [
+        4,
+        4,
+        4
+      ],
+      "actionMap": [
+        {
+          "key": "wheelup+g0203",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.5
+        },
+        {
+          "key": "wheeldown+g0203",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.5
+        },
+        {
+          "key": "wheelup+g0247",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.25
+        },
+        {
+          "key": "wheeldown+g0247",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.25
+        },
+        {
+          "key": "wheelup+g028B",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown+g028B",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        },
+        {
+          "key": "wheelup+g3803",
+          "action": "seekBy",
+          "payload": "5%"
+        },
+        {
+          "key": "wheeldown+g3803",
+          "action": "seekBy",
+          "payload": "-5%"
+        },
+        {
+          "key": "wheelup2+g3803",
+          "action": "nextVideo"
+        },
+        {
+          "key": "wheeldown2+g3803",
+          "action": "previousVideo"
+        },
+        {
+          "key": "wheelup+g3847",
+          "action": "seekBy",
+          "payload": 5
+        },
+        {
+          "key": "wheeldown+g3847",
+          "action": "seekBy",
+          "payload": -5
+        },
+        {
+          "key": "wheelup2+g3847",
+          "action": "seekBy",
+          "payload": "1c"
+        },
+        {
+          "key": "wheeldown2+g3847",
+          "action": "seekBy",
+          "payload": "-1c"
+        },
+        {
+          "key": "wheelup+g388B",
+          "action": "seekBy",
+          "payload": 1
+        },
+        {
+          "key": "wheeldown+g388B",
+          "action": "seekBy",
+          "payload": -1
+        },
+        {
+          "key": "wheelup2+g388B",
+          "action": "seekBy",
+          "payload": "1f"
+        },
+        {
+          "key": "wheeldown2+g388B",
+          "action": "seekBy",
+          "payload": "-1f"
+        },
+        {
+          "key": "wheelup+g9B03",
+          "action": "adjustVolumeBy",
+          "payload": 10
+        },
+        {
+          "key": "wheeldown+g9B03",
+          "action": "adjustVolumeBy",
+          "payload": -10
+        },
+        {
+          "key": "wheelup+g9B47",
+          "action": "adjustVolumeBy",
+          "payload": 5
+        },
+        {
+          "key": "wheeldown+g9B47",
+          "action": "adjustVolumeBy",
+          "payload": -5
+        },
+        {
+          "key": "wheelup+g9B8B",
+          "action": "adjustVolumeBy",
+          "payload": 1
+        },
+        {
+          "key": "wheeldown+g9B8B",
+          "action": "adjustVolumeBy",
+          "payload": -1
+        }
+      ]
+    },
+    {
+      "actionMap": [
+        {
+          "key": "wheelup+g0200",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.5
+        },
+        {
+          "key": "wheeldown+g0200",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.5
+        },
+        {
+          "key": "wheelup+g021A",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.25
+        },
+        {
+          "key": "wheeldown+g021A",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.25
+        },
+        {
+          "key": "wheelup+g02BB",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown+g02BB",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        },
+        {
+          "key": "wheelup+g9B00",
+          "action": "adjustVolumeBy",
+          "payload": 10
+        },
+        {
+          "key": "wheeldown+g9B00",
+          "action": "adjustVolumeBy",
+          "payload": -10
+        },
+        {
+          "key": "wheelup+g381A",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown+g381A",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        },
+        {
+          "key": "wheelup+g3800",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown+g3800",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        },
+        {
+          "key": "wheelup+g9BBB",
+          "action": "adjustPlaybackQuality",
+          "payload": 1
+        },
+        {
+          "key": "wheeldown+g9BBB",
+          "action": "adjustPlaybackQuality",
+          "payload": -1
+        },
+        {
+          "key": "wheelup+g9B1A",
+          "action": "toggleEmbedMode"
+        },
+        {
+          "key": "wheeldown+g9B1A",
+          "action": "toggleVideoPlaybackInfo"
+        },
+        {
+          "key": "wheelup+g38BB",
+          "action": "seekBy",
+          "payload": 5
+        },
+        {
+          "key": "wheeldown+g38BB",
+          "action": "seekBy",
+          "payload": -5
+        }
+      ],
+      "name": "3x3 Grid",
+      "type": "mouseWheel",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "gridColumnsRatios": [
+        3,
+        6,
+        3
+      ],
+      "gridRowsRatios": [
+        1,
+        10,
+        1
+      ]
+    },
+    {
+      "name": "3x3 Grid (RMB + Wheel)",
+      "type": "mouseWheel",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "gridColumnsRatios": [
+        3,
+        6,
+        3
+      ],
+      "gridRowsRatios": [
+        4,
+        4,
+        4
+      ],
+      "actionMap": [
+        {
+          "key": "wheelup2+g0203",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.5
+        },
+        {
+          "key": "wheeldown2+g0203",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.5
+        },
+        {
+          "key": "wheelup2+g0247",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.25
+        },
+        {
+          "key": "wheeldown2+g0247",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.25
+        },
+        {
+          "key": "wheelup2+g028B",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown2+g028B",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        },
+        {
+          "key": "wheelup2+g3803",
+          "action": "seekBy",
+          "payload": "5%"
+        },
+        {
+          "key": "wheeldown2+g3803",
+          "action": "seekBy",
+          "payload": "-5%"
+        },
+        {
+          "key": "ctrl+wheelup+g3803",
+          "action": "nextVideo"
+        },
+        {
+          "key": "ctrl+wheeldown+g3803",
+          "action": "previousVideo"
+        },
+        {
+          "key": "wheelup2+g3847",
+          "action": "seekBy",
+          "payload": 5
+        },
+        {
+          "key": "wheeldown2+g3847",
+          "action": "seekBy",
+          "payload": -5
+        },
+        {
+          "key": "ctrl+wheelup+g3847",
+          "action": "seekBy",
+          "payload": "1c"
+        },
+        {
+          "key": "ctrl+wheeldown+g3847",
+          "action": "seekBy",
+          "payload": "-1c"
+        },
+        {
+          "key": "wheelup2+g388B",
+          "action": "seekBy",
+          "payload": 1
+        },
+        {
+          "key": "wheeldown2+g388B",
+          "action": "seekBy",
+          "payload": -1
+        },
+        {
+          "key": "ctrl+wheelup+g388B",
+          "action": "seekBy",
+          "payload": "1f"
+        },
+        {
+          "key": "ctrl+wheeldown+g388B",
+          "action": "seekBy",
+          "payload": "-1f"
+        },
+        {
+          "key": "wheelup2+g9B03",
+          "action": "adjustVolumeBy",
+          "payload": 10
+        },
+        {
+          "key": "wheeldown2+g9B03",
+          "action": "adjustVolumeBy",
+          "payload": -10
+        },
+        {
+          "key": "wheelup2+g9B47",
+          "action": "adjustVolumeBy",
+          "payload": 5
+        },
+        {
+          "key": "wheeldown2+g9B47",
+          "action": "adjustVolumeBy",
+          "payload": -5
+        },
+        {
+          "key": "wheelup2+g9B8B",
+          "action": "adjustVolumeBy",
+          "payload": 1
+        },
+        {
+          "key": "wheeldown2+g9B8B",
+          "action": "adjustVolumeBy",
+          "payload": -1
+        }
+      ]
+    },
+    {
+      "actionMap": [
+        {
+          "key": "wheelup+g0B0B",
+          "action": "adjustPlaybackRateBy",
+          "payload": 0.1
+        },
+        {
+          "key": "wheeldown+g0B0B",
+          "action": "adjustPlaybackRateBy",
+          "payload": -0.1
+        }
+      ],
+      "gridColumns": 1,
+      "gridColumnsRatios": [
+        12
+      ],
+      "gridRows": 1,
+      "gridRowsRatios": [
+        12
+      ],
+      "name": "Empty",
+      "type": "mouseWheel"
+    }
+  ],
+  "keyboardControlKeys": [
+    {
+      "action": "viewChapter",
+      "key": "9:tab"
+    },
+    {
+      "action": "togglePlayerSettings",
+      "key": "65:a"
+    },
+    {
+      "action": "toggleVideoInfo",
+      "key": "73:i"
+    },
+    {
+      "action": "toggleFullscreen",
+      "key": "70:f"
+    },
+    {
+      "action": "getVideoURLAtCurrentTime",
+      "key": "67:ctrl+c"
+    },
+    {
+      "action": "toggleChatCollapsed",
+      "key": "67:c"
+    }
+  ],
+  "maxMouseControlArea": false,
+  "mmbToggleFullscreen": false,
+  "mouseControlActive": true,
+  "mouseControlDisableDoubleClick": false,
+  "mouseControlElement": "player",
+  "mouseControlInactiveWheelWhilePaused": true,
+  "mouseControlMiniplayer": false,
+  "mouseControlModKey": "shift",
+  "mouseControlShorts": true,
+  "pausePreviousActiveVideo": true,
+  "playbackRateRangeMax": 16,
+  "playbackRateRangeMin": 0.1,
+  "playerBackgroundColor": false,
+  "playerDisableBigMode": false,
+  "playerInitialStateBackground": "stopped",
+  "playerInitialStateForeground": false,
+  "playerViewChangeDelayInBackground": 0,
+  "playerVolumeBarAlwaysVisible": false,
+  "playlistAutoplayNext": true,
+  "playlistDuration": false,
+  "preventAutoPause": true,
+  "removeCustomMainScrollbar": false,
+  "replayOnPreviousChapter": false,
+  "richGridView": true,
+  "richGridViewDecreasedContainerWidth": false,
+  "richGridViewDecreasedFontSize": true,
+  "richGridViewHiddenAvatars": false,
+  "richGridViewItemsPerRow": 3,
+  "richSectionOnTop": false,
+  "scrollbarThin": false,
+  "searchBoxStyles": false,
+  "searchPlaylistPage": false,
+  "searchResultsNavigation": false,
+  "searchResultsOpenInNewTab": false,
+  "searchResultsOpenInNewTabPosition": "after",
+  "shortsAutoplayNext": false,
+  "shortsConvertTitleToUrl": false,
+  "shortsLoop": false,
+  "shortsOpenInNormalPlayer": true,
+  "shortsPlayerOverlay": false,
+  "sidebarOverlaid": false,
+  "sidebarOverlaidScrollbarWidth": 11,
+  "sidebarOverlaidSingleScrollbar": false,
+  "sidebarOverlaidWidth": "",
+  "sidebarPanelsMaxHeight": true,
+  "sidebarRelatedHidden": false,
+  "sidebarSectionFixed": true,
+  "sidebarSectionHidden": false,
+  "skipVideoBlockGlobal": false,
+  "skipVideoBlockGlobalData": {
+    "enabled": true,
+    "start": ""
+  },
+  "skipVideoBlockIndividual": false,
+  "skipVideoBlockIndividualData": [],
+  "skipVideoBlockMinDuration": 181,
+  "stickyPlayer": false,
+  "stickyPlayerActivateOnlyOnDemand": false,
+  "stickyPlayerHeight": 360,
+  "stickyPlayerInactiveAtEnd": false,
+  "stickyPlayerInactiveWhilePaused": false,
+  "stickyPlayerOffsetX": 0,
+  "stickyPlayerOffsetY": 0,
+  "stickyPlayerPosition": "default",
+  "stickyPlayerThreshold": 0.5,
+  "stickyPlayerType": "wide",
+  "subscriptionsChannelsView": "compact-list",
+  "subscriptionsPageDivider": false,
+  "subscriptionsPageDividerNewVideos": true,
+  "subscriptionsPageWatchLater": false,
+  "subtitlesDisabled": false,
+  "subtitlesDisabledWhenPaused": false,
+  "subtitlesOffsetY": 2,
+  "subtitlesPosition": false,
+  "subtitlesPositioningEnabled": true,
+  "themeType": "dark",
+  "thumbnailControlPrimary": false,
+  "thumbnailControlPrimaryCleanUrl": false,
+  "thumbnailControlPrimaryG00": "openInForegroundTab",
+  "thumbnailControlPrimaryG01": "openInBackgroundTab",
+  "thumbnailControlPrimaryG10": "openInForegroundTab",
+  "thumbnailControlPrimaryG11": "openInBackgroundTab",
+  "thumbnailShortsChannelLink": true,
+  "thumbnailShortsTitle": true,
+  "thumbnailViewFullSize": false,
+  "thumbnailViewFullSizeByMouse": "ctrl+mousedown0",
+  "transcriptAutoShow": false,
+  "transparentButtonsAndDescription": "borderless",
+  "upNextVideo": true,
+  "videoDescription": true,
+  "videoDescriptionExactDate": true,
+  "videoDescriptionExactViewCount": true,
+  "videoDescriptionInSidebar": false,
+  "videoDimmer": false,
+  "videoDimmerBrightness": 1,
+  "videoDimmerContrast": 100,
+  "videoDimmerSaturate": 100,
+  "videoDownloadLinkMode": "copy",
+  "videoDownloadLinkQuery": "yt-dlp https://youtu.be/%s",
+  "videoPlaybackInfo": true,
+  "videoPlaybackInfoBasedOnPlaybackRate": false,
+  "videoPlaybackInfoCurrentChapter": false,
+  "videoPlaybackInfoCurrentTime": false,
+  "videoPlaybackInfoPlaybackRate": false,
+  "videoPlaybackInfoRemainingTime": false,
+  "videoPlaybackInfoRequiredWidth": 0,
+  "videoPlaybackInfoResolution": false,
+  "videoPlaybackInfoStyleFontSize": 2,
+  "videoPlaybackInfoStyleOpacity": 1,
+  "videoPlaybackInfoStylePosition": "top-right",
+  "videoPlaybackInfoTemplate": false,
+  "videoPlaybackInfoTemplateContent": "",
+  "videoPlaybackInfoVisibility": "on-hover",
+  "videoPlaybackInfoVolume": false,
+  "volumeRangeMax": 100,
+  "volumeRangeMin": 0,
+  "volumeUnmuteOnChange": false,
+  "watchedVideosDim": true,
+  "watchedVideosDimGrayscale": "0",
+  "watchedVideosDimImage": false,
+  "watchedVideosDimItem": true,
+  "watchedVideosDimOpacity": "25",
+  "watchedVideosDimStartThreshold": 91,
+  "watchedVideosDimThumbnail": false,
+  "ytElementAuxActions": false,
+  "ytElementAuxActionsDelay": 100,
+  "ytpAutohideDelay": 3000,
+  "ytpBezelTextDurationActionSeek": 1000,
+  "ytpBezelTextDurationShort": 750,
+  "ytpBezelTextPosition": false,
+  "ytpBezelTextPositionOffset": 10,
+  "ytpControlsHidden": false,
+  "ytpControlsHiddenElements": "bottom+top",
+  "ytpControlsHiddenPaused": true,
+  "ytpControlsHiddenPlaying": true,
+  "ytpControlsHiddenShowOnHover": false,
+  "ytpControlsMiniRefreshRate": 1000,
+  "ytpControlsMode": "mini",
+  "ytpControlsModeAvailableForCycle": [],
+  "ytpGradientBottom": false,
+  "ytpMuteButtonShowVolume": false,
+  "ytpPreferredQuality": "hd2160",
+  "ytpPreferredQualityBackground": "hd2160",
+  "ytpPreferredQualityEmbedded": "hd2160",
+  "ytpPreferredQualityFullscreen": "hd2160",
+  "ytpPreferredQualityRevert": true,
+  "ytpPreferredQualityTheater": "hd2160",
+  "ytpPreferredQualityUpgradeOrDowngrade": "downgrade",
+  "ytpProgressBarAtBottom": false,
+  "ytpProgressBarColor": true,
+  "ytpProgressBarColorPaused": "#49de3c",
+  "ytpProgressBarColorPlaying": "#49de3c",
+  "ytpProgressBarOpacity": 1,
+  "ytpProgressBarPadding": "0",
+  "ytpQualityUseEnhancedBitrate": false,
+  "ytpTimeBasedOnPlaybackRate": false,
+  "ytpTimeDisplayCustom": false,
+  "ytpTimeDisplayCustomTemplate": "%current_time / %duration (%pr_remaining_time)",
+  "zenMode": false,
+  "zenModeStylesBlur": 4,
+  "zenModeStylesGrayscale": 0,
+  "zenModeStylesOpacity": 16
+}

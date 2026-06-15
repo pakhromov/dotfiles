@@ -2,6 +2,7 @@
 	"enable_telemetry": false,
 	"hardware_acceleration": "none", //opengl, none
 	"ui_scale": 1.0,
+	"hide_pointer_while_typing": false,
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
 	"theme": "Base.hidden-theme",
@@ -136,7 +137,6 @@
 	"auto_complete_cycle": true,
 	"auto_complete_use_history": false,
 	"auto_complete_preserve_order": "some",
-	"hide_pointer_while_typing": true,
 	"copy_with_empty_selection": false,
 	"close_find_after_find_all": false,
 	"close_find_after_replace_all": false,
