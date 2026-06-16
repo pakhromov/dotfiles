@@ -19,9 +19,12 @@ fi
 DBUS_SESSION_BUS_ADDRESS="$(sed -n '1p' "$dbus_env")"
 export DBUS_SESSION_BUS_ADDRESS
 
+log="/tmp/$compositor.log"
+
 case "$compositor" in
-    jay)   exec jay run </dev/null >/dev/null 2>&1 ;;
-    river) exec river -no-xwayland </dev/null >/dev/null 2>&1 ;;
-    sway)  exec sway --unsupported-gpu </dev/null >/dev/null 2>&1 ;;
-    *)     exec "$compositor" </dev/null >/dev/null 2>&1 ;;
+    jay)   exec jay run </dev/null >"$log" 2>&1 ;;
+    river) exec river -no-xwayland </dev/null >"$log" 2>&1 ;;
+    sway)  exec sway --unsupported-gpu </dev/null >"$log" 2>&1 ;;
+    wayfire) exec wayfire -d </dev/null >"$log" 2>&1 ;;
+    *)     exec "$compositor" </dev/null >"$log" 2>&1 ;;
 esac

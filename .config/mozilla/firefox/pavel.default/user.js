@@ -140,10 +140,10 @@ user_pref("media.hardware-video-decoding.force-enabled",  true);
 //personal settings
 user_pref("identity.fxaccounts.enabled", true);
 user_pref("browser.download.autohideButton",        false);
-user_pref("browser.tabs.tabMinWidth",               100);
+user_pref("browser.tabs.tabMinWidth",               125);
 user_pref("mousewheel.default.delta_multiplier_y",            100);
 user_pref("userChrome.autohide.page_action",          true);
-user_pref("userChrome.autohide.forward_button",       true);
+user_pref("userChrome.autohide.forward_button",       false);
 user_pref("userChrome.centered.urlbar",               true);
 user_pref("userChrome.tab.close_button_at_hover.with_selected", true);
 user_pref("userChrome.tab.close_button_at_hover.always",        true);

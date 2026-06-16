@@ -85,10 +85,11 @@
   display: none !important;
 }
 
-/* Hide back button */
+/* Hide back button
 #back-button{
   display: none !important;
 }
+*/
 
 /* Hide all separators in all context menus */
 #contentAreaContextMenu menuseparator,
@@ -101,12 +102,13 @@
   display: none !important;
 }
 
-/* Hide tab bar scroll arrows — mouse wheel scrolling still works */
+/* Hide tab bar scroll arrows — mouse wheel scrolling still works
 #scrollbutton-up,
 #scrollbutton-up ~ spacer,
 #scrollbutton-down {
   display: none !important;
 }
+*/
 
 /* Hide left separator on the first tab */
 #pinned-tabs-container > .tabbrowser-tab:first-child .tab-stack::before,

@@ -1,5 +1,5 @@
 ps.sub("ind-app-title", function(args)
-	args.value = "Yazi"
+	args.value = "yazi"
 	return args
 end)
 
