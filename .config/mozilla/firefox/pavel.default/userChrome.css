@@ -4,6 +4,17 @@
 
 /** Add your custom styles below **********************************************/
 
+/* Hide tab title tooltip on hover
+#tabbrowser-tab-tooltip {
+  display: none !important;
+}
+*/
+
+/* Hide back button
+#back-button{
+  display: none !important;
+}
+*/
 
 /* Fix semi-transparent inactive tabs in fullscreen */
 :root[sizemode="fullscreen"]:not([inDOMFullscreen="true"]) #TabsToolbar {
@@ -21,11 +32,6 @@
   transition: margin-top 0.2s ease !important;
 }
 
-/* Hide tab title tooltip on hover
-#tabbrowser-tab-tooltip {
-  display: none !important;
-}
-*/
 
 /* Workaround: all bookmarks going to overflow/chevron after exiting DOM fullscreen
    (e.g. YouTube). Firefox 141+ regression — XUL flex sizing of PlacesToolbarItems
@@ -85,11 +91,7 @@
   display: none !important;
 }
 
-/* Hide back button
-#back-button{
-  display: none !important;
-}
-*/
+
 
 /* Hide all separators in all context menus */
 #contentAreaContextMenu menuseparator,
@@ -102,18 +104,23 @@
   display: none !important;
 }
 
-/* Hide tab bar scroll arrows — mouse wheel scrolling still works
+/* Hide tab bar scroll arrows — mouse wheel scrolling still works */
 #scrollbutton-up,
 #scrollbutton-up ~ spacer,
 #scrollbutton-down {
   display: none !important;
 }
-*/
+
 
 /* Hide left separator on the first tab */
 #pinned-tabs-container > .tabbrowser-tab:first-child .tab-stack::before,
 #tabbrowser-arrowscrollbox > .tabbrowser-tab:first-child .tab-stack::before {
   opacity: 0 !important;
+}
+
+/* Enable option to edit bookmark URLs under Add Bookmark (blue star) menu */
+.editBMPanel_locationRow {
+  display: initial !important;
 }
 
 /* ===== Page context menu ===================================================*/
@@ -336,9 +343,4 @@ menuseparator[contexttype="fullscreen"] {
 .textbox-contextmenu > menu[anonid="spell-dictionaries"],
 .textbox-contextmenu > menuseparator {
   display: none !important;
-}
-
-/* Enable option to edit bookmark URLs under Add Bookmark (blue star) menu */
-.editBMPanel_locationRow {
-  display: initial !important;
 }

@@ -7,7 +7,6 @@
     "highlight_non_word_characters": true,
     "highlight_on_multiple_selections": false,
     "highlight_on_multiline_selection": false,
-    "min_selection_length": 2,
     "minimum_characters": 3,
     "color_scope_name": "region.yellowish",
     "show_word_highlight_status_bar_message_last": true,

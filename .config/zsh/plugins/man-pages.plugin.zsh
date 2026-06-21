@@ -34,9 +34,9 @@ function man \
   debman {
   if [[ $0 == "man" && $# -eq 0 ]]; then
     # No arguments - show fzf with all man pages, loop until cancelled
-    local preview_cmd='echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
+    local preview_cmd='echo; echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
     while true; do
-      local selected=$(apropos . | fzf --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
+      local selected=$(apropos . | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
       [[ -z $selected ]] && break
     done
   elif [[ $0 == "man" && $# -eq 1 ]]; then
@@ -52,9 +52,9 @@ function man \
       colored $0 "$@"
     else
       # Multiple matches, show fzf with loop
-      local preview_cmd='echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
+      local preview_cmd='echo; echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
       while true; do
-        local selected=$(echo "$matches" | fzf --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
+        local selected=$(echo "$matches" | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
         [[ -z $selected ]] && break
       done
     fi

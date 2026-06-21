@@ -21,7 +21,7 @@ export HISTORY_SUBSTRING_SEARCH_FUZZY=false
 export HISTORY_SUBSTRING_SEARCH_PREFIXED=true
 export FZF_DEFAULT_OPTS="
   --exact --reverse --no-hscroll --height=80%
-  --preview-window=right:50%:noinfo
+  --preview-window=right:50%:info
   --highlight-line
   --scroll-off 7
   --info=inline-right
@@ -47,8 +47,7 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
 export BAT_PAGER="lore"
-#export BAT_PAGER="/home/pavel/.config/kitty/pager.sh"
-export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
+export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=never | kitty-pager.sh'"
 export PYTHON_AUTO_VRUN=true
 export MAGIC_ENTER_COMMAND='cd .'
 export ZPWR_EXPAND_BLACKLIST=(ls)
@@ -135,19 +134,6 @@ yzf() {
   rehash
 }
 
-
-fancy-alt-z () {
-  if [[ $#BUFFER -eq 0 ]]; then
-    BUFFER="fg"
-    zle accept-line -w
-  else
-    zle push-input -w
-    zle clear-screen -w
-  fi
-}
-zle -N fancy-alt-z
-bindkey '^[z' fancy-alt-z
-
 alt-tab-fzf-widget() {
   setopt localoptions pipefail no_aliases 2>/dev/null
   local cmd="fd --type d --hidden --follow"
@@ -211,11 +197,16 @@ _fzf_complete_commands() {
 }
 zle -N _fzf_complete_commands
 
+_chpwd_ls_cmdline=""
+_chpwd_ls_capture_cmdline() { _chpwd_ls_cmdline="$3"; }
+add-zsh-hook -Uz preexec _chpwd_ls_capture_cmdline
+
 chpwd-ls() {
     (( ZSH_SUBSHELL )) && return
     for dir in "${CHPWD_LS_BLACKLIST[@]}"; do
         [[ "$PWD" == "$dir" ]] && return
     done
+    [[ "$_chpwd_ls_cmdline" =~ '(&&|\|\||;|\|)' ]] && return
     eza -1a --icons=always --group-directories-first --hyperlink
 }
 add-zsh-hook -Uz chpwd chpwd-ls
@@ -245,6 +236,10 @@ unalias -a
 alias clear="printf '\x1b[2J\x1b[3J\x1b[H'; _PROMPT_COUNT=0"
 alias r="sudo pacman -Rns"
 alias i="yay -S"
+alias s="subl"
+alias b="exec btm"
+alias n="kitten notify"
+alias k="kitten show-key"
 alias e="exec launch"
 alias rr="yzf -x"
 alias ro="yzf -o"
