@@ -1,7 +1,11 @@
 #!/bin/bash
 
-_footer_text=$'\033[38;2;160;160;160mDEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mCTRL+SPACE\033[36m spaced   \033[38;2;160;160;160mALT+,\033[36m comma   \033[38;2;160;160;160mCTRL+ALT+,\033[36m comma+space\033[m'
-_footer_plain='DEL delete   ENTER copy   CTRL+SPACE spaced   ALT+, comma   CTRL+ALT+, comma+space'
+_footer_text=$'\033[38;2;160;160;160mCTRL+SPACE\033[36m space   \033[38;2;160;160;160mALT+,\033[36m comma   \033[38;2;160;160;160mCTRL+ALT+,\033[36m comma+space\033[m'
+_footer_plain='CTRL+SPACE space   ALT+, comma   CTRL+ALT+, comma+space'
+
+#_footer_text=$'\033[38;2;160;160;160mDEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy   \033[38;2;160;160;160mCTRL+SPACE\033[36m space   \033[38;2;160;160;160mALT+,\033[#36m comma   \033[38;2;160;160;160mCTRL+ALT+,\033[36m comma+space\033[m'
+#_footer_plain='DEL delete   ENTER copy   CTRL+SPACE space   ALT+, comma   CTRL+ALT+, comma+space'
+
 _pad=$(( $(tput cols) - ${#_footer_plain} - 7 ))
 (( _pad > 0 )) && printf -v _footer '%*s%s' "$_pad" '' "$_footer_text" || _footer=$_footer_text
 
@@ -11,7 +15,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
   --highlight-line
   --scroll-off 7
   --info=inline-right
-  --border
+  --no-border
   --input-border
   --border-label ' CLIPBOARD HISTORY '
   --info-command='echo -e \"\$FZF_POS/\$FZF_MATCH_COUNT(\$FZF_SELECT_COUNT)\"'
@@ -24,7 +28,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
   --ellipsis '  '
   --scrollbar ''
   --separator ''
-  --color fg:242,bg:233,hl:65,fg+:222,bg+:234,hl+:108
+  --color fg:242,bg:233,hl:65,fg+:222,bg+:233,hl+:108
   --color info:108,prompt:110,spinner:150,pointer:167,marker:65
 "
 

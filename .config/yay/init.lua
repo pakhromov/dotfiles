@@ -1,4 +1,4 @@
-yay.opt.build_dir = "/tmp/yay-pavel" -- Build/cache directory for AUR packages.
+yay.opt.build_dir = "/tmp" -- Build/cache directory for AUR packages.
 yay.opt.clean_after = true -- Remove untracked files after install.
 yay.opt.redownload = "no" -- PKGBUILD download mode: "no" | "yes" | "all".
 yay.opt.rebuild = "no" -- Build mode: "no" | "yes" | "tree" | "all".

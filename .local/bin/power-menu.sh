@@ -3,14 +3,14 @@
 options="󰐥 shutdown\n reboot\n󰍃 logout\n󰒲 suspend\n󰋊 hibernate\n󰌾 lock"
 
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
-  --reverse --no-input --height=100% --margin '14,63'
+  --reverse --no-input --height=100%
   --highlight-line
-  --border
+  --no-border
   --pointer '>'
   --gutter ' '
   --scrollbar ''
   --separator ''
-  --color fg:242,bg:233,hl:65,fg+:222,bg+:234,hl+:108
+  --color fg:242,bg:233,hl:65,fg+:222,bg+:233,hl+:108
   --color info:108,prompt:110,spinner:150,pointer:167,marker:65"
 
 choice=$(echo -e "$options" | fzf)

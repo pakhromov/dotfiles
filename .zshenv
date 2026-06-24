@@ -27,3 +27,5 @@ export LIBVA_DRIVER_NAME=nvidia
 export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
+
+export WAYFIRE_PLUGIN_PATH=/home/pavel/.local/bin/hide-cursor-once/build/src

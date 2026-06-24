@@ -1,7 +1,7 @@
 #!/bin/sh
-TABS=$(kitty @ --to unix:@mykitty ls 2>/dev/null | jq -r '.[] | select(.wm_class == "float-half") | .tabs[].id')
+TABS=$(kitty @ --to unix:@mykitty ls 2>/dev/null | jq -r '.[] | select(.wm_class == "float-full") | .tabs[].id')
 if [ -n "$TABS" ]; then
     echo "$TABS" | xargs -I{} kitty @ --to unix:@mykitty close-tab --match "id:{}"
 else
-    kitty --single-instance --listen-on=unix:@mykitty --class float-half --session ~/.config/kitty/session.conf &
+    kitty --single-instance --listen-on=unix:@mykitty --class float-full --session ~/.config/kitty/session.conf &
 fi

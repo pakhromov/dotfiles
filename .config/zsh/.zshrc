@@ -134,11 +134,11 @@ yzf() {
   rehash
 }
 
-alt-tab-fzf-widget() {
+alt-shift-c-widget() {
   setopt localoptions pipefail no_aliases 2>/dev/null
   local cmd="fd --type d --hidden --follow"
   local opts='--preview "eza -1a --icons=always --color=always --group-directories-first {}"'
-  local result="$(eval "$cmd" | awk '{print gsub("/","/")+0, $0}' | sort -k1,1n -k2,2 | awk '{print $2}' | FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $opts" fzf --no-sort)"
+  local result="$(eval "$cmd" | awk '{line=$0; sub(/\/$/,"",line); n=split(line,a,"/"); base=a[n]; print gsub("/","/")+0, (substr(base,1,1)=="."), length($0), $0}' | sort -k1,1n -k2,2n -k3,3n -k4,4 | awk '{print $4}' | FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $opts" fzf --no-sort)"
   if [[ -z "$result" ]]; then
     zle redisplay
     return 0
@@ -151,8 +151,8 @@ alt-tab-fzf-widget() {
   zle reset-prompt
   return $ret
 }
-zle -N alt-tab-fzf-widget
-bindkey '^[^I' alt-tab-fzf-widget
+zle -N alt-shift-c-widget
+bindkey '\x1bC' alt-shift-c-widget
 
 #for tab on empty prompt and fallback to --help completions
 _fzf_complete_commands() {
