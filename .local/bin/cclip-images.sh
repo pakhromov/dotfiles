@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_footer=$' \033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+S\033[36m save   \033[38;2;160;160;160mDEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy\033[m '
+_footer=$' \033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+S\033[36m save   \033[38;2;160;160;160mCTRL+E\033[36m edit   \033[38;2;160;160;160mDEL\033[36m delete   \033[38;2;160;160;160mENTER\033[36m copy\033[m '
 
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
   --preview-window=right:70%
@@ -64,6 +64,11 @@ case "$1" in
     shift
     for id in "$@"; do cclip delete "$id"; done
     ;;
+  --edit)
+    file="/tmp/cclip-edit-$2.png"
+    cclip get "$2" > "$file" 2>/dev/null
+    swappy -f "$file"
+    ;;
   -t)
     $2 "$0"
     ;;
@@ -71,6 +76,7 @@ case "$1" in
     sel=$($0 --list | fzf \
       --preview "$0 --preview {1}" \
       --bind "ctrl-s:execute-silent($0 --save {+1})" \
+      --bind "ctrl-e:execute-silent($0 --edit {1})" \
       --bind "delete:execute-silent($0 --delete {+1})+reload($0 --list)")
     [ -z "$sel" ] && exit
     id="${sel%%$'\t'*}"

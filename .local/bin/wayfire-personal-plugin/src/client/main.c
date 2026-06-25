@@ -1,6 +1,6 @@
 /*
  * Minimal IPC client: connects to $WAYFIRE_SOCKET and calls
- * "hide-cursor-once/hide". No Python, no libraries beyond libc.
+ * "personal/hide-cursor". No Python, no libraries beyond libc.
  */
 #include <stdio.h>
 #include <stdint.h>
@@ -74,7 +74,7 @@ int main(void)
         return 1;
     }
 
-    static const char msg[] = "{\"method\":\"hide-cursor-once/hide\",\"data\":{}}";
+    static const char msg[] = "{\"method\":\"personal/hide-cursor\",\"data\":{}}";
     uint32_t len = (uint32_t)strlen(msg);
 
     if (write_all(fd, &len, sizeof(len)) != 0 || write_all(fd, msg, len) != 0)

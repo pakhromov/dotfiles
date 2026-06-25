@@ -1,5 +1,5 @@
 project(
-	'hide-cursor-once',
+	'personal',
 	'c',
 	'cpp',
 	version: '0.1.0',

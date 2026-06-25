@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<wayfire>
-	<plugin name="hide-cursor-once">
-		<_short>Hide Cursor Once</_short>
-		<_long>Exposes an IPC method to hide the cursor on demand, with no idle timer. The cursor is hidden when the IPC method is called, and shown again on the next pointer motion. Nothing runs in the background between calls.</_long>
-		<category>Utility</category>
-	</plugin>
-</wayfire>

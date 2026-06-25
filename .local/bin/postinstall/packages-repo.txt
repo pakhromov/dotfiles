@@ -7,6 +7,7 @@ bottom
 brave-origin-beta-bin
 brightnessctl
 chrony
+circle-flags
 claude-code
 cosmic-icon-theme
 dash
@@ -17,7 +18,7 @@ dua-cli
 expac
 eza
 fd
-firefox-pure
+firefox-wayland-cachy-hg
 fzf
 git
 github-cli

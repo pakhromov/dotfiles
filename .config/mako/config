@@ -15,7 +15,7 @@ anchor=top-right
 max-visible=10
 sort=+time
 
-font=JetBrainsMono 10
+font=ComicShannsLigaMod Nerd Font 12
 text-alignment=left
 
 on-button-left=invoke-default-action
@@ -37,7 +37,7 @@ padding=10
 border-size=2
 border-radius=6
 
-max-icon-size=64
+max-icon-size=48
 icon-location=left
 icon-border-radius=0
 icon-path=/usr/share/icons/Cosmic/scalable/status:/usr/share/icons/Cosmic/scalable/devices:/usr/share/icons/Cosmic/scalable/apps

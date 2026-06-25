@@ -1,6 +1,6 @@
-sources = ['hide-cursor-once.cpp']
+sources = ['personal.cpp']
 
-hide_cursor_once = shared_module('hide-cursor-once', sources,
+personal_plugin = shared_module('personal', sources,
     dependencies: [wayfire],
     install: true, install_dir: join_paths(get_option('libdir'), 'wayfire'))
 

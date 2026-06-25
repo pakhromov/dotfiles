@@ -1,4 +1,5 @@
 acestream-engine
+btop-gpu-git
 calendar-git
 cclip
 ccstatusline
@@ -16,6 +17,7 @@ mcat-bin
 pdf2img-c
 python-undervolt
 python-xlsx2csv
+pywayfire-git
 rar
 rich-cli
 shanns-liga-nerd-font
@@ -23,5 +25,6 @@ shmooz
 surge-bin
 tparted-bin
 vpn-shell
+wayfire-plugin-pixdecor-git
 wlrctl
 xytz-bin
