@@ -34,6 +34,7 @@ TITLE_ICONS = {
     "pacsea": " ",
     "impala": " ",
     "yay": " ",
+    "yzf": " ",
     "codex": "󱚠 ",
     "claude": "󱚠 ",
 }

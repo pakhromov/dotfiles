@@ -5,8 +5,8 @@
 ---- MONITORS ----
 ------------------
 
-hl.monitor({ output = "DP-2",  mode = "1920x1080@144", position = "0x0", scale = 1 })
-hl.monitor({ output = "eDP-1", disabled = true })
+--hl.monitor({ output = "DP-2",  mode = "1920x1080@144", position = "0x0", scale = 1 })
+--hl.monitor({ output = "eDP-1", disabled = true })
 
 
 ---------------------
@@ -246,7 +246,7 @@ hl.bind(M .. " + SHIFT + D", hl.dsp.exec_cmd("hyprpicker -a"))
 
 -- Kitty-based tools
 hl.bind(M .. " + A",         hl.dsp.exec_cmd('kitty --single-instance --listen-on="unix:@mykitty" yazi'))
-hl.bind(M .. " + GRAVE",     hl.dsp.exec_cmd('kitty --single-instance --listen-on="unix:@mykitty" btm & sleep 0.4 && wtype -P m'))
+hl.bind(M .. " + GRAVE",     hl.dsp.exec_cmd('kitty --single-instance --listen-on="unix:@mykitty" btm'))
 hl.bind(M .. " + S",         hl.dsp.exec_cmd("kitty --single-instance --class float-half audio-switch"))
 hl.bind(M .. " + TAB",       hl.dsp.exec_cmd("kitty --single-instance --class float-half fsel --detach"))
 hl.bind(M .. " + W",         hl.dsp.exec_cmd("kitty-launch-or-focus.sh impala"))
@@ -326,47 +326,46 @@ hl.window_rule({
 ---- PLUGINS ----
 --------------------
 
---hl.config({
---    plugin = {
---        hyprtasking = {
---            drag_button            = 0x111,
---            select_button          = 0x110,
---            bg_color               = 0xff111111,
---            layout                 = "grid",
---            gap_size               = 4,
---            border_size            = 1,
---            exit_on_hovered        = false,
---            warp_on_move_window    = 1,
---            close_overview_on_reload = true,
---            full_render = true,
---
---            gestures = {
---                enabled       = true,
---                move_fingers  = 3,
---                move_distance = 300,
---                open_fingers  = 4,
---                open_distance = 300,
---                open_positive = true,
---            },
---
---            grid = {
---                rows                  = 3,
---                cols                  = 3,
---                loop                  = false,
---                layers                = 1,
---                loop_layers           = true,
---                gaps_use_aspect_ratio = false,
---            },
---
---            linear = {
---                top          = false,
---                height       = 400,
---                scroll_speed = 1.0,
---                blur         = false,
---            },
---        },
---    },
---})
+hl.config({
+    plugin = {
+        hyprtasking = {
+            drag_button            = 0x111,
+            select_button          = 0x110,
+            bg_color               = 0xff111111,
+            layout                 = "grid",
+            gap_size               = 4,
+            border_size            = 1,
+            exit_on_hovered        = false,
+            warp_on_move_window    = 1,
+            close_overview_on_reload = true,
+
+            gestures = {
+                enabled       = true,
+                move_fingers  = 3,
+                move_distance = 300,
+                open_fingers  = 4,
+                open_distance = 300,
+                open_positive = true,
+            },
+
+            grid = {
+                rows                  = 3,
+                cols                  = 3,
+                loop                  = false,
+                layers                = 1,
+                loop_layers           = true,
+                gaps_use_aspect_ratio = false,
+            },
+
+            linear = {
+                top          = false,
+                height       = 400,
+                scroll_speed = 1.0,
+                blur         = false,
+            },
+        },
+    },
+})
 
 --hl.config({
 --    plugin = {

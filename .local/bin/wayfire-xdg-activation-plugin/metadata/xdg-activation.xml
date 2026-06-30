@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="xdg-activation">
+		<_short>XDG Activation Protocol</_short>
+		<_long>A permissive implementation of the xdg-activation-v1 protocol. Any focus request is always granted.</_long>
+		<category>Utility</category>
+	</plugin>
+</wayfire>

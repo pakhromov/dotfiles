@@ -46,9 +46,10 @@ case "$1" in
     $2 "$0"
     if [ -f "$flag" ]; then
       rm -f "$flag"
-      sleep 0.1
-      wtype -M ctrl -M shift -k v
-      sleep 0.3
+      #sleep 0.1
+      #wtype -M ctrl -M shift -k v
+      #sleep 0.3
+      inject-key KEY_V KEY_LEFTCTRL KEY_LEFTSHIFT
       pkill -x wl-copy 2>/dev/null || true
     fi
     ;;

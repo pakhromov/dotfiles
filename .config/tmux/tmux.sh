@@ -89,7 +89,7 @@ tmux set -g window-status-format "$RESET#[fg=#0D1117]$larrow#[fg=${THEME[foregro
 
 
 #+--- Bars RIGHT ---+
-tmux set -g status-right "$updates$keyboard_layout$netspeed$date_and_time"
+tmux set -g status-right "$date_and_time"
 tmux set -g window-status-separator ""
 
 

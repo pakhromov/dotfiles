@@ -14,11 +14,8 @@ from kittens.tui.operations import (
     move_cursor_by,
     set_line_wrapping,
     set_window_title,
-    styled,
 )
-from kitty.config import cached_values_for
 from kitty.constants import config_dir
-from kitty.key_encoding import EventType
 
 # scan()/goto() run inside the interactive search process and have no
 # direct access to boss/window/screen, so they ask kitty's main process to
@@ -34,12 +31,6 @@ from kitty.key_encoding import EventType
 # plus our own known filename instead.
 SELF_PATH = Path(config_dir) / "search.py"
 
-NON_SPACE_PATTERN = re.compile(r"\S+")
-SPACE_PATTERN_END = re.compile(r"\s+$")
-NON_ALPHANUM_PATTERN = re.compile(r"[^\w\d]+")
-NON_ALPHANUM_PATTERN_END = re.compile(r"[^\w\d]+$")
-
-
 def call_remote_control(args: list[str]) -> None:
     subprocess.run(["kitty", "@", *args], capture_output=True)
 
@@ -54,19 +45,6 @@ def apply_native_marker(window_id: int, raw_text: str, ftype: str) -> None:
 
 def remove_native_marker(window_id: int) -> None:
     call_remote_control(["remove-marker", f"--match=id:{window_id}"])
-
-
-def reindex(text: str, pattern: re.Pattern[str], right: bool = False) -> tuple[int, int]:
-    if not right:
-        m = pattern.search(text)
-    else:
-        matches = [x for x in pattern.finditer(text) if x]
-        if not matches:
-            raise ValueError
-        m = matches[-1]
-    if not m:
-        raise ValueError
-    return m.span()
 
 
 # ===== Position tracking: talks to search_backend.py (a separate, no_ui
@@ -314,6 +292,18 @@ class SearchNav:
             self.current_index = self.current_index + 1 if self.current_index < len(self.groups) - 1 else 0
         self._apply_current()
 
+    def navigate_first(self) -> None:
+        if not self.groups:
+            return
+        self.current_index = 0
+        self._apply_current()
+
+    def navigate_last(self) -> None:
+        if not self.groups:
+            return
+        self.current_index = len(self.groups) - 1
+        self._apply_current()
+
     def _apply_current(self) -> None:
         new_group = self.groups[self.current_index] if self.current_index is not None else None
         if new_group == self._underlined:
@@ -353,24 +343,16 @@ class Search(Handler):
     # receive wheel events directly ourselves; we don't need motion/drag.
     mouse_tracking = MouseTracking.buttons_only
 
-    def __init__(self, cached_values: dict, window_id: int, error: str = "") -> None:
-        self.cached_values = cached_values
+    def __init__(self, window_id: int, error: str = "") -> None:
         self.window_id = window_id
         self.error = error
         self.line_edit = LineEdit()
-        last_search = cached_values.get("last_search", "")
-        self.line_edit.add_text(last_search)
-        self.text_marked = bool(last_search)
-        self.mode = cached_values.get("mode", "text")
+        self.prompt = "=> "
         self.nav = SearchNav(window_id)
-        self.update_prompt()
         # Deliberately no scanning/drawing here -- self.write isn't wired up
         # by the Loop machinery until after __init__ returns. Doing it here
         # crashes the kitten instantly on launch. initialize() is where the
         # first real scan+draw happens.
-
-    def update_prompt(self) -> None:
-        self.prompt = "~> " if self.mode == "regex" else "=> "
 
     def init_terminal_state(self) -> None:
         self.write(set_line_wrapping(False))
@@ -382,19 +364,9 @@ class Search(Handler):
 
     def draw_screen(self) -> None:
         self.write(clear_screen())
-        input_text = self.line_edit.current_input
-        if self.text_marked:
-            self.line_edit.current_input = styled(input_text, reverse=True)
         self.line_edit.write(self.write, self.prompt)
-        self.line_edit.current_input = input_text
         with cursor(self.write):
-            # Centered on the screen, not right after the input text --
-            # LineEdit.write() leaves the real cursor at cursor_pos (wherever
-            # the edit cursor is *within* the text), so writing anywhere
-            # relative to that would risk overwriting text as the cursor
-            # moves (see the end-of-text fix below for why that matters);
-            # centering on screen width sidesteps it entirely by not
-            # depending on cursor_pos or the text's length at all.
+            # Search counter
             counter_text = self.nav.counter_text()
             target_col = max(0, (self.screen_size.cols - len(counter_text)) // 2)
             self.write("\r")
@@ -402,10 +374,7 @@ class Search(Handler):
                 self.write(move_cursor_by(target_col, "right"))
             self.write(counter_text)
         with cursor(self.write):
-            # Total scrollback line count, right-aligned to the screen's
-            # right edge. Same \r + relative-move trick as the counter
-            # above, just targeting a column computed from the right edge
-            # instead of the end of the input text.
+            # Total scrollback line count
             total_text = f"{self.nav.total_lines} lines "
             target_col = max(0, self.screen_size.cols - len(total_text))
             self.write("\r")
@@ -422,85 +391,42 @@ class Search(Handler):
         text = self.line_edit.current_input
         ignorecase = text.islower()
         if text:
-            ftype = ("i" if ignorecase else "") + self.mode
-            apply_native_marker(self.window_id, text, ftype)
+            apply_native_marker(self.window_id, text, "itext" if ignorecase else "text")
         else:
             remove_native_marker(self.window_id)
-        our_pattern = text if self.mode == "regex" else re.escape(text)
-        self.nav.rescan(our_pattern, ignorecase)
+        self.nav.rescan(re.escape(text), ignorecase)
         self.draw_screen()
 
-    def switch_mode(self) -> None:
-        self.mode = "text" if self.mode == "regex" else "regex"
-        self.cached_values["mode"] = self.mode
-        self.update_prompt()
-        self.refresh_search()
-
     def on_text(self, text: str, in_bracketed_paste: bool = False) -> None:
-        if self.text_marked:
-            self.text_marked = False
-            self.line_edit.clear()
         self.line_edit.on_text(text, in_bracketed_paste)
         self.refresh_search()
 
     def on_key(self, key_event) -> None:
-        if (
-            self.text_marked
-            and key_event.type == EventType.PRESS
-            and key_event.key
-            not in [
-                "TAB", "LEFT_CONTROL", "RIGHT_CONTROL", "LEFT_ALT", "RIGHT_ALT",
-                "LEFT_SHIFT", "RIGHT_SHIFT", "LEFT_SUPER", "RIGHT_SUPER",
-            ]
-        ):
-            self.text_marked = False
-            self.refresh_search()
-
-        if self.line_edit.on_key(key_event):
-            self.refresh_search()
-            return
-
-        if key_event.matches("ctrl+u"):
+        if key_event.matches("ctrl+shift+backspace"):
             self.line_edit.clear()
             self.refresh_search()
-        elif key_event.matches("ctrl+a"):
-            self.line_edit.home()
-            self.draw_screen()
-        elif key_event.matches("ctrl+e"):
-            self.line_edit.end()
-            self.draw_screen()
-        elif key_event.matches("ctrl+backspace") or key_event.matches("ctrl+w"):
+        elif key_event.matches("ctrl+left"):
             before, _after = self.line_edit.split_at_cursor()
+            stripped = before.rstrip(' ')
             try:
-                start, _ = reindex(before, SPACE_PATTERN_END, right=True)
+                pos = stripped.rindex(' ') + 1
             except ValueError:
-                start = -1
-            try:
-                space = before[:start].rindex(" ")
-            except ValueError:
-                space = 0
-            self.line_edit.backspace(len(before) - space)
+                pos = 0
+            self.line_edit.left(len(before) - pos)
+            self.draw_screen()
+        elif key_event.matches("ctrl+right"):
+            _before, after = self.line_edit.split_at_cursor()
+            m = re.match(r'\S*\s+', after)
+            self.line_edit.right(m.end() if m else len(after))
+            self.draw_screen()
+        elif key_event.matches("ctrl+up"):
+            self.nav.navigate_first()
+            self.draw_screen()
+        elif key_event.matches("ctrl+down"):
+            self.nav.navigate_last()
+            self.draw_screen()
+        elif self.line_edit.on_key(key_event):
             self.refresh_search()
-        elif key_event.matches("alt+backspace") or key_event.matches("alt+w"):
-            before, _after = self.line_edit.split_at_cursor()
-            try:
-                start, _ = reindex(before, NON_ALPHANUM_PATTERN_END, right=True)
-            except ValueError:
-                start = -1
-            else:
-                self.line_edit.backspace(len(before) - start)
-                self.refresh_search()
-                return
-            try:
-                start, _ = reindex(before, NON_ALPHANUM_PATTERN, right=True)
-            except ValueError:
-                self.line_edit.backspace(len(before))
-                self.refresh_search()
-                return
-            self.line_edit.backspace(len(before) - (start + 1))
-            self.refresh_search()
-        elif key_event.matches("tab"):
-            self.switch_mode()
         elif key_event.matches("up"):
             self.nav.navigate(prev=True)
             self.draw_screen()
@@ -508,9 +434,9 @@ class Search(Handler):
             self.nav.navigate(prev=False)
             self.draw_screen()
         elif key_event.matches("enter"):
-            self.quit(0)
-        elif key_event.matches("esc"):
             self.quit(1)
+        elif key_event.matches("esc"):
+            self.quit(0)
 
     def on_interrupt(self) -> None:
         self.quit(1)
@@ -536,28 +462,17 @@ class Search(Handler):
 
     def on_click(self, mouse_event: MouseEvent) -> None:
         if mouse_event.buttons == MouseButton.LEFT:
-            # Re-scroll the target window to the current match without
-            # changing which one is current -- e.g. you scrolled the target
-            # window away from it (by hand, or its content moved) and want
-            # to jump back to where the search currently is.
+            # Re-scroll the target window to the current match
             self.nav.recenter()
         elif mouse_event.buttons == MouseButton.RIGHT:
-            # Same as Esc: cancel, leave the scrollback wherever it is.
-            # Currently unreachable with this user's kitty.conf -- their
-            # existing "mouse_map right press ungrabbed,grabbed
-            # mouse_selection rectangle" claims right-press in both grabbed
-            # and ungrabbed states, so kitty marks it handled and never
-            # forwards it to us at all. Left in place for if that mapping
-            # ever changes.
             self.quit(1)
 
     def quit(self, return_code: int) -> None:
-        self.cached_values["last_search"] = self.line_edit.current_input
         remove_native_marker(self.window_id)
         self.nav.clear()
-        if return_code == 0:  # Enter: confirm and jump back to the live prompt
+        if return_code == 0:  # Esc: jump back to the live prompt
             call_remote_control(["scroll-window", f"--match=id:{self.window_id}", "end"])
-        # Esc: cancel, leave the scrollback wherever the search left it
+        # Enter: leave the scrollback wherever the search left it
         self.quit_loop(return_code)
 
 
@@ -568,6 +483,5 @@ def main(args: list[str]) -> None:
     window_id = int(args[1]) if len(args) >= 2 and args[1].isdigit() else 0
 
     loop = Loop()
-    with cached_values_for("search") as cached_values:
-        handler = Search(cached_values, window_id, error)
-        loop.loop(handler)
+    handler = Search(window_id, error)
+    loop.loop(handler)

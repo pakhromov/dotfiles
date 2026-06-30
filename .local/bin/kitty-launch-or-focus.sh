@@ -17,35 +17,34 @@ SOCKET="unix:@mykitty"
 
 # Check if kitty single-instance is running
 if ! kitten @ --to "$SOCKET" ls &>/dev/null; then
-    # No kitty instance, start one with single-instance mode
-    kitty --single-instance --listen-on="$SOCKET" "$PROGRAM" $ARGS &
+    kitty --single-instance --listen-on="$SOCKET" --class shell "$PROGRAM" $ARGS &
+    timeout 10 wlrctl window waitfor "app_id:shell" || true
+    for _ in 1 2 3 4 5; do
+        wlrctl window focus "app_id:shell" || true
+        sleep 0.1
+    done
     exit 0
 fi
 
-# Check if the program is already running in a tab using jq
+# Check if the program is already running
 PROGRAM_WINDOW=$(kitten @ --to "$SOCKET" ls | \
     jq -r --arg prog "$PROGRAM" '.[].tabs[].windows[] | select(.foreground_processes[]?.cmdline[]? | test($prog)) | .id' | \
     head -1)
 
 if [ -n "$PROGRAM_WINDOW" ]; then
-    # Focus existing window
     kitten @ --to "$SOCKET" focus-window --match "id:$PROGRAM_WINDOW"
 else
-    # Launch program in new tab
-    kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS >/dev/null
-    # Re-query to find the new window
-    PROGRAM_WINDOW=$(kitten @ --to "$SOCKET" ls | \
-        jq -r --arg prog "$PROGRAM" '.[].tabs[].windows[] | select(.foreground_processes[]?.cmdline[]? | test($prog)) | .id' | \
-        head -1)
+    SHELL_PANE=$(kitten @ --to "$SOCKET" ls | jq -r '.[] | select(.wm_class == "shell") | .tabs[0].windows[0].id')
+    if [ -n "$SHELL_PANE" ]; then
+        kitten @ --to "$SOCKET" focus-window --match "id:$SHELL_PANE" &>/dev/null
+        kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS >/dev/null
+    else
+        kitten @ --to "$SOCKET" launch --type=os-window --os-window-class shell "$PROGRAM" $ARGS >/dev/null
+        timeout 10 wlrctl window waitfor "app_id:shell" || true
+    fi
 fi
 
-# Get the title of the OS window containing PROGRAM_WINDOW and focus it
-OS_WIN_TITLE=$(kitten @ --to "$SOCKET" ls | \
-    jq -r --argjson wid "${PROGRAM_WINDOW:-0}" \
-    '.[] | select(any(.tabs[]; .windows[]?.id == $wid)) | .tabs[] | select(.windows[]?.id == $wid) | .title' | \
-    head -1)
-if [ -n "$OS_WIN_TITLE" ]; then
-    wlrctl toplevel focus kitty "title:$OS_WIN_TITLE"
-else
-    wlrctl toplevel focus kitty
-fi
+for _ in 1 2 3 4 5; do
+    wlrctl window focus "app_id:shell" || true
+    sleep 0.1
+done

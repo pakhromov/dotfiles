@@ -9,7 +9,8 @@ actions=1
 icons=1
 default-timeout=0
 ignore-timeout=1
-ignore-replace=1
+ignore-replace=0
+ignore-close=1
 
 anchor=top-right
 max-visible=10
