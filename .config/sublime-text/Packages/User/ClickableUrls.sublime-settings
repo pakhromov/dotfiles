@@ -1,3 +1,8 @@
 {
-    "open_on_click": true,
+    "open_on_click": false,
+    "clickable_urls_browser": "xdg-open",
+    "underline_style": "stippled",
+    "show_phantom": false,
+    "max_url_limit": 200,
+    "highlight_urls": true,
 }

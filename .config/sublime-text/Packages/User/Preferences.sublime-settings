@@ -22,6 +22,7 @@
 	"hide_tab_scrolling_buttons": true,
 	"hide_new_tab_button": false,
 	"open_tabs_after_current": true,
+	"close_windows_when_empty": true,
 	"git_diff_target": "index",
 	"sublime_merge_path": "",
 	"console_max_history_lines": 300,

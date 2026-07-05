@@ -15,7 +15,7 @@ restart() {
 wayland_display() {
   case "${XDG_CURRENT_DESKTOP:-}" in
     #wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 --pos 0,0 && wlr-randr --output eDP-1 --on; restart mybar;;
-    wayfire) sudo chvt 1 ;;
+    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ; sudo nvidia-smi -lgc 650,1950 ;;
     river)   wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
     Hyprland) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
   esac
@@ -26,6 +26,9 @@ case "${1:-}" in
     start dunst
     start cclipd -c 5000 -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
     wayland_display
+    ;;
+  -x)
+    xrandr --output DP-3 --mode 1920x1080 --rate 144 --output DP-2 --off
     ;;
   -gw)
     sudo mount /dev/nvme0n1p4 /home/pavel/mnt/nvme0n1p4

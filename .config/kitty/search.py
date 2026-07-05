@@ -347,6 +347,7 @@ class Search(Handler):
         self.window_id = window_id
         self.error = error
         self.line_edit = LineEdit()
+        self.whole_word = False
         self.prompt = "=> "
         self.nav = SearchNav(window_id)
         # Deliberately no scanning/drawing here -- self.write isn't wired up
@@ -391,10 +392,15 @@ class Search(Handler):
         text = self.line_edit.current_input
         ignorecase = text.islower()
         if text:
-            apply_native_marker(self.window_id, text, "itext" if ignorecase else "text")
+            if self.whole_word:
+                marker_text = r'\b' + re.escape(text) + r'\b'
+                apply_native_marker(self.window_id, marker_text, "iregex" if ignorecase else "regex")
+            else:
+                apply_native_marker(self.window_id, text, "itext" if ignorecase else "text")
         else:
             remove_native_marker(self.window_id)
-        self.nav.rescan(re.escape(text), ignorecase)
+        pattern = (r'\b' + re.escape(text) + r'\b') if self.whole_word else re.escape(text)
+        self.nav.rescan(pattern, ignorecase)
         self.draw_screen()
 
     def on_text(self, text: str, in_bracketed_paste: bool = False) -> None:
@@ -425,6 +431,10 @@ class Search(Handler):
         elif key_event.matches("ctrl+down"):
             self.nav.navigate_last()
             self.draw_screen()
+        elif key_event.matches("tab"):
+            self.whole_word = not self.whole_word
+            self.prompt = "W> " if self.whole_word else "=> "
+            self.refresh_search()
         elif self.line_edit.on_key(key_event):
             self.refresh_search()
         elif key_event.matches("up"):

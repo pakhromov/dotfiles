@@ -1,11 +1,5 @@
 [
-	{
-		"button": "button2",
-		"press_command": "drag_select",
-		"press_args": {"by": "columns"}
-	},
-	{
-		"button": "button8",
-		"command": "context_menu"
-	}
+	{ "button": "button1", "count": 1, "press_command": "drag_select", "command": "open_url_on_click" },
+	{ "button": "button2", "press_command": "drag_select", "press_args": {"by": "columns"} },
+	{ "button": "button8", "command": "context_menu" }
 ]

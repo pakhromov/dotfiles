@@ -32,8 +32,8 @@ end)
 
 hl.env("XCURSOR_SIZE",    "24")
 hl.env("XCURSOR_THEME",   "mycursor_LiOSV")
-hl.env("HYPRCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_THEME", "mycursor_LiOSV")
+--hl.env("HYPRCURSOR_THEME", "Hackneyed Cursors")
+--hl.env("HYPRCURSOR_SIZE", "24")
 
 -- NVIDIA Wayland
 hl.env("LIBVA_DRIVER_NAME",        "nvidia")
@@ -71,7 +71,7 @@ hl.config({
         inactive_opacity = 1.0,
 
         shadow = {
-            enabled      = true,
+            enabled      = false,
             range        = 4,
             render_power = 3,
             color        = 0xee1a1a1a,
