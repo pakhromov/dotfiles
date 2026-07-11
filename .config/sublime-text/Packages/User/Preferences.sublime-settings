@@ -2,7 +2,8 @@
 	"enable_telemetry": false,
 	"hardware_acceleration": "none", //opengl, none
 	"ui_scale": 1.0,
-	"hide_pointer_while_typing": false,
+	"scroll_speed": 0.5,
+	"hide_pointer_while_typing": true,
 	"reload_file_in_background": true,
 	"close_deleted_files": false,
 	"theme": "Base.hidden-theme",

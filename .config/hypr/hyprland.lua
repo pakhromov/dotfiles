@@ -54,8 +54,8 @@ hl.config({
         border_size = 0,
 
         col = {
-            active_border   = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   =  "rgba(74aa9cff)",
+            inactive_border = "rgba(59595955)",
         },
 
         resize_on_border = false,
@@ -94,7 +94,7 @@ hl.config({
     },
 
     cursor = {
-        no_hardware_cursors = true,
+        no_hardware_cursors = false,
     },
 
     misc = {
@@ -334,7 +334,7 @@ hl.config({
             bg_color               = 0xff111111,
             layout                 = "grid",
             gap_size               = 4,
-            border_size            = 1,
+            border_size            = 2,
             exit_on_hovered        = false,
             warp_on_move_window    = 1,
             close_overview_on_reload = true,
@@ -349,8 +349,8 @@ hl.config({
             },
 
             grid = {
-                rows                  = 3,
-                cols                  = 3,
+                rows                  = 2,
+                cols                  = 2,
                 loop                  = false,
                 layers                = 1,
                 loop_layers           = true,
@@ -366,6 +366,12 @@ hl.config({
         },
     },
 })
+
+
+
+
+
+
 
 --hl.config({
 --    plugin = {

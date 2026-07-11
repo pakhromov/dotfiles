@@ -30,3 +30,4 @@ export ELECTRON_OZONE_PLATFORM_HINT=auto
 
 export WAYFIRE_PLUGIN_PATH=/home/pavel/.local/bin/wayfire-personal-plugin/build/src:/home/pavel/.local/bin/wayfire-xdg-activation-plugin/build/src
 export WAYFIRE_PLUGIN_XML_PATH=/home/pavel/.local/bin/wayfire-personal-plugin/metadata:/home/pavel/.local/bin/wayfire-xdg-activation-plugin/metadata
+export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build

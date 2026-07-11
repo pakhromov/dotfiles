@@ -47,7 +47,8 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
 export BAT_PAGER="lore"
-export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=never | kitty-pager.sh'"
+export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
+#export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=never | kitty-pager.sh'"
 export PYTHON_AUTO_VRUN=true
 export MAGIC_ENTER_COMMAND='cd .'
 export ZPWR_EXPAND_BLACKLIST=(ls)
@@ -243,6 +244,7 @@ alias k="kitten show-key"
 alias e="exec launch"
 alias c="claude"
 alias cc="claude -c"
+alias cr="claude -r"
 alias rr="yzf -x"
 alias ro="yzf -o"
 alias ls="eza -1a --icons=always --group-directories-first --hyperlink"

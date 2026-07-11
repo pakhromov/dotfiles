@@ -1,4 +1,6 @@
 {
+  "fast_scroll_sensitivity": 9.0,
+  "scroll_sensitivity": 1.0,
   "buffer_line_height": {
     "custom": 1.5
   },
