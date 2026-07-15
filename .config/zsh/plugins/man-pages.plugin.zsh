@@ -25,7 +25,7 @@ less_termcap[ue]="${reset_color}"
 typeset -g __colored_man_pages_dir="${0:A:h}"
 
 function colored() {
-  MANROFFOPT="-c" command "$@"
+  MANROFFOPT="-c -rHY=0" command "$@"
 }
 
 # Colorize man and dman/debman (from debian-goodies)
@@ -36,7 +36,7 @@ function man \
     # No arguments - show fzf with all man pages, loop until cancelled
     local preview_cmd='echo; echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
     while true; do
-      local selected=$(apropos . | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
+      local selected=$(apropos . | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c -rHY=0" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
       [[ -z $selected ]] && break
     done
   elif [[ $0 == "man" && $# -eq 1 ]]; then
@@ -54,7 +54,7 @@ function man \
       # Multiple matches, show fzf with loop
       local preview_cmd='echo; echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/" | xargs man 2>/dev/null | col -bx | bat --language=man --plain --color always --theme=ansi'
       while true; do
-        local selected=$(echo "$matches" | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
+        local selected=$(echo "$matches" | fzf --height=100% --ansi --preview="$preview_cmd" --bind 'enter:execute(MANROFFOPT="-c -rHY=0" man $(echo {} | sed "s/\([^ ]*\) (\([^)]*\)).*/\2 \1/"))')
         [[ -z $selected ]] && break
       done
     fi

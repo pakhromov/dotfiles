@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="inject-key">
+		<_short>Inject Key</_short>
+		<_long>Exposes an IPC method (inject-key/press) which injects a key press+release, optionally with modifiers, directly to the focused surface. Bypasses compositor keybindings. Useful e.g. for programmatically triggering a clipboard paste (Ctrl+Shift+V) in a terminal.</_long>
+		<category>Utility</category>
+	</plugin>
+</wayfire>

@@ -47,8 +47,12 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
 export BAT_PAGER="lore"
-export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
-#export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=never | kitty-pager.sh'"
+#export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=always'"
+export MANPAGER="sh -c 'col -bx | bat -l man --wrap=never --color=always --style=plain --paging=never | kitty-pager.sh'"
+# Disable groff hyphenation so man never splits a word across two lines (e.g.
+# "Fi-\nnally"); otherwise searching for such a word can never match, since the
+# search scans line by line.
+export MANROFFOPT='-rHY=0'
 export PYTHON_AUTO_VRUN=true
 export MAGIC_ENTER_COMMAND='cd .'
 export ZPWR_EXPAND_BLACKLIST=(ls)

@@ -28,6 +28,7 @@ export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
-export WAYFIRE_PLUGIN_PATH=/home/pavel/.local/bin/wayfire-personal-plugin/build/src:/home/pavel/.local/bin/wayfire-xdg-activation-plugin/build/src
-export WAYFIRE_PLUGIN_XML_PATH=/home/pavel/.local/bin/wayfire-personal-plugin/metadata:/home/pavel/.local/bin/wayfire-xdg-activation-plugin/metadata
+export WAYFIRE_PLUGIN_PATH="$HOME/Projects/wayfire-plugins/src"
+export WAYFIRE_PLUGIN_XML_PATH="$HOME/Projects/wayfire-plugins/metadata"
+
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build

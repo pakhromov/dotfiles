@@ -37,4 +37,8 @@ while IFS= read -rsn1 key; do
 done
 stty echo 2>/dev/null
 
+# If a search window was opened for this pager, close it too, so it isn't left
+# orphaned when the pager exits.
+kitty @ close-window --match var:SEARCH_WIN=1 2>/dev/null
+
 echo done > "$fifo"

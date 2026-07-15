@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="my-rules">
+		<_short>My Rules</_short>
+		<_long>Personal window rules, applied once when a view maps (except views launched via the "open" client, which claims them beforehand). Rule syntax: if [criteria] then [action]. Actions: assign-focus RC (move to 1-based row/column workspace and focus it), set geometry_ppt X Y W H, keep-focused.</_long>
+		<category>Window Management</category>
+		<option name="rules" type="dynamic-list" type-hint="plain">
+			<_short>Rules</_short>
+			<_long>List of rules: if [criteria] then [action]</_long>
+			<entry prefix="" type="string">
+				<_short>Rule</_short>
+				<_long>Defines the rule to be applied</_long>
+			</entry>
+		</option>
+	</plugin>
+</wayfire>

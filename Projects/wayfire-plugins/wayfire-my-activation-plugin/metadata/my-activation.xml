@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="my-activation">
+		<_short>My Activation</_short>
+		<_long>A permissive implementation of the xdg-activation-v1 protocol, replacing the stock xdg-activation plugin. Tokens are ignored and every focus request is always granted.</_long>
+		<category>Utility</category>
+	</plugin>
+</wayfire>

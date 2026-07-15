@@ -1,4 +1,5 @@
 import ast
+import os
 import re
 import subprocess
 from gettext import gettext as _
@@ -8,14 +9,19 @@ from kittens.tui.handler import Handler, result_handler
 from kittens.tui.line_edit import LineEdit
 from kittens.tui.loop import Loop, MouseButton, MouseEvent
 from kittens.tui.operations import (
+    Mode,
     MouseTracking,
     clear_screen,
     cursor,
     move_cursor_by,
+    set_cursor_shape,
     set_line_wrapping,
+    set_mode,
     set_window_title,
+    styled,
 )
 from kitty.constants import config_dir
+from kitty.fast_data_types import wcswidth
 
 # scan()/goto() run inside the interactive search process and have no
 # direct access to boss/window/screen, so they ask kitty's main process to
@@ -31,6 +37,27 @@ from kitty.constants import config_dir
 # plus our own known filename instead.
 SELF_PATH = Path(config_dir) / "search.py"
 
+# Search modes, cycled with Tab. text = literal substring, word = whole-word
+# (literal wrapped in \b), regex = the input used verbatim as a regex. The
+# prompt symbol advertises the active mode.
+SEARCH_MODES = ("text", "word", "regex")
+MODE_PROMPTS = {"text": "=> ", "word": "W> ", "regex": "~> "}
+
+# Keybinds, each overridable via its own environment variable (set with
+# `env NAME=VALUE` in kitty.conf). Values are kitty key specs understood by
+# key_event.matches(); the default is used when the env var is unset.
+KEY_CLEAR = os.environ.get("SEARCH_CLEAR", "ctrl+shift+backspace")
+KEY_WORD_LEFT = os.environ.get("SEARCH_WORD_LEFT", "ctrl+left")
+KEY_WORD_RIGHT = os.environ.get("SEARCH_WORD_RIGHT", "ctrl+right")
+KEY_FIRST = os.environ.get("SEARCH_FIRST", "ctrl+up")
+KEY_LAST = os.environ.get("SEARCH_LAST", "ctrl+down")
+KEY_MODE_SWITCH = os.environ.get("SEARCH_MODE_SWITCH", "tab")
+KEY_PREV = os.environ.get("SEARCH_PREV", "up")
+KEY_NEXT = os.environ.get("SEARCH_NEXT", "down")
+KEY_ACCEPT = os.environ.get("SEARCH_ACCEPT", "enter")
+KEY_CANCEL = os.environ.get("SEARCH_CANCEL", "esc")
+
+
 def call_remote_control(args: list[str]) -> None:
     subprocess.run(["kitty", "@", *args], capture_output=True)
 
@@ -45,6 +72,21 @@ def apply_native_marker(window_id: int, raw_text: str, ftype: str) -> None:
 
 def remove_native_marker(window_id: int) -> None:
     call_remote_control(["remove-marker", f"--match=id:{window_id}"])
+
+
+def set_search_mode(window_id: int) -> None:
+    """Mark the target window as having an active search (SEARCH_MODE=1). kitty's
+    --when-focus-on maps read it to forward navigation keys (via send-key) to
+    this search window. It's independent of the pager's PAGER_MODE, so it works
+    on any window; on a pager the SEARCH_MODE maps just take precedence over the
+    scroll maps while search is open."""
+    call_remote_control(["set-user-vars", f"--match=id:{window_id}", "SEARCH_MODE=1"])
+
+
+def clear_search_mode(window_id: int) -> None:
+    """Remove the SEARCH_MODE var when search closes (name-only unsets it), so
+    the window's keys go back to whatever they were (normal, or pager scroll)."""
+    call_remote_control(["set-user-vars", f"--match=id:{window_id}", "SEARCH_MODE"])
 
 
 # ===== Position tracking: talks to search_backend.py (a separate, no_ui
@@ -347,8 +389,9 @@ class Search(Handler):
         self.window_id = window_id
         self.error = error
         self.line_edit = LineEdit()
-        self.whole_word = False
-        self.prompt = "=> "
+        self.mode = "text"
+        self.prompt = MODE_PROMPTS[self.mode]
+        self.focused = True  # whether this search window currently has focus
         self.nav = SearchNav(window_id)
         # Deliberately no scanning/drawing here -- self.write isn't wired up
         # by the Loop machinery until after __init__ returns. Doing it here
@@ -358,14 +401,33 @@ class Search(Handler):
     def init_terminal_state(self) -> None:
         self.write(set_line_wrapping(False))
         self.write(set_window_title(_("Search")))
+        # Ask kitty to report focus in/out (CSI I / CSI O) so we can tint the
+        # prompt when this window loses focus. FocusLoop (below) delivers them.
+        self.write(set_mode(Mode.FOCUS_TRACKING))
+
+    def on_focus_change(self, focused: bool) -> None:
+        self.focused = focused
+        self.draw_screen()
 
     def initialize(self) -> None:
         self.init_terminal_state()
+        set_search_mode(self.window_id)
         self.refresh_search()
 
     def draw_screen(self) -> None:
         self.write(clear_screen())
-        self.line_edit.write(self.write, self.prompt)
+        # Render the prompt (red when this window isn't focused) plus the
+        # input, replicating LineEdit.write's plain-mode cursor math. We can't
+        # just hand LineEdit.write a styled prompt: it derives the cursor
+        # column from wcswidth(prompt), which ANSI color escapes corrupt.
+        prompt = self.prompt if self.focused else styled(self.prompt, fg="red")
+        self.write("\r")
+        self.write(prompt + self.line_edit.current_input)
+        self.write("\r")
+        cursor_pos = self.line_edit.cursor_pos + wcswidth(self.prompt)
+        if cursor_pos:
+            self.write(move_cursor_by(cursor_pos, "right"))
+        self.write(set_cursor_shape("beam"))
         with cursor(self.write):
             # Search counter
             counter_text = self.nav.counter_text()
@@ -391,27 +453,40 @@ class Search(Handler):
     def refresh_search(self) -> None:
         text = self.line_edit.current_input
         ignorecase = text.islower()
+        # marker_text is what kitty's native marker matches on; pattern is what
+        # our own scanner (do_scan) compiles. For text mode kitty re-escapes
+        # internally, so marker_text stays raw; word/regex use kitty's regex
+        # marker, so both sides get an explicit regex.
+        if self.mode == "word":
+            pattern = (r"\b" + re.escape(text) + r"\b") if text else ""
+            marker_text, base_type = pattern, "regex"
+        elif self.mode == "regex":
+            pattern = text
+            marker_text, base_type = text, "regex"
+        else:  # text
+            pattern = re.escape(text)
+            marker_text, base_type = text, "text"
         if text:
-            if self.whole_word:
-                marker_text = r'\b' + re.escape(text) + r'\b'
-                apply_native_marker(self.window_id, marker_text, "iregex" if ignorecase else "regex")
-            else:
-                apply_native_marker(self.window_id, text, "itext" if ignorecase else "text")
+            apply_native_marker(self.window_id, marker_text, ("i" if ignorecase else "") + base_type)
         else:
             remove_native_marker(self.window_id)
-        pattern = (r'\b' + re.escape(text) + r'\b') if self.whole_word else re.escape(text)
         self.nav.rescan(pattern, ignorecase)
         self.draw_screen()
+
+    def switch_mode(self) -> None:
+        self.mode = SEARCH_MODES[(SEARCH_MODES.index(self.mode) + 1) % len(SEARCH_MODES)]
+        self.prompt = MODE_PROMPTS[self.mode]
+        self.refresh_search()
 
     def on_text(self, text: str, in_bracketed_paste: bool = False) -> None:
         self.line_edit.on_text(text, in_bracketed_paste)
         self.refresh_search()
 
     def on_key(self, key_event) -> None:
-        if key_event.matches("ctrl+shift+backspace"):
+        if key_event.matches(KEY_CLEAR):
             self.line_edit.clear()
             self.refresh_search()
-        elif key_event.matches("ctrl+left"):
+        elif key_event.matches(KEY_WORD_LEFT):
             before, _after = self.line_edit.split_at_cursor()
             stripped = before.rstrip(' ')
             try:
@@ -420,32 +495,30 @@ class Search(Handler):
                 pos = 0
             self.line_edit.left(len(before) - pos)
             self.draw_screen()
-        elif key_event.matches("ctrl+right"):
+        elif key_event.matches(KEY_WORD_RIGHT):
             _before, after = self.line_edit.split_at_cursor()
             m = re.match(r'\S*\s+', after)
             self.line_edit.right(m.end() if m else len(after))
             self.draw_screen()
-        elif key_event.matches("ctrl+up"):
+        elif key_event.matches(KEY_FIRST):
             self.nav.navigate_first()
             self.draw_screen()
-        elif key_event.matches("ctrl+down"):
+        elif key_event.matches(KEY_LAST):
             self.nav.navigate_last()
             self.draw_screen()
-        elif key_event.matches("tab"):
-            self.whole_word = not self.whole_word
-            self.prompt = "W> " if self.whole_word else "=> "
-            self.refresh_search()
+        elif key_event.matches(KEY_MODE_SWITCH):
+            self.switch_mode()
         elif self.line_edit.on_key(key_event):
             self.refresh_search()
-        elif key_event.matches("up"):
+        elif key_event.matches(KEY_PREV):
             self.nav.navigate(prev=True)
             self.draw_screen()
-        elif key_event.matches("down"):
+        elif key_event.matches(KEY_NEXT):
             self.nav.navigate(prev=False)
             self.draw_screen()
-        elif key_event.matches("enter"):
+        elif key_event.matches(KEY_ACCEPT):
             self.quit(1)
-        elif key_event.matches("esc"):
+        elif key_event.matches(KEY_CANCEL):
             self.quit(0)
 
     def on_interrupt(self) -> None:
@@ -480,10 +553,27 @@ class Search(Handler):
     def quit(self, return_code: int) -> None:
         remove_native_marker(self.window_id)
         self.nav.clear()
-        if return_code == 0:  # Esc: jump back to the live prompt
-            call_remote_control(["scroll-window", f"--match=id:{self.window_id}", "end"])
-        # Enter: leave the scrollback wherever the search left it
+        # Search is closing: drop SEARCH_MODE. The window's keys go back to
+        # normal, or to pager scrolling if PAGER_MODE=1 is still set -- either
+        # way, we never touched PAGER_MODE.
+        clear_search_mode(self.window_id)
         self.quit_loop(return_code)
+
+
+class FocusLoop(Loop):
+    """The base Loop parses CSI sequences in _on_csi but only dispatches mouse
+    and key terminators -- it silently drops terminal focus in/out (CSI I /
+    CSI O). Catch those and forward them to the handler so it can show whether
+    the search window currently has focus."""
+
+    def _on_csi(self, csi: str) -> None:
+        if csi == "I":
+            self.handler.on_focus_change(True)
+            return
+        if csi == "O":
+            self.handler.on_focus_change(False)
+            return
+        super()._on_csi(csi)
 
 
 def main(args: list[str]) -> None:
@@ -492,6 +582,6 @@ def main(args: list[str]) -> None:
         error = "Error: Window id must be provided as the first argument."
     window_id = int(args[1]) if len(args) >= 2 and args[1].isdigit() else 0
 
-    loop = Loop()
+    loop = FocusLoop()
     handler = Search(window_id, error)
     loop.loop(handler)
