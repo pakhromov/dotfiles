@@ -87,7 +87,7 @@ install_gpu_drivers() {
     case "$gpu" in
         1)
             echo "==> Installing NVIDIA drivers..."
-            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver egl-wayland
+            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver-git egl-wayland
             ;;
         2)
             echo "==> Installing AMD drivers..."

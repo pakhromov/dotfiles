@@ -1,5 +1,5 @@
 local config = {
-	name = "Quick Zip",
+	name = "quick zip",
 }
 
 return config

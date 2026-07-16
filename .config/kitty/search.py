@@ -43,19 +43,22 @@ SELF_PATH = Path(config_dir) / "search.py"
 SEARCH_MODES = ("text", "word", "regex")
 MODE_PROMPTS = {"text": "=> ", "word": "W> ", "regex": "~> "}
 
-# Keybinds, each overridable via its own environment variable (set with
-# `env NAME=VALUE` in kitty.conf). Values are kitty key specs understood by
-# key_event.matches(); the default is used when the env var is unset.
-KEY_CLEAR = os.environ.get("SEARCH_CLEAR", "ctrl+shift+backspace")
-KEY_WORD_LEFT = os.environ.get("SEARCH_WORD_LEFT", "ctrl+left")
-KEY_WORD_RIGHT = os.environ.get("SEARCH_WORD_RIGHT", "ctrl+right")
-KEY_FIRST = os.environ.get("SEARCH_FIRST", "ctrl+up")
-KEY_LAST = os.environ.get("SEARCH_LAST", "ctrl+down")
-KEY_MODE_SWITCH = os.environ.get("SEARCH_MODE_SWITCH", "tab")
-KEY_PREV = os.environ.get("SEARCH_PREV", "up")
-KEY_NEXT = os.environ.get("SEARCH_NEXT", "down")
-KEY_ACCEPT = os.environ.get("SEARCH_ACCEPT", "enter")
-KEY_CANCEL = os.environ.get("SEARCH_CANCEL", "esc")
+# Keybinds, each set via its own environment variable (with `env NAME=VALUE` in
+# kitty.conf). Values are kitty key specs understood by key_event.matches(). An
+# unset variable means that action has no key bound at all.
+KEY_CLEAR = os.environ.get("SEARCH_CLEAR")
+KEY_WORD_LEFT = os.environ.get("SEARCH_WORD_LEFT")
+KEY_WORD_RIGHT = os.environ.get("SEARCH_WORD_RIGHT")
+KEY_FIRST = os.environ.get("SEARCH_FIRST")
+KEY_LAST = os.environ.get("SEARCH_LAST")
+KEY_MODE_SWITCH = os.environ.get("SEARCH_MODE_SWITCH")
+KEY_PREV = os.environ.get("SEARCH_PREV")
+KEY_NEXT = os.environ.get("SEARCH_NEXT")
+KEY_CANCEL = os.environ.get("SEARCH_CANCEL")
+KEY_SCROLL_UP = os.environ.get("SEARCH_SCROLL_UP")
+KEY_SCROLL_DOWN = os.environ.get("SEARCH_SCROLL_DOWN")
+KEY_PAGE_UP = os.environ.get("SEARCH_PAGE_UP")
+KEY_PAGE_DOWN = os.environ.get("SEARCH_PAGE_DOWN")
 
 
 def call_remote_control(args: list[str]) -> None:
@@ -87,6 +90,12 @@ def clear_search_mode(window_id: int) -> None:
     """Remove the SEARCH_MODE var when search closes (name-only unsets it), so
     the window's keys go back to whatever they were (normal, or pager scroll)."""
     call_remote_control(["set-user-vars", f"--match=id:{window_id}", "SEARCH_MODE"])
+
+
+def scroll_window(window_id: int, amount: str) -> None:
+    """Scroll the target (searched) window by a relative amount, e.g. '1l' /
+    '1l-' (one line down/up) or '1p' / '1p-' (one page down/up)."""
+    call_remote_control(["scroll-window", f"--match=id:{window_id}", amount])
 
 
 # ===== Position tracking: talks to search_backend.py (a separate, no_ui
@@ -416,13 +425,17 @@ class Search(Handler):
 
     def draw_screen(self) -> None:
         self.write(clear_screen())
-        # Render the prompt (red when this window isn't focused) plus the
-        # input, replicating LineEdit.write's plain-mode cursor math. We can't
-        # just hand LineEdit.write a styled prompt: it derives the cursor
-        # column from wcswidth(prompt), which ANSI color escapes corrupt.
-        prompt = self.prompt if self.focused else styled(self.prompt, fg="red")
+        # Render the prompt + query, both red when this window isn't focused,
+        # replicating LineEdit.write's plain-mode cursor math. We can't just
+        # hand LineEdit.write styled text: it derives the cursor column from
+        # wcswidth(), which ANSI color escapes corrupt.
+        prompt = self.prompt
+        query = self.line_edit.current_input
+        if not self.focused:
+            prompt = styled(prompt, fg="red")
+            query = styled(query, fg="red")
         self.write("\r")
-        self.write(prompt + self.line_edit.current_input)
+        self.write(prompt + query)
         self.write("\r")
         cursor_pos = self.line_edit.cursor_pos + wcswidth(self.prompt)
         if cursor_pos:
@@ -482,11 +495,18 @@ class Search(Handler):
         self.line_edit.on_text(text, in_bracketed_paste)
         self.refresh_search()
 
+    def key_bound(self, key_event, spec) -> bool:
+        # spec is None when the action's env var is unset -> no key bound.
+        return bool(spec) and key_event.matches(spec)
+
     def on_key(self, key_event) -> None:
-        if key_event.matches(KEY_CLEAR):
+        # All configured actions are checked before line_edit.on_key, so a key
+        # bound to an action always wins over default line editing (and the
+        # precedence is uniform -- no action is special-cased after the editor).
+        if self.key_bound(key_event, KEY_CLEAR):
             self.line_edit.clear()
             self.refresh_search()
-        elif key_event.matches(KEY_WORD_LEFT):
+        elif self.key_bound(key_event, KEY_WORD_LEFT):
             before, _after = self.line_edit.split_at_cursor()
             stripped = before.rstrip(' ')
             try:
@@ -495,31 +515,37 @@ class Search(Handler):
                 pos = 0
             self.line_edit.left(len(before) - pos)
             self.draw_screen()
-        elif key_event.matches(KEY_WORD_RIGHT):
+        elif self.key_bound(key_event, KEY_WORD_RIGHT):
             _before, after = self.line_edit.split_at_cursor()
             m = re.match(r'\S*\s+', after)
             self.line_edit.right(m.end() if m else len(after))
             self.draw_screen()
-        elif key_event.matches(KEY_FIRST):
+        elif self.key_bound(key_event, KEY_FIRST):
             self.nav.navigate_first()
             self.draw_screen()
-        elif key_event.matches(KEY_LAST):
+        elif self.key_bound(key_event, KEY_LAST):
             self.nav.navigate_last()
             self.draw_screen()
-        elif key_event.matches(KEY_MODE_SWITCH):
+        elif self.key_bound(key_event, KEY_MODE_SWITCH):
             self.switch_mode()
-        elif self.line_edit.on_key(key_event):
-            self.refresh_search()
-        elif key_event.matches(KEY_PREV):
+        elif self.key_bound(key_event, KEY_SCROLL_UP):
+            scroll_window(self.window_id, "1l-")
+        elif self.key_bound(key_event, KEY_SCROLL_DOWN):
+            scroll_window(self.window_id, "1l")
+        elif self.key_bound(key_event, KEY_PAGE_UP):
+            scroll_window(self.window_id, "1p-")
+        elif self.key_bound(key_event, KEY_PAGE_DOWN):
+            scroll_window(self.window_id, "1p")
+        elif self.key_bound(key_event, KEY_PREV):
             self.nav.navigate(prev=True)
             self.draw_screen()
-        elif key_event.matches(KEY_NEXT):
+        elif self.key_bound(key_event, KEY_NEXT):
             self.nav.navigate(prev=False)
             self.draw_screen()
-        elif key_event.matches(KEY_ACCEPT):
-            self.quit(1)
-        elif key_event.matches(KEY_CANCEL):
+        elif self.key_bound(key_event, KEY_CANCEL):
             self.quit(0)
+        elif self.line_edit.on_key(key_event):
+            self.refresh_search()
 
     def on_interrupt(self) -> None:
         self.quit(1)

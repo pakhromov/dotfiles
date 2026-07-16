@@ -4,6 +4,16 @@
 
 /** Add your custom styles below **********************************************/
 
+/* Fix active tab background for Firefox 152+ (Project Nova) —
+   --toolbar-bgcolor fallback no longer produces a distinct color;
+   use the new --tab-background-color-selected variable instead */
+.tab-background[selected] {
+  background-color: var(--tab-background-color-selected, var(--toolbar-bgcolor)) !important;
+}
+.tab-background[multiselected]:not([selected]) {
+  background-color: var(--tab-background-color-multiselected, var(--toolbar-bgcolor)) !important;
+}
+
 /* Hide tab title tooltip on hover
 #tabbrowser-tab-tooltip {
   display: none !important;

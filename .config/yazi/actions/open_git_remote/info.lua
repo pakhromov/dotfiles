@@ -1,5 +1,5 @@
 local config = {
-	name = "Open Git Remote",
+	name = "open git remote",
 }
 
 return config

@@ -1,0 +1,7 @@
+font-family = ComicShannsLigaMod Nerd Font
+font-size = 13
+theme = Abernathy
+background-opacity = 1.0
+window-padding-x = 0
+window-padding-y = 0
+mouse-scroll-multiplier = precision:1,discrete:3

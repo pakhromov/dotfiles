@@ -3,7 +3,7 @@ local M = {}
 function M:init(opts)
 	local path = opts.selected[1]
 	if not path then
-		ya.notify({ title = "Open Git Remote", content = "No file selected", timeout = 3.0, level = "warn" })
+		ya.notify({ title = "open git remote", content = "No file selected", timeout = 3.0, level = "warn" })
 		return
 	end
 
