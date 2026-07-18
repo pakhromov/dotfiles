@@ -349,8 +349,8 @@ hl.config({
             },
 
             grid = {
-                rows                  = 2,
-                cols                  = 2,
+                rows                  = 3,
+                cols                  = 3,
                 loop                  = false,
                 layers                = 1,
                 loop_layers           = true,

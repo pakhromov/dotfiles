@@ -1,5 +1,4 @@
 [Default Applications]
-
 text/x-c++src=sublime_text.desktop
 text/plain=sublime_text.desktop
 text/x-python=sublime_text.desktop
@@ -14,7 +13,6 @@ text/javascript=sublime_text.desktop
 application/javascript=sublime_text.desktop
 inode/x-empty=sublime_text.desktop
 inode/directory=xdg-yazi.desktop
-
 x-scheme-handler/http=firefox.desktop
 x-scheme-handler/https=firefox.desktop
 x-scheme-handler/chrome=firefox.desktop
@@ -27,11 +25,9 @@ application/xhtml+xml=firefox.desktop
 application/pdf=firefox.desktop
 text/html=firefox.desktop
 image/svg+xml=firefox.desktop
-
 x-scheme-handler/magnet=mpv.desktop
 application/x-bittorrent=mpv.desktop
 x-scheme-handler/acestream=mpv.desktop
-
 image/png=qimgv.desktop
 image/jpeg=qimgv.desktop
 image/jpg=qimgv.desktop
@@ -43,9 +39,10 @@ image/heif=qimgv.desktop
 image/heic=qimgv.desktop
 image/tiff=qimgv.desktop
 image/x-icon=qimgv.desktop
-
 x-scheme-handler/mailto=gmail
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 x-scheme-handler/ccswitch=cc-switch-handler.desktop
 x-scheme-handler/fdm=freedownloadmanager_fdm_up.desktop
+x-scheme-handler/claude=com.anthropic.Claude.desktop
 
+[Added Associations]
