@@ -6,6 +6,7 @@ shared_module('my-activation',
     dependencies: [wayfire],
     include_directories: include_directories('.'),
     name_prefix: 'lib',
-    install: false,
+    install: true,
+    install_dir: join_paths(get_option('libdir'), 'wayfire'),
     build_by_default: true,
 )

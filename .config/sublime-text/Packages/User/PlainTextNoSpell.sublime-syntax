@@ -2,7 +2,7 @@
 ---
 name: Plain Text
 file_extensions:
-  - log
+  - linux
 scope: text.nospell
 contexts:
   main: []

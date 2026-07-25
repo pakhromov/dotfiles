@@ -49,10 +49,12 @@ export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
-export WAYFIRE_PLUGIN_PATH="$HOME/Projects/wayfire-plugins/src"
-export WAYFIRE_PLUGIN_XML_PATH="$HOME/Projects/wayfire-plugins/metadata"
-
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
+#export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules
+
+#export WAYFIRE_DEFAULT_CONFIG_BACKEND=default-config-backend
+#export WAYFIRE_PLUGIN_PATH=/tmp/wayfire/build/src:/tmp/wayfire/build/plugins/animate:/tmp/wayfire/build/plugins/blur:/tmp/wayfire/build/plugins/cube:/tmp/wayfire/build/plugins/decor:/tmp/wayfire/build/plugins/grid:/tmp/wayfire/build/plugins/ipc:/tmp/wayfire/build/plugins/ipc-rules:/tmp/wayfire/build/plugins/protocols:/tmp/wayfire/build/plugins/scale:/tmp/wayfire/build/plugins/single_plugins:/tmp/wayfire/build/plugins/tile:/tmp/wayfire/build/plugins/vswitch:/tmp/wayfire/build/plugins/window-rules:/tmp/wayfire/build/plugins/wm-actions:/tmp/wayfire/build/plugins/wobbly
+#export WAYFIRE_PLUGIN_XML_PATH=/tmp/wayfire/metadata
 
 log="/tmp/$compositor.log"
 

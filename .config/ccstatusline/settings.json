@@ -173,6 +173,7 @@
   "compactThreshold": 60,
   "colorLevel": 1,
   "defaultPadding": "",
+  "defaultPaddingSide": "both",
   "inheritSeparatorColors": false,
   "globalBold": false,
   "gitCacheTtlSeconds": 5,
@@ -189,5 +190,9 @@
     "endCaps": [],
     "autoAlign": false,
     "continueThemeAcrossLines": false
+  },
+  "installation": {
+    "method": "pinned",
+    "installedVersion": "2.2.25"
   }
 }

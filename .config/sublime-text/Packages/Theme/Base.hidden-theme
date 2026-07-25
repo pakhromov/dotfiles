@@ -7,7 +7,7 @@
         "fontSizeSm": 11,
         "fontSizeMd": 12,
         "fontSizeHuge": 24,
-        "fontFace": "system",
+        "fontFace": "ComicShannsLigaMod Nerd Font",
         "titleBarBackground": "var(--background)",
         "titleBarForeground": "var(--foreground)",
         "tooltipBackground": "var(foreground)",
@@ -24,7 +24,7 @@
         "sidebarFolderExpandedForeground": "var(accent)",
         "treeActiveSelectionBackground": "color(var(background) blend(var(foreground) 90%))",
         "tabBold": false,
-        "tabLabelFontSize": 12,
+        "tabLabelFontSize": 16,
         "tabInactiveForeground": "var(--foreground)",
         "tabActiveBackground": "color(var(foreground) blend(var(background) 5%))",
         "tabBorder": "color(var(background) blend(var(foreground) 90%))",
@@ -117,6 +117,14 @@
         },
         {
             "class": "show_tabs_dropdown_button",
+            "content_margin": 0
+        },
+        {
+            "class": "scroll_tabs_left_button",
+            "content_margin": 0
+        },
+        {
+            "class": "scroll_tabs_right_button",
             "content_margin": 0
         },
         {
@@ -213,6 +221,36 @@
         {
             "class": "tab_control",
             "attributes": [
+                "deleted"
+            ],
+            "layer3.tint": "var(vcsDeleted)",
+            "layer3.inner_margin": [
+                0,
+                1,
+                0,
+                0
+            ],
+            "layer3.opacity": 1
+        },
+        {
+            "class": "tab_control",
+            "attributes": [
+                "selected",
+                "dirty"
+            ],
+            "layer3.tint": "var(vcsModified)",
+            "layer3.inner_margin": [
+                0,
+                1,
+                0,
+                0
+            ],
+            "layer3.opacity": 1
+        },
+        {
+            "class": "tab_control",
+            "attributes": [
+                "selected",
                 "deleted"
             ],
             "layer3.tint": "var(vcsDeleted)",
@@ -646,7 +684,7 @@
                 8,
                 3,
                 8,
-                3
+                1
             ],
             "layer1.draw_center": false,
             "layer1.inner_margin": [
@@ -667,7 +705,7 @@
                 0,
                 3,
                 8,
-                3
+                1
             ]
         },
         {
@@ -679,7 +717,7 @@
                 0,
                 3,
                 0,
-                3
+                1
             ]
         },
         {
@@ -713,6 +751,7 @@
                 }
             ],
             "font.size": "var(fontSizeMd)",
+            "font.face": "var(fontFace)",
             "fg": "var(statusBarForeground)"
         },
         {
@@ -735,6 +774,7 @@
                 }
             ],
             "font.size": "var(fontSizeSm)",
+            "font.face": "var(fontFace)",
             "font.bold": true,
             "fg": "var(buttonForeground)"
         },

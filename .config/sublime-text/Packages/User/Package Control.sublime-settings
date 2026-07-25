@@ -8,15 +8,12 @@
 	"installed_packages":
 	[
 		"All Autocomplete",
-		"AlternativeAutocompletion",
 		"BracketHighlighter",
 		"Compare Side-By-Side",
-		"FontCycler",
 		"Generic Config",
-		"INI",
-		"KDL",
+		"Golden Dragon Color Scheme",
+		"MarkdownPreview",
 		"Package Control",
 		"Sequoia Color Scheme",
-		"WordingStatus",
 	],
 }

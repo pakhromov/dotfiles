@@ -9,13 +9,15 @@ flow-control-bin
 focus-bin
 fsel
 ghgrab-bin
+iwmenu-bin
 lazydlp-bin
 localsend-go-bin
 lore-bin
 mal
 mark-shot
 mcat-bin
-monstar-git
+monstar
+mousam
 pdf2img-c
 python-undervolt
 python-xlsx2csv
@@ -23,6 +25,7 @@ pywayfire-git
 rar
 rich-cli
 scrop-bin
+seekey
 shanns-liga-nerd-font
 shmooz
 sidex-bin

@@ -4,6 +4,17 @@
 
 /** Add your custom styles below **********************************************/
 
+/* Fix photon_like_contextline for Firefox 155+ — [selected] removed from .tabbrowser-tab,
+   replaced by [visuallyselected]; the hide rule now matches all tabs including active */
+@media -moz-pref("userChrome.tab.photon_like_contextline") {
+  .tabbrowser-tab[visuallyselected] .tab-context-line,
+  .tabbrowser-tab[multiselected] .tab-context-line {
+    background-color: var(--tab-line-color, var(--lwt-tab-line-color, rgb(10, 132, 255))) !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 /* Fix active tab background for Firefox 152+ (Project Nova) —
    --toolbar-bgcolor fallback no longer produces a distinct color;
    use the new --tab-background-color-selected variable instead */

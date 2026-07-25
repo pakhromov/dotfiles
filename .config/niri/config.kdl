@@ -34,6 +34,8 @@ input {
 }
 
 output "eDP-1" {
+    mode "1920x1080@144"
+    position x=0 y=1080
     off
 }
 
@@ -54,6 +56,7 @@ layout {
     center-focused-column "never"
     preset-column-widths {
         proportion 0.5
+        proportion 0.75
         proportion 1.0
     }
     default-column-width { proportion 1.0; }

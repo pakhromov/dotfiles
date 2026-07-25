@@ -1,3 +1,0 @@
-[
-    { "caption": "Compare With Current Tab...", "command": "sbs_compare", "args": { "with_active": true, "group": -1, "index": -1 } }
-]

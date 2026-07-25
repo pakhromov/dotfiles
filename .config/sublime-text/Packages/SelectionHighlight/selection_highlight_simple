@@ -1,0 +1,28 @@
+import sublime
+import sublime_plugin
+import threading
+
+REGION_KEY = 'selection-highlight'
+
+class SelectionHighlightListener(sublime_plugin.EventListener):
+    _lock = threading.Semaphore()
+
+    def on_selection_modified_async(self, view):
+        SelectionHighlightListener._lock.acquire()
+        try:
+            sel = view.sel()
+            if not sel or sel[0].empty():
+                view.erase_regions(REGION_KEY)
+                view.erase_status(REGION_KEY)
+                return
+            text = view.substr(sel[0])
+            regions = view.find_all(text, sublime.LITERAL)
+            view.add_regions(
+                REGION_KEY,
+                regions,
+                'region.bluish',
+                flags=sublime.DRAW_NO_FILL,
+            )
+            view.set_status(REGION_KEY, f'{len(regions)} matches')
+        finally:
+            SelectionHighlightListener._lock.release()
