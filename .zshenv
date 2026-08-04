@@ -29,3 +29,5 @@ export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
+
+export LIBVIRT_DEFAULT_URI=qemu:///system

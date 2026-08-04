@@ -1,6 +1,6 @@
 #!/bin/bash
 
-options="󰐥 shutdown\n reboot\n󰍃 logout\n󰒲 suspend\n󰋊 hibernate\n󰌾 lock"
+options="󰐥 shutdown\n reboot\n󰍃 logout\n UEFI\n󰒲 suspend\n󰋊 hibernate\n󰌾 lock"
 
 choice=$(printf '%b\n' "$options" | rofi -dmenu -matching normal -p ' POWER MENU ')
 
@@ -13,6 +13,9 @@ case "$choice" in
         ;;
     "󰍃 logout")
         loginctl terminate-session ${XDG_SESSION_ID-}
+        ;;
+    " UEFI")
+        systemctl reboot --firmware-setup
         ;;
     "󰒲 suspend")
         systemctl suspend

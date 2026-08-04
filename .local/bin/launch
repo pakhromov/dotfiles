@@ -50,7 +50,7 @@ export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
-#export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules
+export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/grid:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/animate
 
 #export WAYFIRE_DEFAULT_CONFIG_BACKEND=default-config-backend
 #export WAYFIRE_PLUGIN_PATH=/tmp/wayfire/build/src:/tmp/wayfire/build/plugins/animate:/tmp/wayfire/build/plugins/blur:/tmp/wayfire/build/plugins/cube:/tmp/wayfire/build/plugins/decor:/tmp/wayfire/build/plugins/grid:/tmp/wayfire/build/plugins/ipc:/tmp/wayfire/build/plugins/ipc-rules:/tmp/wayfire/build/plugins/protocols:/tmp/wayfire/build/plugins/scale:/tmp/wayfire/build/plugins/single_plugins:/tmp/wayfire/build/plugins/tile:/tmp/wayfire/build/plugins/vswitch:/tmp/wayfire/build/plugins/window-rules:/tmp/wayfire/build/plugins/wm-actions:/tmp/wayfire/build/plugins/wobbly
@@ -59,83 +59,24 @@ export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
 log="/tmp/$compositor.log"
 
 case "$compositor" in
-    jay)   exec jay run </dev/null >"$log" 2>&1 ;;
     kwin)
-        # This build of kwin_wayland links libKGlobalAccelD directly
-        # (ldd shows libKGlobalAccelD.so.0) and owns org.kde.kglobalaccel
-        # on the session bus itself - no external kglobalacceld needed or
-        # wanted; starting one just fights kwin for the D-Bus name.
-        #
-        # KWin's KPackage-based script loading (the kwinrc [Plugins]
-        # "*Enabled=true" mechanism kpackagetool6-installed scripts rely
-        # on) is broken here: Scripting.loadScript(path, pluginName)
-        # returns -1 for any installed KWin/Script package, even stock
-        # ones. Scripting.loadScript(path) with no pluginName works fine
-        # and registers shortcuts correctly, so load our scripts that way
-        # by hand once org.kde.KWin appears on the bus.
-        # D-Bus-activated services (like dbus-app-launcher, which our
-        # launchkitty script calls into) are spawned by dbus-daemon itself.
-        # Our private dbus-daemon starts before kwin picks a WAYLAND_DISPLAY,
-        # so activated services never inherit it and can't open windows -
-        # confirmed dbus-app-launcher launches kitty fine when WAYLAND_DISPLAY
-        # is set, but silently does nothing without it. Push it into the
-        # daemon's activation environment once kwin creates its socket.
-        runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-        before_locks=$(ls "$runtime_dir"/wayland-*.lock 2>/dev/null || true)
-        (
-            kwin_script_log="/tmp/kwin-scripts.log"
-            : > "$kwin_script_log"
-
-            i=0
-            found=""
-            while [ "$i" -lt 100 ]; do
-                for lockfile in "$runtime_dir"/wayland-*.lock; do
-                    [ -e "$lockfile" ] || continue
-                    case " $before_locks " in
-                        *" $lockfile "*) continue ;;
-                    esac
-                    found="$lockfile"
-                    break
-                done
-                [ -n "$found" ] && break
-                i=$((i + 1))
-                sleep 0.1
-            done
-            if [ -n "$found" ]; then
-                WAYLAND_DISPLAY=$(basename "$found" .lock)
-                export WAYLAND_DISPLAY
-                echo "wayland display: $WAYLAND_DISPLAY" >>"$kwin_script_log"
-                dbus-update-activation-environment WAYLAND_DISPLAY XDG_RUNTIME_DIR >>"$kwin_script_log" 2>&1
-            else
-                echo "timed out waiting for wayland socket" >>"$kwin_script_log"
-            fi
-
-            j=0
-            while [ "$j" -lt 100 ]; do
-                owned=$(dbus-send --session --print-reply \
-                    --dest=org.freedesktop.DBus /org/freedesktop/DBus \
-                    org.freedesktop.DBus.NameHasOwner string:org.kde.KWin 2>/dev/null)
-                case "$owned" in
-                    *boolean\ true*) break ;;
-                esac
-                j=$((j + 1))
-                sleep 0.1
-            done
-            for script in launchkitty; do
-                path="/home/pavel/.local/share/kwin/scripts/$script/contents/code/main.js"
-                id=$(qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.loadScript "$path" 2>>"$kwin_script_log")
-                echo "$script -> id $id" >>"$kwin_script_log"
-                qdbus6 org.kde.KWin "/Scripting/Script$id" org.kde.kwin.Script.run >>"$kwin_script_log" 2>&1
-            done
-        ) &
-        # kwin_wayland starts locked by default, and the greeter crashes in
-        # a loop here (needs org.kde.plasma.private.sessions from
-        # plasma-workspace, which isn't installed) - global shortcuts stay
-        # suppressed the whole time since KWin considers itself locked.
-        # There's no lockscreen module in this setup anyway, so disable it.
-        exec kwin_wayland --no-lockscreen </dev/null >"$log" 2>&1 ;;
+           # Qt picks its platform theme from XDG_CURRENT_DESKTOP. Without it plasma-integration (KDEPlasmaPlatformTheme6.so) never loads, so KCMs write colour scheme / style / icon settings into kdeglobals and nothing ever applies them - every Qt window stays default white no matter what Breeze Dark says.
+           export XDG_CURRENT_DESKTOP=KDE
+           export XDG_SESSION_DESKTOP=KDE
+           export XDG_SESSION_TYPE=wayland
+           # Tell xdg-open (used by Electron apps like Discord/Firebot) that this is a Plasma 6 session, so it calls kde-open instead of the long-removed kfmclient. Without this, URL and folder clicks in Electron apps silently do nothing.
+           export KDE_SESSION_VERSION=6
+           # Marks this as a full KDE session (startplasma sets this too). KDE apps use it to pick their desktop file identity — e.g. System Settings uses systemsettings.desktop instead of kdesystemsettings.desktop, which is what docks/launchers need to resolve its icon correctly.
+           export KDE_FULL_SESSION=true
+           # Without this, kbuildsycoca6 fails and KDE tools can't find the application menu database, breaking kglobalacceld shortcut registration and the Application Picker
+           export XDG_MENU_PREFIX=plasma-
+           exec kwin_wayland --xwayland --no-lockscreen </dev/null >"$log" 2>&1 ;;
+    jay)   exec jay run </dev/null >"$log" 2>&1 ;;
     river) exec river -no-xwayland </dev/null >"$log" 2>&1 ;;
     sway)  exec sway --unsupported-gpu </dev/null >"$log" 2>&1 ;;
     wayfire) exec wayfire -d </dev/null >"$log" 2>&1 ;;
     *)     exec "$compositor" </dev/null >"$log" 2>&1 ;;
 esac
+
+
+

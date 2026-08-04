@@ -1,0 +1,30 @@
+max-entries = 5000
+
+replace-clipboard-on-clear = true
+
+clipboard-as-files = true
+
+
+# A single flat (...) group is a first-match-wins priority chain, same as
+# cclipd's -t flags: the first pattern here that has any offered match wins,
+# and ONLY that one MIME type is kept for the entry.
+#
+# This means if an image variant is offered, only the image gets stored -
+# text patterns are never even considered, so no text/html sidecar from a
+# browser image copy ever sneaks in alongside the picture.
+#
+# gif and svg come before png because they are the only formats where png
+# loses something it cannot get back - animation and vector scaling. Apps that
+# hand over the real file (file managers, editors) offer them, so they win
+# there. Browsers never offer them, so browser copies still land on png, which
+# is the least-lossy rendition they are willing to produce.
+#
+# Note: patterns are POSIX regexes, so the + in svg+xml has to be escaped.
+mime-pref = (
+    image/gif
+    image/svg\+xml
+    image/png
+    image/.*
+    text/plain;charset=utf-8
+    text/.*
+)

@@ -137,6 +137,9 @@ user_pref("userContent.page.proton",           true); // Need proton_color
 user_pref("media.ffmpeg.vaapi.enabled",                   true);
 user_pref("media.hardware-video-decoding.force-enabled",  true);
 
+//user_pref("media.hardware-video-decoding-vulkan.direct-export.enabled", true);
+//user_pref("media.hardware-video-decoding-vulkan.enabled", true);
+
 //personal settings
 user_pref("identity.fxaccounts.enabled", true);
 user_pref("browser.download.autohideButton",        false);
