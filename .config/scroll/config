@@ -18,7 +18,7 @@ set $right Right
 # Your preferred terminal emulator
 set $term kitty
 # Your preferred application launcher
-set $menu wmenu-run
+set $menu rofi
 
 ### Output configuration
 #
@@ -140,7 +140,7 @@ animations {
 
     # Start your launcher
     bindsym $mod+r exec $menu
-    
+
     bindsym $mod+e exec $filemanager
 
     # Drag floating windows by holding down $mod and left mouse button.
@@ -213,7 +213,7 @@ animations {
     bindsym $mod+Shift+7 move container to workspace number 7; workspace number 7
     bindsym $mod+Shift+8 move container to workspace number 8; workspace number 8
     bindsym $mod+Shift+9 move container to workspace number 9; workspace number 9
-    bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10 
+    bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
 
@@ -395,18 +395,18 @@ bindsym  $mod+Shift+slash mode "filter"
 # Mode modifiers
 #
 mode "modifiers" {
-    bindsym $right set_mode after; mode default 
-    bindsym $left set_mode before; mode default 
-    bindsym home set_mode beginning; mode default 
-    bindsym end set_mode end; mode default 
-    bindsym $up set_mode focus; mode default 
-    bindsym $down set_mode nofocus; mode default 
-    bindsym h set_mode center_horiz; mode default 
-    bindsym Shift+h set_mode nocenter_horiz; mode default 
-    bindsym v set_mode center_vert; mode default 
-    bindsym Shift+v set_mode nocenter_vert; mode default 
-    bindsym r set_mode reorder_auto; mode default 
-    bindsym Shift+r set_mode noreorder_auto; mode default 
+    bindsym $right set_mode after; mode default
+    bindsym $left set_mode before; mode default
+    bindsym home set_mode beginning; mode default
+    bindsym end set_mode end; mode default
+    bindsym $up set_mode focus; mode default
+    bindsym $down set_mode nofocus; mode default
+    bindsym h set_mode center_horiz; mode default
+    bindsym Shift+h set_mode nocenter_horiz; mode default
+    bindsym v set_mode center_vert; mode default
+    bindsym Shift+v set_mode nocenter_vert; mode default
+    bindsym r set_mode reorder_auto; mode default
+    bindsym Shift+r set_mode noreorder_auto; mode default
 
     # Return to default mode
     bindsym Escape mode "default"
@@ -707,7 +707,7 @@ focus_wrapping no
 bindgesture swipe:4:right workspace next
 bindgesture swipe:4:left workspace prev
 
-bindgesture swipe:4:up scale_workspace overview 
+bindgesture swipe:4:up scale_workspace overview
 
 #
 # Workspace rules:

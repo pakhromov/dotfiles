@@ -62,7 +62,8 @@
 	"drag_text": false,
 	"allow_git_home_dir": true,
 	"preview_on_click": false,
-	"ignored_packages": ["Vintage"],
+	"ignored_packages": ["Vintage",
+	],
 	"fonts_list":
 	[
 		{

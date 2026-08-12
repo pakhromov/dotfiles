@@ -40,6 +40,7 @@ export NPM_CONFIG_USERCONFIG=$XDG_CONFIG_HOME/npm/npmrc
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 export NO_AT_BRIDGE=1
+export LIBVIRT_DEFAULT_URI=qemu:///system
 
 export GBM_BACKEND=nvidia-drm
 export NVD_BACKEND=direct
@@ -50,11 +51,12 @@ export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
-export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/grid:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/animate
+export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/references/wayfire/build/plugins/single_plugins
+#export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/build-old-wayfire/src:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/vswitch:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/expo
 
-#export WAYFIRE_DEFAULT_CONFIG_BACKEND=default-config-backend
-#export WAYFIRE_PLUGIN_PATH=/tmp/wayfire/build/src:/tmp/wayfire/build/plugins/animate:/tmp/wayfire/build/plugins/blur:/tmp/wayfire/build/plugins/cube:/tmp/wayfire/build/plugins/decor:/tmp/wayfire/build/plugins/grid:/tmp/wayfire/build/plugins/ipc:/tmp/wayfire/build/plugins/ipc-rules:/tmp/wayfire/build/plugins/protocols:/tmp/wayfire/build/plugins/scale:/tmp/wayfire/build/plugins/single_plugins:/tmp/wayfire/build/plugins/tile:/tmp/wayfire/build/plugins/vswitch:/tmp/wayfire/build/plugins/window-rules:/tmp/wayfire/build/plugins/wm-actions:/tmp/wayfire/build/plugins/wobbly
-#export WAYFIRE_PLUGIN_XML_PATH=/tmp/wayfire/metadata
+#export WAYFIRE_DEFAULT_CONFIG_BACKEND=/home/pavel/Projects/wayfire-fix/wayfire/build/src/libdefault-config-backend.so
+#export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/build-old-wayfire/src/:/home/pavel/Projects/wayfire-fix/wayfire/build/src:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/animate:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/blur:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/cube:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/decor:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/grid:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/ipc:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/ipc-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/protocols:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/scale:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/single_plugins:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/tile:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/vswitch:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/wm-actions:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/wobbly
+#export WAYFIRE_PLUGIN_XML_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/metadata:/home/pavel/Projects/wayfire-fix/wayfire/metadata
 
 log="/tmp/$compositor.log"
 

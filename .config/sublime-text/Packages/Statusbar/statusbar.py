@@ -17,4 +17,4 @@ class StatusBarPlugin(sublime_plugin.EventListener):
 
     def _render(self, view):
         path = view.file_name()
-        view.set_status('aa', f' {path}   ' if path else '')
+        view.set_status('aa', f'{path}   ' if path else '')

@@ -19,6 +19,7 @@ export NPM_CONFIG_USERCONFIG=$XDG_CONFIG_HOME/npm/npmrc
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 export NO_AT_BRIDGE=1
+export LIBVIRT_DEFAULT_URI=qemu:///system
 
 export GBM_BACKEND=nvidia-drm
 export NVD_BACKEND=direct
@@ -28,6 +29,5 @@ export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
-export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
+#export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
 
-export LIBVIRT_DEFAULT_URI=qemu:///system
