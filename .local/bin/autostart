@@ -22,7 +22,7 @@ wayland_display() {
 
 case "${1:-}" in
   -w)
-    start dunst
+    start mako
     #start cclipd -c 5000 -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
     start zzzclip daemon
     wayland_display
@@ -43,4 +43,4 @@ case "${1:-}" in
     ;;
 esac
 
-audio-switch -d &
+audio-default.sh &

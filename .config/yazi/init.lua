@@ -4,7 +4,6 @@ ps.sub("ind-app-title", function(args)
 end)
 
 require("custom-filter"):setup()
-require("recycle-bin"):setup()
 require("autosave"):setup({})
 require("write-id"):setup()
 require("sshfs"):setup()
@@ -12,23 +11,88 @@ require("sshfs"):setup()
 --    -- Available values: ui.Border.PLAIN, ui.Border.ROUNDED
 --    type = ui.Border.ROUNDED,
 --}
-th.git = th.git or {}
 
 
+-- ── git-remote.yazi ─────────────────────────────────────────────────────────
+-- git.yazi's local status, plus upstream awareness.
+--   `git fetch`  runs exactly once per repo per yazi session, never again.
+--   `git diff HEAD...@{upstream}` runs every batch and is local, so pulling
+--   clears the update markers without any further network access.
+--
+-- Every value below is the plugin's own default, spelled out so it can be
+-- changed in place. Must come before the setup() call.
+th.git_remote = th.git_remote or {}
 
+-- Signs. "" hides that state entirely.
+th.git_remote.updated_local_sign = "⇅" -- upstream has changes AND so do you
+th.git_remote.updated_sign       = "↓" -- upstream has changes
+th.git_remote.untracked_sign     = "?" -- not tracked, not ignored
+th.git_remote.unstaged_sign      = "M" -- edited in the work tree
+th.git_remote.staged_sign        = "M" -- edited and staged
+th.git_remote.added_sign         = "A" -- new file, staged
+th.git_remote.deleted_sign       = "D" -- deleted
+th.git_remote.conflict_sign      = "!" -- unmerged (git.yazi called this `updated`)
+th.git_remote.ignored_sign       = "I" -- matched by .gitignore
+th.git_remote.clean_sign         = "•" -- tracked file with no changes, or a clean up-to-date repo folder
+th.git_remote.unknown_sign       = ""  -- outside any repo
 
+-- Colours. staged and unstaged share "M" and are told apart by these.
+th.git_remote.updated_local = ui.Style():fg("magenta")
+th.git_remote.updated       = ui.Style():fg("cyan")
+th.git_remote.untracked     = ui.Style():fg("magenta")
+th.git_remote.unstaged      = ui.Style():fg("yellow")
+th.git_remote.staged        = ui.Style():fg("green")
+th.git_remote.added         = ui.Style():fg("green")
+th.git_remote.deleted       = ui.Style():fg("red")
+th.git_remote.conflict      = ui.Style():fg("red")
+th.git_remote.ignored       = ui.Style():fg("darkgray")
+th.git_remote.clean         = ui.Style():fg("green")
+th.git_remote.unknown       = ui.Style()
 
-th.git.unknown_sign = " "
-th.git.added_sign = "A"
-th.git.untracked_sign = "U"
-th.git.ignored_sign = "I"
-th.git.updated_sign = ""
-th.git.modified_sign = "M"
-th.git.deleted_sign = "D"
-th.git.clean_sign = "✔"
-require("git"):setup {
-    -- Order of status signs showing in the linemode
-    order = 1600,
+-- A directory shows the worst status beneath it, ranked:
+--   updated_local > updated > ignored > untracked > unstaged > staged
+--   > added > deleted > conflict > clean
+-- Linemode children are laid out left to right by ascending order
+-- (yazi's own `solo` is 1000 and `padding` is 2000). Each plugin holds one
+-- fixed-width column, so this number is which column it gets.
+require("git-remote"):setup {
+    order = 1600, -- rightmost column
+}
+
+-- ── dotfiles.yazi ───────────────────────────────────────────────────────────
+-- Status for the bare dotfiles repo:
+--     git --git-dir=~/.dotfiles-git --work-tree=$HOME
+-- Local only, the remote is never contacted.
+--
+-- Every value below is the plugin's own default, spelled out so it can be
+-- changed in place. `th.dotfiles` must be populated before setup() runs,
+-- since setup() reads it once to build the sign table.
+th.dotfiles = th.dotfiles or {}
+
+-- Signs: the character drawn in the linemode. "" hides that state entirely.
+th.dotfiles.clean_sign    = "✔" -- tracked, no changes
+th.dotfiles.unstaged_sign = "M" -- edited in the work tree
+th.dotfiles.staged_sign   = "M" -- edited and staged
+th.dotfiles.added_sign    = "A" -- new file, staged
+th.dotfiles.deleted_sign  = "D" -- deleted
+th.dotfiles.conflict_sign = "!" -- unmerged / conflicted
+th.dotfiles.unknown_sign  = ""  -- not tracked by the dotfiles repo
+
+-- Colours. staged and unstaged share the "M" sign and are told apart by these.
+th.dotfiles.clean    = ui.Style():fg("darkgray")
+th.dotfiles.unstaged = ui.Style():fg("yellow")
+th.dotfiles.staged   = ui.Style():fg("green")
+th.dotfiles.added    = ui.Style():fg("green")
+th.dotfiles.deleted  = ui.Style():fg("red")
+th.dotfiles.conflict = ui.Style():fg("red")
+th.dotfiles.unknown  = ui.Style()
+
+-- A directory shows the worst status beneath it, ranked:
+--     conflict > unstaged > staged > added > deleted > clean
+require("dotfiles"):setup {
+    git_dir = os.getenv("HOME") .. "/.dotfiles-git", -- bare repo location
+    order   = 1700,                                  -- column left of git-remote
+    ttl_ms  = 250,                                   -- refresh debounce, ms
 }
 
 local tokyo_night_theme = require("yatline-tokyo-night"):setup("night") -- storm moon

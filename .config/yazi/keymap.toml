@@ -1,390 +1,88 @@
-
-# Arrow key navigation that preserves filters
-[[mgr.prepend_keymap]]
-on   = "<Up>"
-run  = "arrow prev"
-desc = "Previous file"
-
-[[mgr.prepend_keymap]]
-on   = "<Down>"
-run  = "arrow next"
-desc = "Next file"
-
-# Arrow key navigation with filter clearing
-[[mgr.prepend_keymap]]
-on   = "<Left>"
-run  = [ "plugin custom-filter -- clear", "leave", "plugin autosave" ]
-desc = "Back to parent directory (clears filter)"
-
-[[mgr.prepend_keymap]]
-on   = "<Right>"
-run  = [ "plugin custom-filter -- clear", "plugin smart-enter", "plugin autosave" ]
-desc = "Smart enter: enter directories, open files (clears filter)"
-
-# Backspace for filter management
-[[mgr.prepend_keymap]]
-on   = "<Backspace>"
-run  = "plugin custom-filter -- backspace"
-desc = "Remove last character from filter"
-
-# Enter opens interactively
-[[mgr.prepend_keymap]]
-on   = "<Enter>"
-run  = "plugin custom-filter -- enter"
-desc = "Create file or directory from filter text"
-
-# Ctrl+Enter to go to file's directory (useful in search results)
-[[mgr.prepend_keymap]]
-on   = "<C-Enter>"
-run  = "plugin goto-file-dir"
-desc = "Navigate to hovered file's directory"
-
-# Smart tab navigation
-[[mgr.prepend_keymap]]
-on   = "<C-Right>"
-run  = [ "plugin custom-filter -- clear", "plugin smart-tab", "plugin autosave" ]
-desc = "Go to next tab or create new tab if on last"
-
-# ALL letter keys for immediate filtering
-[[mgr.prepend_keymap]]
-on   = "a"
-run  = "plugin custom-filter -- add a"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "b"
-run  = "plugin custom-filter -- add b"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "c"
-run  = "plugin custom-filter -- add c"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "d"
-run  = "plugin custom-filter -- add d"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "e"
-run  = "plugin custom-filter -- add e"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "f"
-run  = "plugin custom-filter -- add f"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "g"
-run  = "plugin custom-filter -- add g"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "h"
-run  = "plugin custom-filter -- add h"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "i"
-run  = "plugin custom-filter -- add i"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "j"
-run  = "plugin custom-filter -- add j"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "k"
-run  = "plugin custom-filter -- add k"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "l"
-run  = "plugin custom-filter -- add l"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "m"
-run  = "plugin custom-filter -- add m"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "n"
-run  = "plugin custom-filter -- add n"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "o"
-run  = "plugin custom-filter -- add o"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "p"
-run  = "plugin custom-filter -- add p"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "q"
-run  = "plugin custom-filter -- add q"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "r"
-run  = "plugin custom-filter -- add r"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "s"
-run  = "plugin custom-filter -- add s"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "t"
-run  = "plugin custom-filter -- add t"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "u"
-run  = "plugin custom-filter -- add u"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "v"
-run  = "plugin custom-filter -- add v"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "w"
-run  = "plugin custom-filter -- add w"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "x"
-run  = "plugin custom-filter -- add x"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "y"
-run  = "plugin custom-filter -- add y"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "z"
-run  = "plugin custom-filter -- add z"
-desc = "Filter files"
-
-# Period for filtering (e.g., .config)
-[[mgr.prepend_keymap]]
-on   = "."
-run  = "plugin custom-filter -- add ."
-desc = "Filter files"
-
-# Hyphen and underscore for filtering
-[[mgr.prepend_keymap]]
-on   = "-"
-run  = "plugin custom-filter -- add -"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "_"
-run  = "plugin custom-filter -- add _"
-desc = "Filter files"
-
-# ALL number keys for immediate filtering
-[[mgr.prepend_keymap]]
-on   = "0"
-run  = "plugin custom-filter -- add 0"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "1"
-run  = "plugin custom-filter -- add 1"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "2"
-run  = "plugin custom-filter -- add 2"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "3"
-run  = "plugin custom-filter -- add 3"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "4"
-run  = "plugin custom-filter -- add 4"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "5"
-run  = "plugin custom-filter -- add 5"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "6"
-run  = "plugin custom-filter -- add 6"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "7"
-run  = "plugin custom-filter -- add 7"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "8"
-run  = "plugin custom-filter -- add 8"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "9"
-run  = "plugin custom-filter -- add 9"
-desc = "Filter files"
-
-[[mgr.prepend_keymap]]
-on   = "C"
-run  = [ "cd ~/.config", "plugin autosave" ]
-desc = "Go to .config directory"
-
-[[mgr.prepend_keymap]]
-on   = "<A-S-c>"
-run  = [ "cd ~/.cache", "plugin autosave" ]
-desc = "Go to .cache directory"
-
-[[mgr.prepend_keymap]]
-on   = "D"
-run  = [ "cd ~/Downloads", "plugin autosave" ]
-desc = "Go to Downloads directory"
-
-[[mgr.prepend_keymap]]
-on   = "F"
-run  = [ "cd ~/Documents", "plugin autosave" ]
-desc = "Go to Documents directory"
-
-[[mgr.prepend_keymap]]
-on   = "V"
-run  = [ "cd ~/Videos", "plugin autosave" ]
-desc = "Go to Videos directory"
-
-[[mgr.prepend_keymap]]
-on   = "M"
-run  = [ "cd /run/media/pavel/", "plugin autosave" ]
-desc = "Go to mounts"
-
-[[mgr.prepend_keymap]]
-on   = "P"
-run  = [ "cd ~/Pictures", "plugin autosave" ]
-desc = "Go to Pictures directory"
-
-[[mgr.prepend_keymap]]
-on   = "L"
-run  = [ "cd ~/.local", "plugin autosave" ]
-desc = "Go to .local directory"
-
-[[mgr.prepend_keymap]]
-on   = "T"
-run  = [ "cd /tmp", "plugin autosave" ]
-desc = "Go to /tmp directory"
-
-[[mgr.prepend_keymap]]
-on   = "B"
-run  = [ "cd ~/.local/bin", "plugin autosave" ]
-desc = "Go to .local/bin directory"
-
-[[mgr.prepend_keymap]]
-on   = "S"
-run  = [ "cd ~/.local/share", "plugin autosave" ]
-desc = "Go to .local/share directory"
-
-[[mgr.prepend_keymap]]
-on   = "O"
-run  = "plugin toggle-pane max-preview"
-desc = "Maximize or restore the preview pane"
-
-[[mgr.prepend_keymap]]
-on   = "<C-o>"
-run  = "plugin toggle-pane min-parent"
-desc = "Show or hide the parent pane"
-
-[[mgr.prepend_keymap]]
-on = "<C-l>"
-run = "plugin localsend"
-desc = "Send via LocalSend"
-
-[[mgr.prepend_keymap]]
-on = ["<C-t>","d"]
-run = "plugin recycle-bin -- delete"
-desc = "Delete from Trash"
-
-[[mgr.prepend_keymap]]
-on = ["<C-t>","r"]
-run = "plugin recycle-bin -- restore"
-desc = "Restore from Trash"
-
-[[mgr.prepend_keymap]]
-on   = "<A-S-t>"
-run  = [ "cd ~/.local/share/Trash/files", "plugin autosave" ]
-desc = "Go to Trash directory"
-
-[[mgr.prepend_keymap]]
-on   = "<C-m>"
-run  = "plugin mount"
-desc = "Mount manager"
-
-[[mgr.prepend_keymap]]
-on   = "<C-M>"
-run  = "plugin gvfs-mount -- select-then-mount --jump"
-desc = "GVFS Mount manager"
-
-[[mgr.prepend_keymap]]
-on  = "<C-d>"
-run = 'shell -- dragon-drop -a -x -i -T %s'
-
-[[mgr.prepend_keymap]]
-on = [ "A" ]
-run = "plugin file-actions -- --around "
-desc= "Perform actions on selected files"
-
-[[mgr.prepend_keymap]]
-on = "<C-r>"
-run = "plugin batch-rename-gui"
-desc = "Smart rename: single or batch"
-
-[[mgr.prepend_keymap]]
-on   = "<C-e>"
-run  = 'shell "dua i" --block'
-desc = "Disk usage analyzer (dua)"
-
-[[mgr.prepend_keymap]]
-on   = "/"
-run  = "plugin paste-navigate"
-desc = "Paste navigate to pasted path"
-
-[[mgr.prepend_keymap]]
-on = "<A-c>"
-run = "plugin ucp copy"
-desc = "Copy"
-
-[[mgr.prepend_keymap]]
-on = "<A-v>"
-run = "plugin ucp paste"
-desc = "Paste"
-
-[[mgr.prepend_keymap]]
-on = "<A-m>"
-run = "plugin sshfs -- menu"
-desc = "Open SSHFS options"
-
-[[mgr.prepend_keymap]]
-on = "I"
-run = "plugin mediainfo -- toggle-metadata"
-desc = "Toggle media preview metadata"
-
-
 [mgr]
+
+prepend_keymap = [
+	# Arrow key navigation that preserves filters
+	{ on = "<Up>", run = "arrow prev", desc = "Previous file" },
+	{ on = "<Down>", run = "arrow next", desc = "Next file" },
+	# Arrow key navigation with filter clearing
+	{ on = "<Left>", run = [ "plugin custom-filter -- clear", "leave", "plugin autosave" ], desc = "Back to parent directory (clears filter)" },
+	{ on = "<Right>", run = [ "plugin custom-filter -- clear", "plugin smart-enter", "plugin autosave" ], desc = "Smart enter: enter directories, open files (clears filter)" },
+	# Backspace for filter management
+	{ on = "<Backspace>", run = "plugin custom-filter -- backspace", desc = "Remove last character from filter" },
+	# Enter creates a file named after the filter, or opens interactively when empty
+	{ on = "<Enter>", run = "plugin custom-filter -- file", desc = "Create a file from the filter text" },
+    # `/` creates a directory from the filter, or falls through to paste-navigate when empty
+    { on = "/", run = "plugin custom-filter -- dir", desc = "Create a directory from the filter text" },
+	# Ctrl+Enter to go to file's directory (useful in search results)
+	{ on = "<C-Enter>", run = "plugin goto-file-dir", desc = "Navigate to hovered file's directory" },
+	# Smart tab navigation
+	{ on = "<C-Right>", run = [ "plugin custom-filter -- clear", "plugin smart-tab", "plugin autosave" ], desc = "Go to next tab or create new tab if on last" },
+	# ALL letter keys for immediate filtering
+	{ on = "a", run = "plugin custom-filter -- add a", desc = "Filter files" },
+	{ on = "b", run = "plugin custom-filter -- add b", desc = "Filter files" },
+	{ on = "c", run = "plugin custom-filter -- add c", desc = "Filter files" },
+	{ on = "d", run = "plugin custom-filter -- add d", desc = "Filter files" },
+	{ on = "e", run = "plugin custom-filter -- add e", desc = "Filter files" },
+	{ on = "f", run = "plugin custom-filter -- add f", desc = "Filter files" },
+	{ on = "g", run = "plugin custom-filter -- add g", desc = "Filter files" },
+	{ on = "h", run = "plugin custom-filter -- add h", desc = "Filter files" },
+	{ on = "i", run = "plugin custom-filter -- add i", desc = "Filter files" },
+	{ on = "j", run = "plugin custom-filter -- add j", desc = "Filter files" },
+	{ on = "k", run = "plugin custom-filter -- add k", desc = "Filter files" },
+	{ on = "l", run = "plugin custom-filter -- add l", desc = "Filter files" },
+	{ on = "m", run = "plugin custom-filter -- add m", desc = "Filter files" },
+	{ on = "n", run = "plugin custom-filter -- add n", desc = "Filter files" },
+	{ on = "o", run = "plugin custom-filter -- add o", desc = "Filter files" },
+	{ on = "p", run = "plugin custom-filter -- add p", desc = "Filter files" },
+	{ on = "q", run = "plugin custom-filter -- add q", desc = "Filter files" },
+	{ on = "r", run = "plugin custom-filter -- add r", desc = "Filter files" },
+	{ on = "s", run = "plugin custom-filter -- add s", desc = "Filter files" },
+	{ on = "t", run = "plugin custom-filter -- add t", desc = "Filter files" },
+	{ on = "u", run = "plugin custom-filter -- add u", desc = "Filter files" },
+	{ on = "v", run = "plugin custom-filter -- add v", desc = "Filter files" },
+	{ on = "w", run = "plugin custom-filter -- add w", desc = "Filter files" },
+	{ on = "x", run = "plugin custom-filter -- add x", desc = "Filter files" },
+	{ on = "y", run = "plugin custom-filter -- add y", desc = "Filter files" },
+	{ on = "z", run = "plugin custom-filter -- add z", desc = "Filter files" },
+	{ on = ".", run = "plugin custom-filter -- add .", desc = "Filter files" },
+	{ on = "-", run = "plugin custom-filter -- add -", desc = "Filter files" },
+	{ on = "_", run = "plugin custom-filter -- add _", desc = "Filter files" },
+	{ on = "0", run = "plugin custom-filter -- add 0", desc = "Filter files" },
+	{ on = "1", run = "plugin custom-filter -- add 1", desc = "Filter files" },
+	{ on = "2", run = "plugin custom-filter -- add 2", desc = "Filter files" },
+	{ on = "3", run = "plugin custom-filter -- add 3", desc = "Filter files" },
+	{ on = "4", run = "plugin custom-filter -- add 4", desc = "Filter files" },
+	{ on = "5", run = "plugin custom-filter -- add 5", desc = "Filter files" },
+	{ on = "6", run = "plugin custom-filter -- add 6", desc = "Filter files" },
+	{ on = "7", run = "plugin custom-filter -- add 7", desc = "Filter files" },
+	{ on = "8", run = "plugin custom-filter -- add 8", desc = "Filter files" },
+	{ on = "9", run = "plugin custom-filter -- add 9", desc = "Filter files" },
+	{ on = "C", run = [ "cd ~/.config", "plugin autosave" ], desc = "Go to .config directory" },
+	{ on = "<A-S-c>", run = [ "cd ~/.cache", "plugin autosave" ], desc = "Go to .cache directory" },
+	{ on = "D", run = [ "cd ~/Downloads", "plugin autosave" ], desc = "Go to Downloads directory" },
+	{ on = "F", run = [ "cd ~/Documents", "plugin autosave" ], desc = "Go to Documents directory" },
+	{ on = "V", run = [ "cd ~/Videos", "plugin autosave" ], desc = "Go to Videos directory" },
+	{ on = "M", run = [ "cd /run/media/pavel/", "plugin autosave" ], desc = "Go to mounts" },
+	{ on = "P", run = [ "cd ~/Projects", "plugin autosave" ], desc = "Go to Projects directory" },
+    { on = "<A-S-p>", run = [ "cd ~/Pictures", "plugin autosave" ], desc = "Go to Pictures directory" },
+	{ on = "L", run = [ "cd ~/.local", "plugin autosave" ], desc = "Go to .local directory" },
+	{ on = "T", run = [ "cd /tmp", "plugin autosave" ], desc = "Go to /tmp directory" },
+	{ on = "B", run = [ "cd ~/.local/bin", "plugin autosave" ], desc = "Go to .local/bin directory" },
+	{ on = "S", run = [ "cd ~/.local/share", "plugin autosave" ], desc = "Go to .local/share directory" },
+	{ on = "O", run = "plugin toggle-pane max-preview", desc = "Maximize or restore the preview pane" },
+	{ on = "<C-o>", run = "plugin toggle-pane min-parent", desc = "Show or hide the parent pane" },
+	{ on = "<C-l>", run = "plugin localsend", desc = "Send via LocalSend" },
+	{ on = "<C-t>", run = "plugin trash", desc = "Open the trash bin" },
+	{ on = "<C-m>", run = "plugin mount", desc = "Mount manager" },
+	{ on = "<C-d>", run = "shell -- dragon-drop -a -x -i -T %s" },
+	{ on = [ "A" ], run = "plugin file-actions -- --around ", desc = "Perform actions on selected files" },
+	{ on = "<C-r>", run = "plugin batch-rename-gui", desc = "Smart rename: single or batch" },
+	{ on = "<C-e>", run = 'shell "dua i" --block', desc = "Disk usage analyzer (dua)" },
+	#{ on = "/", run = "plugin paste-navigate", desc = "Paste navigate to pasted path" },
+	{ on = "<A-m>", run = "plugin sshfs -- menu", desc = "Open SSHFS options" },
+	{ on = "I", run = "plugin mediainfo -- toggle-metadata", desc = "Toggle media preview metadata" },
+	{ on = "<Tab>", run = "spot", desc = "Spot the hovered file" },
+]
 
 keymap = [
 
@@ -540,7 +238,7 @@ keymap = [
 [cmp]
 
 keymap = [
-    { on = "ESC",   run = "close",                                      desc = "Cancel completion" },
+    { on = "<Esc>",   run = "close",                                      desc = "Cancel completion" },
     { on = "<Tab>",   run = "close --submit",                             desc = "Submit the completion" },
     { on = "<Enter>", run = [ "close --submit", "input:close --submit" ], desc = "Complete and submit the input" },
 
@@ -553,11 +251,8 @@ keymap = [
 [help]
 
 keymap = [
-    { on = "<Esc>", run = "escape", desc = "Clear the filter, or hide the help" },
-    { on = "<C-c>", run = "close",  desc = "Hide the help" },
+    { on = "<Esc>", run = "close",  desc = "Hide the help" },
 
     { on = "<Up>",   run = "arrow prev", desc = "Previous line" },
     { on = "<Down>", run = "arrow next", desc = "Next line" },
-
-    { on = "/", run = "filter", desc = "Filter help items" },
 ]

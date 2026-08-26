@@ -19,6 +19,10 @@ function M.init(_, opts)
 		return
 	end
 
+	-- Repaint the dotfiles column now. The index changed but no file did, so
+	-- nothing else would make yazi re-read this directory.
+	ya.emit("plugin", { "dotfiles" })
+
 	local n = #opts.selected
 	ya.notify({
 		title = "Dotfiles",

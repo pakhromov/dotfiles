@@ -25,11 +25,8 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
 _k=$'\033[38;2;160;160;160m'
 _a=$'\033[36m'
 _r=$'\033[m'
-_kb_install=" ${_k}TAB${_a} select   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} install${_r} "
 _kb_remove=" ${_k}TAB${_a} select   ${_k}ENTER${_a} remove${_r} "
-_kb_query=" ${_k}TAB${_a} select${_r} "
 _kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove${_r} "
-_kb_upgrade=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}CTRL+RIGHT${_a} url   ${_k}ENTER${_a} upgrade${_r} "
 
 _footer_text=$'\033[38;2;160;160;160mTAB\033[36m select   \033[38;2;160;160;160mCTRL+A\033[36m all   \033[38;2;160;160;160mCTRL+RIGHT\033[36m url   \033[38;2;160;160;160mENTER\033[36m update\033[m'
 _footer_plain='TAB select   CTRL+A all   CTRL+RIGHT url   ENTER update'
@@ -65,7 +62,7 @@ search_install() {
 			--pointer ' ' \
 			--border-label " yay $* " \
 			--footer "$_footer_install" --footer-border none \
-			--bind "ctrl-right:execute-silent(pkg=\$(printf '%s' {1} | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+			--bind "ctrl-right:execute-silent(for item in {+1}; do pkg=\$(printf '%s' \"\$item\" | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && setsid -f xdg-open \"\$url\" >/dev/null 2>&1; done)" \
 			>"$fzf_out"
 
 	[ ! -s "$fzf_out" ] && return
@@ -79,37 +76,12 @@ search_install() {
 		xargs -ro yay -S --needed
 }
 
-query() {
-	local label="$1" flags="$2"
-	shift 2
-	read -ra cmd <<<"$1"
-	local kb="${cmd:+$_kb_remove}"
-	kb="${kb:-$_kb_query}"
-
-	yay "$flags" --color=always |
-		fzf --border-label " $label " --preview "$(fzf_preview -Qi)" \
-		--preview-label "$kb" --preview-label-pos 'bottom' |
-		awk '{print $1}' |
-		xargs -ro "${cmd[@]}"
-}
-
 remove_orphans() {
 	yay -Qdtq 2>/dev/null |
 		fzf --border-label ' REMOVE ORPHANS ' --preview "$(fzf_preview -Qi)" \
 		--preview-label "$_kb_orphans" --preview-label-pos 'bottom' \
 		--bind "ctrl-a:toggle-all" |
 		xargs -ro sudo pacman -Rns
-}
-
-high_impact() {
-	local results
-	results=$(parus-high-impact)
-	[ -z "$results" ] && return
-	echo "$results" |
-		fzf --border-label ' HIGH IMPACT PKG ' --preview "$(fzf_preview -Qi)" \
-		--preview-label "$_kb_remove" --preview-label-pos 'bottom' |
-		awk '{print $1}' |
-		xargs -ro sudo pacman -Rnsc
 }
 
 remove_recent() {
@@ -229,14 +201,11 @@ upgrade() {
 	formatted=$(format_updates <<<"$pkgs")
 
 	local selected
-
-		#--preview "pkg=\$(echo {1} | awk -F/ '{print \$2}'); yay --color=always -Qi \$pkg | awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'" \
-		#--preview-label "$_kb_upgrade" --preview-label-pos 'bottom' \
 	selected=$(fzf --no-sort --border-label ' SYSTEM UPDATE ' \
 		--footer "$_footer" --footer-border none \
 		--bind "load:select-all" \
 		--bind "ctrl-a:toggle-all" \
-		--bind "ctrl-right:execute-silent(pkg=\$(echo {} | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && xdg-open \"\$url\")" \
+		--bind "ctrl-right:execute-silent(for item in {+}; do pkg=\$(printf '%s' \"\$item\" | sed 's/\x1b\[[0-9;]*m//g' | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && setsid -f xdg-open \"\$url\" >/dev/null 2>&1; done)" \
 		<<<"$formatted")
 
 	[ -z "$selected" ] && return
@@ -271,7 +240,7 @@ help() {
 Info:
     $prog v$version
     A package search TUI for Yay, powered by fzf.
-    It can install, upgrade, remove, and query packages.
+    It can install, upgrade, and remove packages.
 
 Usage:
     $prog <query> -> Search and install packages
@@ -284,13 +253,8 @@ Multiple Selection:
 Options:
     h -> Print this message
     u -> Upgrade upgradable packages
-    r -> Remove installed packages
-    R -> Remove explicitly installed packages
     x -> Remove recently installed packages
     o -> Remove orphan packages
-    H -> High-impact removals (by size)
-    q -> Show installed packages
-    Q -> Show explicitly installed packages
 EOF
 }
 
@@ -303,13 +267,8 @@ invalid_option() {
 case $1 in
 "")          printf "usage: %s <query>\n" "$(basename "$0")" >&2 ;;
 -u | u)      [ -n "$2" ] && invalid_option; upgrade ;;
--r | r)      [ -n "$2" ] && invalid_option; query "REMOVE PKG" "-Q" "sudo pacman -Rnsc" ;;
--R | R)      [ -n "$2" ] && invalid_option; query "REMOVE EXPLICITLY PKG" "-Qe" "sudo pacman -Rnsc" ;;
 -x | x)      [ -n "$2" ] && invalid_option; remove_recent ;;
 -o | o)      [ -n "$2" ] && invalid_option; remove_orphans ;;
--H | H)      [ -n "$2" ] && invalid_option; high_impact ;;
--q | q)      [ -n "$2" ] && invalid_option; query "INSTALLED PKG" "-Q" ;;
--Q | Q)      [ -n "$2" ] && invalid_option; query "INSTALLED EXPLICITLY PKG" "-Qe" ;;
 -h | h | --help) [ -n "$2" ] && invalid_option; help ;;
 *)           search_install "$@" ;;
 esac

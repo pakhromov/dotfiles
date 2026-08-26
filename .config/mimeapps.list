@@ -39,10 +39,11 @@ image/heif=qimgv.desktop
 image/heic=qimgv.desktop
 image/tiff=qimgv.desktop
 image/x-icon=qimgv.desktop
-x-scheme-handler/mailto=gmail
+x-scheme-handler/mailto=helium.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 x-scheme-handler/ccswitch=cc-switch-handler.desktop
 x-scheme-handler/fdm=freedownloadmanager_fdm_up.desktop
 x-scheme-handler/claude=com.anthropic.Claude.desktop
+x-scheme-handler/t3code=t3code-url-handler.desktop
 
 [Added Associations]

@@ -1,12 +1,32 @@
 --- @since 25.12.29
 
-local toggle_ui = ya.sync(function(self)
+-- Open and close are separate and idempotent, rather than one toggle. A toggle
+-- can only stay balanced if every exit path calls it exactly once; the modal
+-- being left on screen with no input loop behind it is what that costs when it
+-- doesn't. `active` also stops a second invocation starting a second loop.
+local claim_ui = ya.sync(function(self)
+	if self.active then
+		return false
+	end
+	self.active = true
+	self.children = self.children or Modal:children_add(self, 10)
+	ui.render()
+	return true
+end)
+
+local release_ui = ya.sync(function(self)
+	self.active, self.busy = false, nil
 	if self.children then
 		Modal:children_remove(self.children)
 		self.children = nil
-	else
-		self.children = Modal:children_add(self, 10)
 	end
+	ui.render()
+end)
+
+-- Shown in the border while an operation runs, since the input loop cannot read
+-- keys until it returns.
+local set_busy = ya.sync(function(self, what)
+	self.busy = what
 	ui.render()
 end)
 
@@ -83,15 +103,30 @@ function M:entry(job)
 		return update_partitions(self.obtain())
 	end
 
-	toggle_ui()
+	if not claim_ui() then
+		return -- already open; a second input loop would fight this one for keys
+	end
 	update_partitions(self.obtain())
+
+	-- An operation that fails must not take the whole UI down with it: report it
+	-- and carry on reading keys.
+	local function run(what, op)
+		set_busy(what)
+		local ok, err = pcall(function()
+			self.operate(op)
+			update_partitions(self.obtain())
+		end)
+		set_busy(nil)
+		if not ok then
+			M.fail("Mount: %s", tostring(err))
+		end
+	end
 
 	local function input_loop()
 		while true do
 			local cand = self.keys[ya.which { cands = self.keys, silent = true }] or { run = {} }
 			for _, r in ipairs(type(cand.run) == "table" and cand.run or { cand.run }) do
 				if r == "quit" then
-					toggle_ui()
 					return
 				elseif r == "up" then
 					update_cursor(-1)
@@ -101,27 +136,29 @@ function M:entry(job)
 					local active = active_partition()
 					if active and active.dist then
 						ya.emit("cd", { active.dist })
-						toggle_ui()
 						return
-					else
-						self.operate("mount")
-						update_partitions(self.obtain())
 					end
+					run("Mounting…", "mount")
 				elseif r == "mount" then
-					self.operate("mount")
-					update_partitions(self.obtain())
+					run("Mounting…", "mount")
 				elseif r == "unmount" then
-					self.operate("unmount")
-					update_partitions(self.obtain())
+					run("Unmounting…", "unmount")
 				elseif r == "eject" then
-					self.operate("eject")
-					update_partitions(self.obtain())
+					run("Ejecting…", "eject")
 				end
 			end
 		end
 	end
 
-	ya.join(input_loop)
+	ya.join(function()
+		local ok, err = pcall(input_loop)
+		-- Runs on every path, including an unexpected error, so the modal can
+		-- never be left on screen with nothing reading keys.
+		release_ui()
+		if not ok then
+			M.fail("Mount: %s", tostring(err))
+		end
+	end)
 end
 
 function M:reflow() return { self } end
@@ -146,7 +183,7 @@ function M:redraw()
 			:area(self._area)
 			:type(ui.Border.ROUNDED)
 			:style(ui.Style():fg("blue"))
-			:title(ui.Line("Mount"):align(ui.Align.CENTER)),
+			:title(ui.Line(self.busy or "Mount"):align(ui.Align.CENTER)),
 		ui.Table(rows)
 			:area(self._area:pad(ui.Pad(1, 2, 1, 2)))
 			:header(ui.Row({ "Src", "Label", "FSType", "Size", "Dist" }):style(ui.Style():bold()))
@@ -223,14 +260,25 @@ function M.fillin(tbl)
 		return tbl
 	end
 
-	-- Get both fstype and size from lsblk
-	local output, err = Command("lsblk"):arg({ "-p", "-b", "-o", "name,fstype,size", "-J" }):arg(sources):output()
-	if err then
-		ya.dbg("Failed to fetch partition info: " .. err)
+	-- Get both fstype and size from lsblk.
+	--
+	-- Wrapped in `timeout` because lsblk can block for a long time probing a USB
+	-- device that was just unmounted or is spinning down, and this runs on the
+	-- same coroutine as the key loop — a hang here reads as "the modal stopped
+	-- responding". A missed refresh is far cheaper than that.
+	local output, err = Command("timeout")
+		:arg({ "5", "lsblk", "-p", "-b", "-o", "name,fstype,size", "-J" })
+		:arg(sources)
+		:output()
+	if not output then
+		ya.dbg("Failed to fetch partition info: " .. tostring(err))
 		return tbl
 	end
 
-	local t = ya.json_decode(output and output.stdout or "")
+	local ok, t = pcall(ya.json_decode, output.stdout or "")
+	if not ok then
+		return tbl
+	end
 	for _, p in ipairs(t and t.blockdevices or {}) do
 		if indices[p.name] then
 			tbl[indices[p.name]].fstype = p.fstype

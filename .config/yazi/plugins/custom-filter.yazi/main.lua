@@ -20,21 +20,32 @@ local function write_state(text)
 	end
 end
 
-local function is_file(name)
-	-- If starts with . but has another . after it, it's a file (.config.bak)
-	if name:match("^%..*%.") then
-		return true
+local function shell_quote(s) return "'" .. s:gsub("'", [['\'']]) .. "'" end
+
+-- Which of `file` / `dir` you invoked decides what gets made; nothing is
+-- inferred from the name itself.
+---@param name string filter text
+---@param is_dir boolean
+local function create(name, is_dir)
+	name = name:gsub("/+$", "")
+	if name == "" then
+		return
 	end
-	-- If starts with . and no other ., it's a directory (.config, .local)
-	if name:match("^%.[^%.]*$") then
-		return false
+
+	local quoted = shell_quote(name)
+	local cmd
+	if is_dir then
+		cmd = "mkdir -p -- " .. quoted
+	else
+		-- `a/b/c` needs its parent to exist before touch can create it, and
+		-- mkdir -p on the parent is a no-op for a bare name.
+		cmd = "mkdir -p -- \"$(dirname -- " .. quoted .. ")\" && touch -a " .. quoted
 	end
-	-- If contains . anywhere else, it's a file (script.sh, image.png)
-	if name:match("%.") then
-		return true
-	end
-	-- No . at all, it's a directory
-	return false
+	ya.emit("shell", { cmd, block = true, confirm = false })
+
+	write_state("")
+	ya.emit("escape", { filter = true })
+	ya.emit("reveal", { name })
 end
 
 local function setup(state, opts)
@@ -65,34 +76,25 @@ local function entry(state, job)
 			end
 		end
 		
-	elseif action == "enter" then
+	elseif action == "file" then
 		local current = read_state()
-		if current ~= "" then
-			-- Create file or directory based on the name
-			if is_file(current) then
-				-- Create file using shell command (touch doesn't error if file exists)
-				ya.emit("shell", {
-					"touch \"" .. current .. "\"",
-					block = true,
-					confirm = false,
-				})
-			else
-				-- Create directory using shell command with -p flag (no error if exists)
-				ya.emit("shell", {
-					"mkdir -p \"" .. current .. "\"",
-					block = true,
-					confirm = false,
-				})
-			end
-			-- Clear filter and reveal the created file
-			write_state("")
-			ya.emit("escape", { filter = true })
-			ya.emit("reveal", { current })
-		else
-			-- No filter text: run open --interactive
+		if current == "" then
 			ya.emit("open", { interactive = true })
+		else
+			create(current, false)
 		end
-		
+
+	elseif action == "dir" then
+		local current = read_state()
+		if current == "" then
+			-- Nothing typed, so `/` keeps its old meaning instead of creating an
+			-- unnamed directory.
+			ya.emit("plugin", { "paste-navigate" })
+		else
+			create(current, true)
+		end
+
+
 	elseif action == "clear" then
 		write_state("")
 		ya.emit("escape", { filter = true })

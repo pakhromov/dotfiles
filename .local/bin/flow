@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Wrapper around /usr/bin/flow that tells kitty "this window is running flow",
+# so kitty can hand every key to flow instead of consuming its own shortcuts
+# (see flow-keybinds.conf, which no_op's every global map when FLOW=1).
+#
+# The flag is a kitty *user variable* set with the OSC 1337 SetUserVar escape:
+#   set:   OSC 1337 ; SetUserVar=<name>=<base64 value> BEL
+#   unset: OSC 1337 ; SetUserVar=<name> BEL          (no =value -> removed)
+# It's written straight to the terminal, so it needs no remote control and is
+# scoped to this window only. TVE= is base64 for "1".
+
+FLOW_BIN=/usr/bin/flow
+
+# Write to the controlling terminal, not stdout -- stdout may be redirected, and
+# the escape has to reach kitty's parser to take effect.
+set_flag()   { printf '\033]1337;SetUserVar=FLOW=MQ==\a' > /dev/tty 2>/dev/null; }
+clear_flag() { printf '\033]1337;SetUserVar=FLOW\a'      > /dev/tty 2>/dev/null; }
+
+# Always clear the flag on the way out -- a normal exit, a crash, or a signal.
+# If it leaked, the window would keep swallowing kitty's shortcuts after flow
+# exited. The signal traps turn those into a normal exit so EXIT still runs.
+trap clear_flag EXIT
+trap 'exit' HUP INT TERM
+
+set_flag
+"$FLOW_BIN" "$@"

@@ -17,9 +17,9 @@ local function entry(self)
 	local selected_count = 0
 	local hovered_is_selected = false
 
-	for _, url in pairs(cx.active.selected) do
+	for _, file in pairs(cx.active.selected) do
 		selected_count = selected_count + 1
-		if tostring(h.url) == tostring(url) then
+		if tostring(h.url) == tostring(file.url) then
 			hovered_is_selected = true
 		end
 	end

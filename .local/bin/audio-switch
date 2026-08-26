@@ -1,54 +1,201 @@
 #!/bin/bash
+# audio-switch - pick an ALSA output or input with rofi and write ~/.asoundrc
+#
+# Nothing about the hardware is assumed: cards, devices, jack sensors, mixer
+# controls and their ranges are all discovered at run time, so this behaves the
+# same on any machine. Only the presentation below is configurable.
 
-parse() {
-    grep "^card" | grep -v "Loopback" | \
-    sed -n 's/card \([0-9]*\): [^[]*\[\([^]]*\)\], device \([0-9]*\): [^[]*\[\([^]]*\)\]/card=\1 device=\3 | \2 — \4/p'
+RC="$HOME/.asoundrc"
+
+ICON_OUT_100=''
+ICON_OUT_50=''
+ICON_OUT_0=''
+ICON_IN_100=''
+ICON_IN_0=''
+ICON_CURRENT=''
+SEP_CHAR='─'
+
+# Devices that are actually connected, as: <kind> <card-id> <device> <label>
+# $1 is aplay or arecord. Jack sensors named '...pcm=N Jack' report whether
+# device N has anything plugged into it. Devices with no such sensor are
+# always listed.
+devices() {
+    local kind=$1 cmd=$2
+    $cmd -l 2>/dev/null | grep '^card' | grep -v Loopback | \
+    sed -n 's/card \([0-9]*\): [^[]*\[\([^]]*\)\], device \([0-9]*\): [^[]*\[\([^]]*\)\]/\1 \3 \2 — \4/p' | \
+    while read -r num dev label; do
+        state=$(amixer -c "$num" contents 2>/dev/null | awk -v want="$dev" '
+            /iface=CARD.*pcm=[0-9]+.*Jack/ {
+                if (match($0, /pcm=[0-9]+/)) cur = substr($0, RSTART+4, RLENGTH-4); next }
+            /: values=/ { if (cur != "" && cur "" == want "") { print (index($0,"values=on") ? "on" : "off"); f=1; exit } }
+            END { if (!f) print "na" }')
+        [[ "$state" == off ]] && continue
+        printf '%s\t%s\t%s\t%s\n' "$kind" "$(< "/proc/asound/card$num/id")" "$dev" "$label"
+    done
 }
 
-write_asoundrc() {
-    local card=$1 dev=$2
-    cat > ~/.asoundrc << EOF
+outs=$(devices OUT aplay)
+ins=$(devices IN arecord)
+
+# Playback level for a card: Softmaster is what the volume keys drive, so show
+# that when it exists. It is only created once a card has been selected, so
+# fall back to the card's own first playback volume.
+vol_out() {
+    local v ctl i
+    v=$(amixer -c "$1" sget Softmaster 2>/dev/null | grep -oE '\[[0-9]+%\]' | head -1)
+    if [[ -z "$v" ]]; then
+        while read -r ctl; do
+            i=$(amixer -c "$1" sget "$ctl" 2>/dev/null)
+            if grep -q 'Playback channels' <<<"$i" && grep -q pvolume <<<"$i"; then
+                v=$(grep -oE '\[[0-9]+%\]' <<<"$i" | head -1); break
+            fi
+        done < <(amixer -c "$1" scontrols 2>/dev/null | sed "s/^Simple mixer control '//; s/',[0-9]*$//")
+    fi
+    printf '%s' "${v//[\[\]]/}"
+}
+
+# Capture level for a card: first control that actually has a capture volume.
+vol_in() {
+    local v ctl i
+    while read -r ctl; do
+        i=$(amixer -c "$1" sget "$ctl" 2>/dev/null)
+        if grep -q 'Capture channels' <<<"$i" && grep -q cvolume <<<"$i"; then
+            v=$(grep -oE '\[[0-9]+%\]' <<<"$i" | head -1); break
+        fi
+    done < <(amixer -c "$1" scontrols 2>/dev/null | sed "s/^Simple mixer control '//; s/',[0-9]*$//")
+    printf '%s' "${v//[\[\]]/}"
+}
+
+# Icon for a level. Outputs get three steps (0, up to 50, above 50); inputs
+# only distinguish muted from live. An unreadable level is treated as audible
+# rather than muted, so a card with no volume control is not shown as silent.
+icon_for() {
+    local n=${2%\%}
+    [[ "$n" =~ ^[0-9]+$ ]] || n=100
+    if [[ "$1" == OUT ]]; then
+        if   (( n == 0 ));  then printf '%s' "$ICON_OUT_0"
+        elif (( n <= 50 )); then printf '%s' "$ICON_OUT_50"
+        else                     printf '%s' "$ICON_OUT_100"
+        fi
+    else
+        if (( n == 0 )); then printf '%s' "$ICON_IN_0"
+        else                  printf '%s' "$ICON_IN_100"
+        fi
+    fi
+}
+
+# Whatever is configured now, so changing one side leaves the other alone.
+cur_out=$(grep -oE 'dmix:CARD=[^,]+,DEV=[0-9]+' "$RC" 2>/dev/null | head -1)
+cur_in=$(grep -oE 'dsnoop:CARD=[^,]+,DEV=[0-9]+' "$RC" 2>/dev/null | head -1)
+ocard=${cur_out#dmix:CARD=}; odev=${ocard#*,DEV=}; ocard=${ocard%%,*}
+icard=${cur_in#dsnoop:CARD=}; idev=${icard#*,DEV=}; icard=${icard%%,*}
+
+# The divider is a blank row between the two groups, at a known index, so no
+# sentinel value is needed: $all and $menu stay the same length and line
+# sepline is the divider in both.
+if [[ -n "$outs" && -n "$ins" ]]; then
+    all=$(printf '%s\n\n%s\n' "$outs" "$ins")
+    sepline=$(( $(grep -c '' <<<"$outs") + 1 ))
+else
+    all=$(printf '%s\n%s\n' "$outs" "$ins" | grep -v '^[[:space:]]*$')
+    sepline=0
+fi
+menu=$(while IFS=$'\t' read -r kind card dev label; do
+    if [[ -z "$kind" ]]; then echo; continue; fi
+    mark=' '; v='-'
+    if [[ "$kind" == OUT ]]; then
+        [[ "$card,$dev" == "$ocard,$odev" ]] && mark="$ICON_CURRENT"
+        v=$(vol_out "$card"); icon=$(icon_for OUT "$v")
+    else
+        [[ "$card,$dev" == "$icard,$idev" ]] && mark="$ICON_CURRENT"
+        v=$(vol_in "$card"); icon=$(icon_for IN "$v")
+    fi
+    printf '%s %s %5s      %-10s %s\n' "$mark" "$icon" "${v:--}" "$card" "$label"
+done <<<"$all")
+
+# Now that every row exists, fill the divider out to the longest one. awk
+# counts characters rather than bytes in a UTF-8 locale, so the em dash in
+# card labels and the Nerd Font glyphs each count once.
+if (( sepline )); then
+    menu=$(awk -v n="$sepline" -v c="$SEP_CHAR" '
+        { line[NR] = $0; if (NR != n) { len = length($0); if (len > max) max = len } }
+        END { s = ""; for (i = 0; i < max; i++) s = s c
+              for (i = 1; i <= NR; i++) print (i == n ? s : line[i]) }' <<<"$menu")
+fi
+
+# The NUL-separated row option has to be added here rather than stored in
+# $menu, because bash variables cannot hold NUL bytes.
+chosen=$(awk -v n="$sepline" '{ if (NR == n) printf "%s%cnonselectable%ctrue\n", $0, 0, 31; else print }' <<<"$menu" |
+         rofi -dmenu -matching normal -p ' AUDIO DEVICE ') || exit 0
+[[ -z "$chosen" ]] && exit 0
+# Map back by line position rather than by parsing columns, so the display
+# format can change freely without breaking selection.
+idx=$(grep -n -x -F -- "$chosen" <<<"$menu" | head -1 | cut -d: -f1)
+[[ -z "$idx" ]] && { echo "audio-switch: could not resolve selection" >&2; exit 1; }
+IFS=$'\t' read -r kind card dev label <<<"$(sed -n "${idx}p" <<<"$all")"
+[[ -z "$kind" ]] && exit 0
+if [[ "$kind" == OUT ]]; then
+    ocard=$card; odev=$dev
+else
+    icard=$card; idev=$dev
+    if [[ -z "$ocard" ]]; then
+        echo "No output configured yet - pick an OUT entry first" >&2
+        exit 1
+    fi
+fi
+
+# No input -> leave capture.pcm out entirely, so opening an input fails cleanly.
+# `type null` is wrong here: it opens successfully and returns uninitialised
+# memory, i.e. full-scale noise, instead of nothing.
+if [[ -n "$icard" ]]; then
+    capture_pcm="    capture.pcm {
+        type plug
+        slave.pcm \"dsnoop:CARD=$icard,DEV=$idev\"
+    }"
+else
+    capture_pcm=""
+fi
+
+# Card by name, not number: numbers shift when devices are unplugged.
+# softvol because HDMI has no hardware volume at all, so this is the only
+# control that works on every output. asym splits the two directions, since
+# dmix is playback-only and capture cannot share it.
+cat > "$RC" <<EOF
 pcm.!default {
-    type plug
-    slave.pcm "dmix:$card,$dev"
+    type asym
+    playback.pcm {
+        type plug
+        slave.pcm {
+            type softvol
+            slave.pcm "dmix:CARD=$ocard,DEV=$odev"
+            control {
+                name "Softmaster"
+                card "$ocard"
+            }
+        }
+    }
+$capture_pcm
 }
 ctl.!default {
     type hw
-    card $card
+    card "$ocard"
 }
 EOF
-}
 
-write_asoundrc_defaults() {
-    local card=$1 dev=$2
-    cat > ~/.asoundrc << EOF
-defaults.ctl.card $card
-defaults.pcm.card $card
-defaults.pcm.device $dev
-EOF
-}
+# Let the codec route to speakers when nothing is in the headphone jack, and
+# lift anything left muted or at zero. Without this a card can be selected
+# correctly and still be silent.
+amixer -c "$ocard" sset 'Auto-Mute Mode' Enabled >/dev/null 2>&1
+amixer -c "$ocard" scontrols 2>/dev/null | sed "s/^Simple mixer control '//; s/',[0-9]*$//" |
+while IFS= read -r ctl; do
+    case "$ctl" in *Capture*|*Mic*|*Loopback*|*Beep*|*IEC958*) continue ;; esac
+    info=$(amixer -c "$ocard" sget "$ctl" 2>/dev/null)
+    grep -q 'Playback channels' <<<"$info" || continue
+    vol=$(awk -F'[][]' '/%/{print $2; exit}' <<<"$info" | tr -d '%')
+    if grep -q '\[off\]' <<<"$info" || [[ "${vol:-0}" -eq 0 ]]; then
+        amixer -c "$ocard" sset "$ctl" 60% unmute >/dev/null 2>&1
+    fi
+done
 
-case "$1" in
-    -d)
-        selection=$(aplay -l | parse | grep -i "Sennheiser" | head -1)
-        [[ -z "$selection" ]] && { echo "Sennheiser device not found"; cat > ~/.asoundrc << 'EOF'
-pcm.!default { type null }
-ctl.!default { type null }
-EOF
-exit 1; }
-        ;;
-    *)
-        selection=$(aplay -l | parse | rofi -dmenu -matching normal -p ' AUDIO OUTPUT ')
-        [[ -z "$selection" ]] && exit 0
-        ;;
-esac
-
-card=$(echo "$selection" | grep -oP 'card=\K[0-9]+')
-dev=$(echo "$selection"  | grep -oP 'device=\K[0-9]+')
-if [[ "$1" == "-d" ]]; then
-    write_asoundrc_defaults "$card" "$dev"
-else
-    write_asoundrc "$card" "$dev"
-fi
-echo "Set: $(echo "$selection" | cut -d'|' -f2 | xargs) (card $card, device $dev)"
-aplay -D dmix:$card,$dev -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero
+echo "Set: $label  [out $ocard,$odev  in ${icard:-none}${icard:+,$idev}]"
+aplay -D default -f S16_LE -r 48000 -c 2 -d 1 -t raw /dev/zero &>/dev/null
