@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<wayfire>
-	<plugin name="keep-focused">
-		<_short>Keep Focused</_short>
-		<_long>Exposes an IPC method (keep-focused/set) which pins keyboard focus to a view for as long as it stays mapped, even when other plugins (e.g. follow-focus) try to focus another view. The kept view is also shown on all workspaces (moved to the overlay layer, following workspace switches).</_long>
-		<category>Utility</category>
-	</plugin>
-</wayfire>
