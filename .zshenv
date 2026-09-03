@@ -6,7 +6,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export EDITOR="subl"
 export VISUAL="$EDITOR"
 export TERMINAL="kitty"
-export BROWSER="firefox"
+export BROWSER="vivaldi"
 export XCURSOR_SIZE=24
 
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
@@ -28,6 +28,7 @@ export LIBVA_DRIVER_NAME=nvidia
 export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
+export VIVALDI_FFMPEG_AUTO=0
 
-#export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
+export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
 

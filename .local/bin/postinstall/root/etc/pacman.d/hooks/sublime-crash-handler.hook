@@ -1,8 +1,8 @@
 [Trigger]
-Type = File
 Operation = Install
 Operation = Upgrade
-Target = opt/sublime_text/crash_handler
+Type = Package
+Target = sublime-text-4
 
 [Action]
 Description = Disabling Sublime Text crash handler...

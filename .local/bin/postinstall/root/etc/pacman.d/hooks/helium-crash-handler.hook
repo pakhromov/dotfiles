@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = helium-browser-bin
+
+[Action]
+Description = Disabling Helium crash handler...
+When = PostTransaction
+Exec = /bin/cp /home/pavel/.local/bin/postinstall/root/opt/helium-browser-bin/helium_crashpad_handler /opt/helium-browser-bin/helium_crashpad_handler

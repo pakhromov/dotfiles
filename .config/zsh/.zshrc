@@ -212,7 +212,7 @@ chpwd-ls() {
         [[ "$PWD" == "$dir" ]] && return
     done
     [[ "$_chpwd_ls_cmdline" =~ '(&&|\|\||;|\|)' ]] && return
-    eza -1a --icons=always --group-directories-first --hyperlink
+    eza -1a --icons=always --group-directories-first --hyperlink auto
 }
 add-zsh-hook -Uz chpwd chpwd-ls
 
@@ -251,6 +251,6 @@ alias cc="claude -c"
 alias cr="claude -r"
 alias rr="yzf -x"
 alias ro="yzf -o"
-alias ls="eza -1a --icons=always --group-directories-first --hyperlink"
+alias ls="eza -1a --icons=always --group-directories-first --hyperlink auto"
 alias -g dn='2>/dev/null'
 alias dotfiles='git --git-dir=$HOME/.dotfiles-git --work-tree=$HOME'

@@ -96,7 +96,7 @@ case "$1" in
     done
     ;;
   --preview)
-    kitty +kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no \
+    kitty +kitten icat --clear --transfer-mode=stream --unicode-placeholder --stdin=no \
       --place="${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0" "$STORE/$2" 2>/dev/null | sed $'$s/$/\e[m/'
     ;;
   --save)

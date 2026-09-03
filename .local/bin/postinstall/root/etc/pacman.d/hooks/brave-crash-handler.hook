@@ -1,8 +1,8 @@
 [Trigger]
-Type = File
 Operation = Install
 Operation = Upgrade
-Target = /opt/brave-origin-bin/chrome_crashpad_handler
+Type = Package
+Target = brave-origin-bin
 
 [Action]
 Description = Disabling Brave crash handler...

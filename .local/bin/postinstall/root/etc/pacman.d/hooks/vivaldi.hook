@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = vivaldi
+
+[Action]
+Description = Re-applying Vivaldi auto-hide instant-open patch...
+When = PostTransaction
+Exec = /bin/cp /home/pavel/.local/bin/postinstall/root/opt/vivaldi/chrome_crashpad_handler /opt/vivaldi/chrome_crashpad_handler
