@@ -19,6 +19,7 @@ export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=false
 export HISTORY_SUBSTRING_SEARCH_FUZZY=false
 export HISTORY_SUBSTRING_SEARCH_PREFIXED=true
+export YZF_DEFAULT_OPTS="--height=-2"
 export FZF_DEFAULT_OPTS="
   --exact --reverse --no-hscroll --height=80%
   --preview-window=right:50%:info
@@ -39,10 +40,10 @@ export FZF_DEFAULT_OPTS="
   --color info:108,prompt:110,spinner:150,pointer:167,marker:65
 "
 export FZF_CTRL_T_COMMAND="fd --type f --hidden --follow"
-export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}' --border-label ' FIND FILES '"
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
 export FZF_ALT_C_COMMAND='{ zoxide query -l 2>/dev/null; fd --type d --hidden --follow . ~ 2>/dev/null; } | sed "s:/$::" | awk "!seen[\$0]++"'
-export FZF_ALT_C_OPTS="--tiebreak=index --preview 'eza -1a --icons=always --color=always --group-directories-first {}' --border-label ' JUMP '"
-export FZF_CTRL_R_OPTS="--no-sort --border-label ' HISTORY '"
+export FZF_ALT_C_OPTS="--tiebreak=index --preview 'eza -1a --icons=always --color=always --group-directories-first {}'"
+export FZF_CTRL_R_OPTS="--no-sort"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export ZSH_AUTOSUGGEST_COMPLETION_IGNORE_CASE=true
 export BAT_THEME="ansi"
@@ -249,8 +250,9 @@ alias e="exec launch"
 alias c="claude"
 alias cc="claude -c"
 alias cr="claude -r"
-alias rr="yzf -x"
+alias rr="yzf -r"
 alias ro="yzf -o"
+alias yy="yzf"
 alias ls="eza -1a --icons=always --group-directories-first --hyperlink auto"
 alias -g dn='2>/dev/null'
 alias dotfiles='git --git-dir=$HOME/.dotfiles-git --work-tree=$HOME'

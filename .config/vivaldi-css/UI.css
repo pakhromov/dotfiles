@@ -1,3 +1,37 @@
+/* ------------------------------- VARIABLES --------------------------------*/
+/* UI font size and the address row split: address | bookmarks | status */
+#browser {
+  --uiFont: 11pt;
+  font-size: var(--uiFont) !important;
+
+  --addressW: 32%;
+  --bookmarksW: 42%;
+  --statusW: 26%;
+}
+
+/* Font family for the whole UI */
+body,
+#browser,
+#browser input,
+#browser button,
+#browser textarea,
+#browser select {
+  font-family: "ComicShannsLigaMod Nerd Font", Cantarell, system-ui, sans-serif !important;
+}
+
+
+
+
+/* --------------------------------- WINDOW ---------------------------------*/
+
+/* Font size for the elements that set their own */
+.tab,
+.bookmark-bar,
+.BookmarkButton,
+.toolbar-statusbar {
+  font-size: var(--uiFont) !important;
+}
+
 /* Square window corners */
 #browser,
 #app,
@@ -7,34 +41,113 @@
   border-radius: 0 !important;
 }
 
+/* Hide the Vivaldi menu button (hamburger / V logo) */
+#browser button.vivaldi,
+#browser .vivaldi-menu,
+#browser .toolbar-mainmenu {
+  display: none !important;
+}
+
+/* Hide the link preview shown over the page on hover */
+#webview-container ~ .StatusInfo {
+  display: none !important;
+}
+
+/* Hide the tab bar scroll arrows */
+.toolbar-tabbar > .button-toolbar.horizontal-scroll-arrow > button,
+.toolbar-tabbar > .toolbar-group > .button-toolbar.horizontal-scroll-arrow > button {
+  display: none !important;
+}
+
+
+
+
+/* -------------------------------- TAB BAR ---------------------------------*/
+
+/* Remove the gap before the first tab */
+.tabs-top #tabs-tabbar-container .toolbar-tabbar-before,
+.tabs-bottom #tabs-tabbar-container .toolbar-tabbar-before {
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove the empty space at the right end of the tab bar */
+#tabs-container.top {
+  padding-right: 0 !important;
+}
+
+#tabs-tabbar-container .resize {
+  margin-right: 0 !important;
+}
+
+/* Align items placed after the tabs with the right screen edge */
+.tabs-top #tabs-tabbar-container .toolbar-tabbar-after,
+.tabs-bottom #tabs-tabbar-container .toolbar-tabbar-after {
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  padding-right: 0 !important;
+  align-self: stretch !important;
+  height: 100% !important;
+}
+
+.tabs-top #tabs-tabbar-container .toolbar-tabbar-after > *,
+.tabs-bottom #tabs-tabbar-container .toolbar-tabbar-after > * {
+  align-self: stretch !important;
+  height: 100% !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  -webkit-app-region: no-drag !important;
+}
+
+.tabs-top #tabs-tabbar-container .toolbar-tabbar-after > *:last-child,
+.tabs-bottom #tabs-tabbar-container .toolbar-tabbar-after > *:last-child {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+.tabs-top #tabs-tabbar-container .toolbar-tabbar-after > * > button,
+.tabs-bottom #tabs-tabbar-container .toolbar-tabbar-after > * > button {
+  height: 100% !important;
+  -webkit-app-region: no-drag !important;
+}
+
+
+
+
+/* ------------------------------ ADDRESS ROW -------------------------------*/
+
+/* Anchor on the tab bar, used to place the row below it */
+#header {
+  anchor-name: --vivaldiTabBar;
+}
+
+/* Address bar takes the left slot */
+.toolbar-addressbar {
+  anchor-name: --vivaldiAddrBar;
+  padding-right: calc(var(--bookmarksW) + var(--statusW)) !important;
+}
+
+/* Bookmark bar takes the middle slot */
 .bookmark-bar {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 56%;
+  position-anchor: --vivaldiAddrBar;
+  top: anchor(top, 0px);
+  right: var(--statusW);
+  width: var(--bookmarksW);
   height: 33px !important;
   z-index: 5;
   border: none !important;
   background: transparent !important;
-}
-
-.toolbar-addressbar {
-  padding-right: 56% !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-items: stretch !important;
 }
 
 .bookmark-bar button.chevron {
   height: 33px !important;
 }
 
-/* Fitts's law: bookmarks clickable from the very top screen edge.
-   Items must fill the bar's full height, and must not be treated as
-   window-drag region, or the top few px swallow the click. */
-.bookmark-bar {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  align-items: stretch !important;
-}
-
+/* Make bookmarks clickable across the full height of the bar */
 .bookmark-bar > *,
 .bookmark-bar .toolbar-group,
 .bookmark-bar .observer,
@@ -54,37 +167,117 @@
   -webkit-app-region: no-drag !important;
 }
 
-/* Hide the Vivaldi menu button (hamburger / V logo) */
-#browser button.vivaldi,
-#browser .vivaldi-menu,
-#browser .toolbar-mainmenu {
-  display: none !important;
+/* Status bar takes the right slot */
+#browser > footer#footer {
+  position: absolute !important;
+  position-anchor: --vivaldiTabBar;
+  top: anchor(bottom);
+  right: 0 !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: var(--statusW) !important;
+  height: 33px !important;
+  z-index: 5 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-/* UI font: match Firefox, which on Linux uses the GTK UI font.
-   GNOME here is set to "Adwaita Sans 11". Form controls don't inherit
-   font-family, so they need naming explicitly. */
-body,
-#browser,
-#browser input,
-#browser button,
-#browser textarea,
-#browser select {
-  font-family: "Adwaita Sans", Cantarell, system-ui, sans-serif !important;
+#browser > footer#footer .toolbar-statusbar {
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-/* UI size: match Firefox chrome, which uses the GTK font size
-   ("Adwaita Sans 11" here = 11pt ~= 14.7px).
-   .tab (12px), .bookmark-bar (11.5px) and .BookmarkButton (11.5px)
-   declare their OWN font-size in Vivaldi's common.css, so an inherited
-   value from #browser never reaches them -- they need naming directly. */
-#browser {
-  --uiFont: 11pt;
-  font-size: var(--uiFont) !important;
+
+
+
+/* --------------------------------- POPUPS ---------------------------------*/
+
+/* Open status bar popups downward */
+#browser > .button-popup.button-popup-pos-above {
+  position-anchor: --vivaldiTabBar;
+  bottom: auto !important;
+  top: calc(anchor(bottom) + 33px + 6px) !important;
+  --popupMaxHeight: calc(100vh - 82px) !important;
+  max-height: calc(100vh - 82px) !important;
 }
 
-.tab,
-.bookmark-bar,
-.BookmarkButton {
-  font-size: var(--uiFont) !important;
+#browser > .button-popup.button-popup-pos-above::before {
+  bottom: auto !important;
+  top: -6px !important;
+  rotate: 180deg;
+}
+
+/* Open extension windows downward (height stays clamped by Vivaldi) */
+#browser > .extension-popup.bottom {
+  position-anchor: --vivaldiTabBar;
+  bottom: auto !important;
+  top: calc(anchor(bottom) + 33px + 6px) !important;
+}
+
+#browser > .extension-popup.bottom::before {
+  bottom: auto !important;
+  top: -13px !important;
+  border-top-color: transparent !important;
+  border-bottom-color: var(--colorBorder) !important;
+}
+
+#browser > .extension-popup.bottom::after {
+  bottom: auto !important;
+  top: -12px !important;
+  border-top-color: transparent !important;
+  border-bottom-color: var(--colorBgLight) !important;
+}
+
+
+
+
+/* ------------------------------- AUTO-HIDE --------------------------------*/
+
+/* Flat, flush panels instead of floating cards */
+.auto-hide-wrapper {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.auto-hide-wrapper.top,
+.auto-hide-wrapper.bottom {
+  left: 0 !important;
+  width: 100% !important;
+}
+
+.auto-hide-wrapper.left,
+.auto-hide-wrapper.right {
+  top: 0 !important;
+  height: 100% !important;
+}
+
+.auto-hide-wrapper.top    { top: 0 !important; }
+.auto-hide-wrapper.bottom { bottom: 0 !important; }
+.auto-hide-wrapper.left   { left: 0 !important; }
+.auto-hide-wrapper.right  { right: 0 !important; }
+
+.auto-hide .auto-hide-wrapper > div,
+.auto-hide .auto-hide-wrapper #tabs-tabbar-container,
+.auto-hide .auto-hide-wrapper .bookmark-bar {
+  border-radius: 0 !important;
+}
+
+/* Align the bookmark bar with the address bar */
+.auto-hide.unified-ui .bookmark-bar {
+  margin: 0 !important;
+}
+
+.auto-hide-wrapper .bookmark-bar {
+  padding: 0 !important;
+  height: 33px !important;
+  border-top-width: 0 !important;
+}
+
+.auto-hide-wrapper .toolbar-statusbar {
+  padding: 0 !important;
 }
