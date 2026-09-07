@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Generate ~/.local/bin/icons/unicode.txt from Python's built-in unicodedata.
+"""Generate ~/.local/share/icons/unicode.txt from Python's built-in unicodedata.
 Re-run after a Python upgrade to pick up newer Unicode versions.
 Only includes blocks useful for UI elements."""
 
 import unicodedata
 import os
 
-out_path = os.path.expanduser('~/.local/bin/icons/unicode.txt')
+out_path = os.path.expanduser('~/.local/share/icons/unicode.txt')
 
 RANGES = [
     (0x2000, 0x206F, 'General Punctuation'),

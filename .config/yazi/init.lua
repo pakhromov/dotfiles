@@ -5,7 +5,6 @@ end)
 
 require("custom-filter"):setup()
 require("autosave"):setup({})
-require("write-id"):setup()
 require("sshfs"):setup()
 --require("full-border"):setup {
 --    -- Available values: ui.Border.PLAIN, ui.Border.ROUNDED

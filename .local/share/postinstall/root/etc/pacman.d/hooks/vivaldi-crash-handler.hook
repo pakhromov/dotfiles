@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = vivaldi
+
+[Action]
+Description = Disabling Vivaldi crash handler...
+When = PostTransaction
+Exec = /bin/cp /home/pavel/.local/share/postinstall/root/opt/vivaldi/chrome_crashpad_handler /opt/vivaldi/chrome_crashpad_handler

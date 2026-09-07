@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = brave-origin-bin
+
+[Action]
+Description = Disabling Brave crash handler...
+When = PostTransaction
+Exec = /bin/cp /home/pavel/.local/share/postinstall/root/opt/brave-origin-bin/chrome_crashpad_handler /opt/brave-origin-bin/chrome_crashpad_handler

@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=launch wayfire
-Comment=Wayfire with manual dbus
-Exec=/home/pavel/.local/bin/launch wayfire
-Type=Application

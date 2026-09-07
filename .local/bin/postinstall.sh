@@ -6,7 +6,7 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 REPO="pakhromov/dotfiles"
-DOTFILES="$HOME/.local/bin/postinstall"
+DOTFILES="$HOME/.local/share/postinstall"
 GIT_DIR="$HOME/.dotfiles-git"
 
 add_repos() {

@@ -1,11 +1,5 @@
 #!/bin/bash
 # audio-default - point ~/.asoundrc at one specific device, or at nothing.
-#
-# Meant for session startup. Unlike audio-switch, this one is deliberately
-# opinionated: only the device named below may become the default on its own.
-# If it is not connected, output is muted and no microphone is reachable --
-# never a fallback to speakers or a built-in mic. Anything else has to be
-# chosen by hand through audio-switch.
 
 DEVICE="Sennheiser"
 

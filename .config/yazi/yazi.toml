@@ -123,7 +123,7 @@ prepend_previewers = [
 	{ url = "*.ipynb", run = 'faster-piper -- CLICOLOR_FORCE=1 rich --ipynb --width "$w" --force-terminal "$1"' },
 	{ url = "*.csv",   run = 'faster-piper -- CLICOLOR_FORCE=1 rich --csv --width "$w" --force-terminal "$1"' },
 	{ url = "*.xlsx",  run = 'faster-piper -- xlsx2csv "$1" | CLICOLOR_FORCE=1 rich --csv --width "$w" --force-terminal -' },
-	{ mime = "application/bittorrent", run = 'faster-piper -- torrent-info "$1"' },
+	{ mime = "application/bittorrent", run = 'faster-piper -- torrent-info.js "$1"' },
 
 	{ url = "*.{docx,pptx,odp,odt}", run = 'to-pdf-preview -- libreoffice --headless --convert-to pdf --outdir "$OUTDIR" "$1"' },
 	{ mime = "application/pdf", run = "to-pdf-preview" },

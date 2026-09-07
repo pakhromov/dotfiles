@@ -1,6 +1,6 @@
 from kittens.tui.handler import result_handler
 
-DASHBOARD_CLASS = 'float-time'
+DASHBOARD_CLASS = 'float'
 # Programs that don't quit on a plain Escape themselves -- close their
 # floating window instead. Matched against the foreground process name,
 # not wm_class, since some of these floating windows share a class

@@ -1,0 +1,29 @@
+#!/bin/sh
+# kglobalacceld bridge for D-Bus activation.
+#
+# Since Plasma 6 the kglobalacceld package ships only libKGlobalAccelD.so -
+# there is no daemon binary left, and the compositor (kwin_wayland, which
+# links it) owns org.kde.kglobalaccel in-process. Stock Arch therefore has
+# no org.kde.kglobalaccel D-Bus service file at all, so any client that
+# tries to auto-activate the name gets an activation failure, which
+# kcm_keys reports as "Error while communicating with the global shortcuts
+# service".
+#
+# This mirrors what the KineticWE package installs as
+# /usr/libexec/kineticwe-kglobalacceld-bridge. It does not start anything:
+# it just reports success once the compositor owns the name, so activation
+# resolves instead of erroring out.
+i=0
+while [ "$i" -lt 10 ]; do
+    owned=$(dbus-send --session --print-reply \
+        --dest=org.freedesktop.DBus /org/freedesktop/DBus \
+        org.freedesktop.DBus.NameHasOwner string:org.kde.kglobalaccel 2>/dev/null)
+    case "$owned" in
+        *"boolean true"*) exit 0 ;;
+    esac
+    i=$((i + 1))
+    sleep 0.5
+done
+
+echo "kglobalacceld-bridge: no compositor owns org.kde.kglobalaccel" >&2
+exit 1

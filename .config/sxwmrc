@@ -24,7 +24,7 @@ start_fullscreen        :
 mod_key : super
 
 bind : mod + shift + Return : "kitty --single-instance"
-bind : mod + Return : "autostart -gx"
+bind : mod + Return : "autostart.sh -gx"
 bind : mod + z : "firefox"
 bind : mod + s : "steam"
 bind : mod + d : "kitty --single-instance fsel --detach"

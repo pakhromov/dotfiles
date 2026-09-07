@@ -9,7 +9,7 @@ sel=$(rofi -dmenu -multi-select -matching normal \
     -ballot-unselected-str ' ' \
     -kb-element-next "" \
     -kb-accept-alt "Tab" \
-    < ~/.local/bin/icons/emoji.txt | awk '{print $1}' | tr -d "\n")
+    < ~/.local/share/icons/emoji.txt | awk '{print $1}' | tr -d "\n")
 
 if [ -n "$sel" ]; then
     setsid wl-copy -- "$sel" >/dev/null 2>&1 &

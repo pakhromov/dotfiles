@@ -233,7 +233,7 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),    { locked = t
 hl.bind("CTRL + ALT + BACKSPACE", hl.dsp.exit())
 hl.bind(M .. " + L",              hl.dsp.exec_cmd("hyprlock"))
 hl.bind(M .. " + SHIFT + Q",      hl.dsp.exec_cmd("kitty --single-instance --class float-full power-menu.sh"))
-hl.bind(M .. " + RETURN",         hl.dsp.exec_cmd("autostart -w"))
+hl.bind(M .. " + RETURN",         hl.dsp.exec_cmd("autostart.sh -w"))
 hl.bind(M .. " + SPACE",          hl.dsp.exec_cmd("keyboard-layout-switcher.sh"))
 
 -- Browsers / apps

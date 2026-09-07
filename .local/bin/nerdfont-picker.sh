@@ -9,7 +9,7 @@ sel=$(rofi -dmenu -multi-select -matching normal \
     -ballot-unselected-str ' ' \
     -kb-element-next "" \
     -kb-accept-alt "Tab" \
-    < ~/.local/bin/icons/nerdfont.txt | cut -d" " -f1 | paste -sd" " -)
+    < ~/.local/share/icons/nerdfont.txt | cut -d" " -f1 | paste -sd" " -)
 
 if [ -n "$sel" ]; then
     setsid wl-copy -- "$sel" >/dev/null 2>&1 &

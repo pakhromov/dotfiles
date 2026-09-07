@@ -15,14 +15,18 @@ ARGS="$@"
 # Fixed socket for single-instance mode
 SOCKET="unix:@mykitty"
 
+wait_for_kitty() {
+    for _ in $(seq 1 50); do
+        kitten @ --to "$SOCKET" ls &>/dev/null && return 0
+        sleep 0.2
+    done
+    return 1
+}
+
 # Check if kitty single-instance is running
 if ! kitten @ --to "$SOCKET" ls &>/dev/null; then
     kitty --single-instance --listen-on="$SOCKET" --class shell "$PROGRAM" $ARGS &
-    timeout 10 wlrctl window waitfor "app_id:shell" || true
-    for _ in 1 2 3 4 5; do
-        wlrctl window focus "app_id:shell" || true
-        sleep 0.1
-    done
+    wait_for_kitty
     exit 0
 fi
 
@@ -32,19 +36,14 @@ PROGRAM_WINDOW=$(kitten @ --to "$SOCKET" ls | \
     head -1)
 
 if [ -n "$PROGRAM_WINDOW" ]; then
-    kitten @ --to "$SOCKET" focus-window --match "id:$PROGRAM_WINDOW"
+    kitten @ --to "$SOCKET" focus-window --match "id:$PROGRAM_WINDOW" >/dev/null
 else
     SHELL_PANE=$(kitten @ --to "$SOCKET" ls | jq -r '.[] | select(.wm_class == "shell") | .tabs[0].windows[0].id')
     if [ -n "$SHELL_PANE" ]; then
         kitten @ --to "$SOCKET" focus-window --match "id:$SHELL_PANE" &>/dev/null
-        kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS >/dev/null
+        NEW_WINDOW=$(kitten @ --to "$SOCKET" launch --type=tab "$PROGRAM" $ARGS)
     else
-        kitten @ --to "$SOCKET" launch --type=os-window --os-window-class shell "$PROGRAM" $ARGS >/dev/null
-        timeout 10 wlrctl window waitfor "app_id:shell" || true
+        NEW_WINDOW=$(kitten @ --to "$SOCKET" launch --type=os-window --os-window-class shell "$PROGRAM" $ARGS)
     fi
+    [ -n "$NEW_WINDOW" ] && kitten @ --to "$SOCKET" focus-window --match "id:$NEW_WINDOW" &>/dev/null
 fi
-
-for _ in 1 2 3 4 5; do
-    wlrctl window focus "app_id:shell" || true
-    sleep 0.1
-done

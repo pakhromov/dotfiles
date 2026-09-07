@@ -2,7 +2,7 @@
 // Intercepts .torrent files and magnet links, hands them to the
 // webtorrent server, and shows the same OSD stats as webtorrent-mpv-hook.
 
-var WEBTORRENT_BIN = '/home/pavel/.local/bin/webtorrent'
+var WEBTORRENT_BIN = '/home/pavel/.local/lib/webtorrent/webtorrent'
 
 var active          = false
 var initiallyActive = false
