@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "lines": [
     [
       {
@@ -62,10 +62,7 @@
       {
         "id": "6520ce71-e16b-46e4-b40a-eefed3a01686",
         "type": "git-branch",
-        "color": "brightYellow",
-        "metadata": {
-          "hideNoGit": "false"
-        }
+        "color": "brightYellow"
       },
       {
         "id": "d59c2c1f-91a2-4b88-acaf-b35f4e6a20e9",
@@ -76,7 +73,7 @@
         "id": "31dc0012-c066-41dc-a964-6911044cc5c0",
         "type": "git-status",
         "metadata": {
-          "hideNoGit": "true"
+          "hide": "no-git"
         }
       },
       {
@@ -89,7 +86,7 @@
         "type": "git-ahead-behind",
         "color": "green",
         "metadata": {
-          "hideNoGit": "true"
+          "hide": "no-git,no-upstream,zero"
         }
       },
       {
@@ -102,7 +99,7 @@
         "type": "git-changes",
         "color": "brightCyan",
         "metadata": {
-          "hideNoGit": "true"
+          "hide": "no-git"
         }
       }
     ],

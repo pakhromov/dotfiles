@@ -2,8 +2,6 @@ layer=overlay
 
 markup=1
 format= <i><b>%s</b></i>\n%b
-max-history=0
-history=0
 actions=1
 icons=1
 default-timeout=0

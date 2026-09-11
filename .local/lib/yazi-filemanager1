@@ -57,7 +57,7 @@ def focus_or_launch():
 
 
 def navigate(target_dir, target_file):
-    if not ya_emit("emit-to", "0", "plugin", "--str", "write-id", target_dir):
+    if not ya_emit("emit-to", "0", "plugin", "--str", "focus-dir-tab", target_dir):
         return False
     if target_file:
         ya_emit("emit-to", "0", "reveal", "--str", target_file)
