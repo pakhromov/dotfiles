@@ -1,0 +1,49 @@
+# Kitty — imported from ~/.config/kitty (background #111111 / foreground #A0A0A0)
+
+background = #111111
+foreground = #A0A0A0
+
+# kitty had `cursor none` (cursor takes the color of the text under it).
+# Monstar has no such mode, so the cursor is pinned to the foreground.
+cursor-color = #A0A0A0
+cursor-text  = #111111
+
+# kitty had `selection_foreground/background none`, i.e. reverse video.
+# Reproduced statically as a foreground/background swap.
+selection-background = #A0A0A0
+selection-foreground = #111111
+# Muted alternative, if the swap is too bright:
+# selection-background = #2F3334
+# selection-foreground = #F8F8F2
+
+# black
+palette = 0=#1A1C1D
+palette = 8=#505354
+
+# red
+palette = 1=#FF5894
+palette = 9=#F92571
+
+# green
+palette = 2=#B5E354
+palette = 10=#81B313
+
+# yellow
+palette = 3=#F5921D
+palette = 11=#FEED6B
+
+# blue
+palette = 4=#4E81AA
+palette = 12=#0B72C1
+
+# magenta
+palette = 5=#8B54FE
+palette = 13=#9D6EFE
+
+# cyan
+palette = 6=#465456
+palette = 14=#889BA1
+
+# white
+palette = 7=#CBCBC5
+palette = 15=#F8F8F2

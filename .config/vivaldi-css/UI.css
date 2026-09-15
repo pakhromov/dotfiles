@@ -1,12 +1,81 @@
 /* ------------------------------- VARIABLES --------------------------------*/
-/* UI font size and the address row split: address | bookmarks | status */
+/* UI font size and the address row slot widths (must total 100%) */
 #browser {
   --uiFont: 11pt;
   font-size: var(--uiFont) !important;
 
-  --addressW: 32%;
+  --addressW: 25%;
   --bookmarksW: 42%;
-  --statusW: 26%;
+  --statusW: 33%;
+
+  /* Address row order: 1 = leftmost, 3 = rightmost, each number used once */
+  --addressOrder: 3;
+  --bookmarksOrder: 2;
+  --statusOrder: 1;
+
+  /* Main colors: background, text, accent, text on accent, highlight */
+  --bg: #000000;
+  --fg: #a1a1a1;
+  --accent: #202020;
+  --accentFg: #a1a1a1;
+  --highlight: #d77757;
+
+  /* Hover background: shared by tabs, bookmarks and toolbar buttons */
+  --hoverBg: #2a2a2a;
+
+  /* Tab colors: active, inactive, hovered, unloaded title */
+  --tabActiveBg: var(--accent);
+  --tabActiveFg: var(--accentFg);
+  --tabInactiveBg: color-mix(in srgb, var(--bg) 25%, transparent);
+  --tabInactiveFg: var(--fg);
+  --tabHoverBg: var(--hoverBg);
+  --unloadedTabFg: color-mix(in srgb, var(--tabInactiveFg) 50%, transparent);
+
+  /* Tab separators: color, height, width */
+  --tabSeparator: color-mix(in srgb, var(--fg) 25%, transparent);
+  --tabSeparatorHeight: 100%;
+  --tabSeparatorWidth: 2px;
+
+  /* Tab top strip: active color, height, hovered color */
+  --tabActiveStrip: #b1b9f9;
+  --tabActiveStripHeight: 3px;
+  --tabHoverStrip: color-mix(in srgb, var(--tabActiveStrip) 50%, transparent);
+
+  /* Tab title fade width at the right edge */
+  --tabTitleFade: 24px;
+
+  /* Tab sound indicator: circle size and color, icon size and color (0px circle = icon only) */
+  --tabAudioBgSize: 14px;
+  --tabAudioBg: var(--bg);
+  --tabAudioIconSize: 10px;
+  --tabAudioFg: var(--fg);
+
+  /* Corner rounding: address bar and toolbar buttons, tab top corners, tab bottom outward curves */
+  --addressRadius: 8px;
+  --tabRadiusTop: 4px;
+  --tabRadiusBottom: 4px;
+
+  /* Bookmark colors: text, hovered */
+  --bookmarkFg: var(--fg);
+  --bookmarkHoverBg: var(--hoverBg);
+
+  /* Toolbar button colors: hovered, pressed */
+  --buttonHoverBg: var(--hoverBg);
+  --buttonPressedBg: var(--hoverBg);
+
+  /* Address row colors: bottom border line */
+  --addressRowBorder: #000000;
+}
+
+/* Apply the main colors to Vivaldi's theme */
+#browser {
+  --colorBg: var(--bg) !important;
+  --colorFg: var(--fg) !important;
+  --colorAccentBg: var(--accent) !important;
+  --colorAccentBgAlphaBlur: var(--accent) !important;
+  --colorAccentBorder: var(--accent) !important;
+  --colorAccentFg: var(--accentFg) !important;
+  --colorHighlightBg: var(--highlight) !important;
 }
 
 /* Font family for the whole UI */
@@ -16,7 +85,7 @@ body,
 #browser button,
 #browser textarea,
 #browser select {
-  font-family: "ComicShannsLigaMod Nerd Font", Cantarell, system-ui, sans-serif !important;
+  font-family: "ComicShannsLigaMod Nerd Font",Adwaita Sans, Cantarell, system-ui, sans-serif !important;
 }
 
 
@@ -32,6 +101,17 @@ body,
   font-size: var(--uiFont) !important;
 }
 
+/* Toolbar button background on hover */
+:is(.toolbar-mainbar, .toolbar-statusbar, #tabs-tabbar-container) .button-toolbar:not(.toolbar-spacer, .toolbar-spacer-flexible, .toolbar-spacer-panel, .toolbar-divider) > button:is(:hover, :focus-visible) {
+  background-color: var(--buttonHoverBg) !important;
+}
+
+/* Toolbar button background when pressed or its popup is open */
+:is(.toolbar-mainbar, .toolbar-statusbar, #tabs-tabbar-container) .button-toolbar:not(.toolbar-spacer, .toolbar-spacer-flexible, .toolbar-spacer-panel, .toolbar-divider, .BookmarkButton-Button) > button:is(:active, .button-pressed, .popup-visible) {
+  background-color: var(--buttonPressedBg) !important;
+  background-image: none !important;
+}
+
 /* Square window corners */
 #browser,
 #app,
@@ -39,6 +119,37 @@ body,
 #webview-container,
 .inner {
   border-radius: 0 !important;
+}
+
+/* Address bar and toolbar button corner rounding */
+:is(.toolbar-mainbar, .toolbar-statusbar, .toolbar-tabbar-before, .toolbar-tabbar-after) {
+  --radius: var(--addressRadius) !important;
+  --radiusRoundedLess: max(0px, calc(var(--addressRadius) - 1px)) !important;
+}
+
+/* Tab top corner rounding, bottom corners stay square */
+.tabbar-wrapper {
+  --currentRadius: var(--tabRadiusTop) !important;
+}
+
+.tab-strip .tab,
+.tab-strip .tab-wrapper {
+  border-radius: var(--tabRadiusTop) var(--tabRadiusTop) 0 0 !important;
+}
+
+/* Outward curves at the bottom corners of the active tab */
+.tab-strip .tab.active::before,
+.tab-strip .tab.active::after {
+  width: var(--tabRadiusBottom) !important;
+  height: var(--tabRadiusBottom) !important;
+}
+
+.tab-strip .tab.active::before {
+  left: calc(0px - var(--tabRadiusBottom)) !important;
+}
+
+.tab-strip .tab.active::after {
+  right: calc(0px - var(--tabRadiusBottom)) !important;
 }
 
 /* Hide the Vivaldi menu button (hamburger / V logo) */
@@ -63,6 +174,175 @@ body,
 
 
 /* -------------------------------- TAB BAR ---------------------------------*/
+/* Active and inactive tab colors */
+.tab-strip .tab.active {
+  background-color: var(--tabActiveBg) !important;
+  color: var(--tabActiveFg) !important;
+}
+
+.tab-strip .tab:not(.active) {
+  background-color: var(--tabInactiveBg) !important;
+  color: var(--tabInactiveFg) !important;
+}
+
+/* Tabs fill their full slot width, no 1px gap between neighbours */
+.tab-strip .tab {
+  max-width: var(--Width) !important;
+}
+
+/* Accent strip on top of the active tab */
+.tab-strip .tab.active {
+  box-shadow: inset 0 var(--tabActiveStripHeight) 0 0 var(--tabActiveStrip) !important;
+}
+
+/* Separators between inactive tabs */
+#browser:is(.tabs-top, .tabs-bottom) .tab-strip > span > .tab-position::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: calc((100% + 1px - var(--tabSeparatorHeight) / 100% * (100% + 1px)) / 2);
+  height: calc(var(--tabSeparatorHeight) / 100% * (100% + 1px));
+  width: var(--tabSeparatorWidth);
+  background-color: var(--tabSeparator);
+  pointer-events: none;
+}
+
+/* Hide separators next to the active tab, a hovered tab and the hovered new tab button */
+#browser:is(.tabs-top, .tabs-bottom) .tab-strip > span > .tab-position:hover::after,
+#browser:is(.tabs-top, .tabs-bottom) .tab-strip > span > .tab-position:has(.tab.active)::after,
+#browser:is(.tabs-top, .tabs-bottom) .tab-strip > span:has(+ span > .tab-position:hover, + span .tab.active) > .tab-position::after,
+#browser:is(.tabs-top, .tabs-bottom):has(#tabs-tabbar-container .newtab > button:hover) .tab-strip > span:last-child > .tab-position::after {
+  content: none;
+}
+
+/* Inactive tab background on hover */
+.unified-ui:not(.unified-ui-transparent) .tab-position:hover .tab:not(.active),
+.color-behind-tabs-off:not(.ui-transparent-tabs) .tab-position:hover .tab:not(.active) {
+  background-color: var(--tabHoverBg) !important;
+}
+
+/* Hovered tab styled like the active one: full height, dimmed top strip, outward bottom curves */
+.tab-strip .tab-position:hover .tab:not(.active) {
+  height: calc(var(--Height) + 1px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+  box-shadow: inset 0 var(--tabActiveStripHeight) 0 0 var(--tabHoverStrip) !important;
+}
+
+.tab-strip .tab-position:hover .tab:not(.active)::before,
+.tab-strip .tab-position:hover .tab:not(.active)::after {
+  content: '';
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  width: var(--tabRadiusBottom);
+  height: var(--tabRadiusBottom);
+  background-color: inherit;
+  mask-image: radial-gradient(circle at 0 0, transparent 70%, #000 73%);
+  contain: strict;
+  pointer-events: none;
+}
+
+.tab-strip .tab-position:hover .tab:not(.active)::before {
+  left: calc(0px - var(--tabRadiusBottom));
+}
+
+.tab-strip .tab-position:hover .tab:not(.active)::after {
+  right: calc(0px - var(--tabRadiusBottom));
+  transform: rotate(90deg);
+}
+
+/* No outward curves on the edge shared by the active and a hovered tab */
+.tab-strip > span:has(+ span .tab.active) > .tab-position:hover .tab::after,
+.tab-strip > span:has(.tab.active) + span > .tab-position:hover .tab::before,
+.tab-strip > span:has(> .tab-position:hover) + span .tab.active::before,
+.tab-strip > span:has(+ span > .tab-position:hover) .tab.active::after {
+  content: none !important;
+}
+
+/* Dim the title of unloaded tabs */
+#tabs-container .tab.isdiscarded .title,
+#tabs-subcontainer .tab.isdiscarded .title {
+  color: var(--unloadedTabFg) !important;
+  transition: color 0.2s ease-in;
+}
+
+#tabs-container .tab-position:hover .tab.isdiscarded .title,
+#tabs-subcontainer .tab-position:hover .tab.isdiscarded .title {
+  color: inherit !important;
+}
+
+/* Undim the icon of unloaded tabs on hover */
+#tabs-container .tab-position:hover .tab.isdiscarded .favicon,
+#tabs-subcontainer .tab-position:hover .tab.isdiscarded .favicon {
+  filter: grayscale(0) opacity(1);
+}
+
+/* Keep the active tab icon unchanged (no outline) */
+.tab-strip .tab.active .favicon {
+  filter: none !important;
+}
+
+/* Sound indicator as a small badge on the top-left corner of the tab icon */
+.tab-strip .tab {
+  anchor-scope: --tabFavicon;
+}
+
+.tab-strip .tab .favicon {
+  anchor-name: --tabFavicon;
+}
+
+#browser #tabs-container .tab:is(.audio-on, .audio-muted, .tab-captured) .favicon {
+  transform: scale(1) !important;
+}
+
+#browser #tabs-container .tab:is(.audio-on, .audio-muted, .tab-captured) .tab-audio {
+  --tabAudioBox: max(var(--tabAudioBgSize), var(--tabAudioIconSize));
+  position: absolute !important;
+  position-anchor: --tabFavicon;
+  top: round(calc(anchor(top) - var(--tabAudioBox) / 4), 1px) !important;
+  left: round(calc(anchor(left) - var(--tabAudioBox) / 4), 1px) !important;
+  display: grid !important;
+  place-items: center !important;
+  width: var(--tabAudioBox) !important;
+  height: var(--tabAudioBox) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  color: var(--tabAudioFg) !important;
+  transform: none !important;
+  z-index: 1;
+}
+
+#browser #tabs-container .tab:is(.audio-on, .audio-muted, .tab-captured) .tab-audio:hover {
+  transform: scale(1.25) !important;
+}
+
+/* Sound indicator circle */
+#browser #tabs-container .tab .tab-audio::before {
+  content: '';
+  grid-area: 1 / 1;
+  width: var(--tabAudioBgSize);
+  height: var(--tabAudioBgSize);
+  border-radius: 50%;
+  background-color: var(--tabAudioBg);
+}
+
+/* Sound indicator icon */
+#browser #tabs-container .tab .tab-audio .audioicon {
+  grid-area: 1 / 1;
+  display: block !important;
+  width: var(--tabAudioIconSize) !important;
+  height: var(--tabAudioIconSize) !important;
+  transform: none !important;
+}
+
+/* Fade tab titles at the right edge instead of cutting them or showing '...' */
+.tab-strip .tab .title {
+  text-overflow: clip !important;
+  mask-image: linear-gradient(to left, transparent 0, #000 var(--tabTitleFade)) !important;
+}
 
 /* Remove the gap before the first tab */
 .tabs-top #tabs-tabbar-container .toolbar-tabbar-before,
@@ -115,26 +395,63 @@ body,
 
 
 /* ------------------------------ ADDRESS ROW -------------------------------*/
+/* Address row bottom border color */
+.mainbar {
+  border-bottom-color: var(--addressRowBorder) !important;
+}
+
+
+/* Make the address bar page zoom control look like the status bar one */
+#browser .toolbar-mainbar .page-zoom-slider::-webkit-slider-container {
+  background-color: transparent;
+}
+
+#browser .toolbar-mainbar .page-zoom-slider::-webkit-slider-thumb {
+  background-color: var(--colorBgLight);
+  border-color: var(--colorFgFaded);
+}
+
+#browser .toolbar-mainbar .page-zoom-slider:is(:active, :focus-within)::-webkit-slider-thumb {
+  background-color: var(--colorHighlightBg);
+  border-color: var(--colorHighlightBg);
+}
+
+#browser .toolbar-mainbar .page-zoom-controls > .button-toolbar > button {
+  background-image: unset;
+}
+
+#browser .toolbar-mainbar .page-zoom-controls > .button-toolbar > button:is(:active, .button-pressed) {
+  background-color: var(--colorBgDark);
+}
 
 /* Anchor on the tab bar, used to place the row below it */
 #header {
   anchor-name: --vivaldiTabBar;
 }
 
-/* Address bar takes the left slot */
-.toolbar-addressbar {
-  anchor-name: --vivaldiAddrBar;
-  padding-right: calc(var(--bookmarksW) + var(--statusW)) !important;
+/* Address row slot offsets computed from the order */
+#browser {
+  --addressLeft: calc(var(--bookmarksW) * clamp(0, var(--addressOrder) - var(--bookmarksOrder), 1) + var(--statusW) * clamp(0, var(--addressOrder) - var(--statusOrder), 1));
+  --bookmarksLeft: calc(var(--addressW) * clamp(0, var(--bookmarksOrder) - var(--addressOrder), 1) + var(--statusW) * clamp(0, var(--bookmarksOrder) - var(--statusOrder), 1));
+  --statusLeft: calc(var(--addressW) * clamp(0, var(--statusOrder) - var(--addressOrder), 1) + var(--bookmarksW) * clamp(0, var(--statusOrder) - var(--bookmarksOrder), 1));
 }
 
-/* Bookmark bar takes the middle slot */
+/* Address bar slot */
+.toolbar-addressbar {
+  anchor-name: --vivaldiAddrBar;
+  padding-left: var(--addressLeft) !important;
+  padding-right: calc(100% - var(--addressLeft) - var(--addressW)) !important;
+}
+
+/* Bookmark bar slot */
 .bookmark-bar {
   position: absolute;
   position-anchor: --vivaldiAddrBar;
   top: anchor(top, 0px);
-  right: var(--statusW);
+  left: var(--bookmarksLeft);
+  right: auto;
   width: var(--bookmarksW);
-  height: 33px !important;
+  height: anchor-size(height) !important;
   z-index: 5;
   border: none !important;
   background: transparent !important;
@@ -144,7 +461,18 @@ body,
 }
 
 .bookmark-bar button.chevron {
-  height: 33px !important;
+  height: 100% !important;
+}
+
+/* Bookmark text color */
+.bookmark-bar button {
+  color: var(--bookmarkFg) !important;
+}
+
+/* Bookmark background on hover */
+.bookmark-bar button:hover,
+.bookmark-bar button:focus-visible {
+  background-color: var(--bookmarkHoverBg) !important;
 }
 
 /* Make bookmarks clickable across the full height of the bar */
@@ -163,20 +491,20 @@ body,
   height: 100% !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  border-radius: 0 !important;
+  border-radius: var(--addressRadius) !important;
   -webkit-app-region: no-drag !important;
 }
 
-/* Status bar takes the right slot */
+/* Status bar slot */
 #browser > footer#footer {
   position: absolute !important;
   position-anchor: --vivaldiTabBar;
   top: anchor(bottom);
-  right: 0 !important;
-  left: auto !important;
+  left: var(--statusLeft) !important;
+  right: auto !important;
   bottom: auto !important;
   width: var(--statusW) !important;
-  height: 33px !important;
+  height: anchor-size(--vivaldiAddrBar height) !important;
   z-index: 5 !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -210,6 +538,14 @@ body,
   bottom: auto !important;
   top: -6px !important;
   rotate: 180deg;
+}
+
+/* Open the address field dropdown downward when the field is in the status bar */
+#browser > footer#footer .above .OmniDropdown {
+  top: -1px !important;
+  bottom: auto !important;
+  padding-top: 35px !important;
+  padding-bottom: 4px !important;
 }
 
 /* Open extension windows downward (height stays clamped by Vivaldi) */
@@ -274,7 +610,7 @@ body,
 
 .auto-hide-wrapper .bookmark-bar {
   padding: 0 !important;
-  height: 33px !important;
+  height: anchor-size(height) !important;
   border-top-width: 0 !important;
 }
 

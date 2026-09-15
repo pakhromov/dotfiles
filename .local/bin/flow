@@ -23,4 +23,4 @@ trap clear_flag EXIT
 trap 'exit' HUP INT TERM
 
 set_flag
-"$FLOW_BIN" "$@"
+exec "$FLOW_BIN" "$@"

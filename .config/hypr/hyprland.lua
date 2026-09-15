@@ -126,12 +126,14 @@ hl.curve("easeInOutCubic", { type = "bezier", points = { { 0.65, 0.05 }, { 0.36,
 hl.curve("linear",         { type = "bezier", points = { { 0,    0    }, { 1,    1 } } })
 hl.curve("almostLinear",   { type = "bezier", points = { { 0.5,  0.5  }, { 0.75, 1 } } })
 hl.curve("quick",          { type = "bezier", points = { { 0.15, 0    }, { 0.1,  1 } } })
+hl.curve("circle",         { type = "bezier", points = { { 0,    0.55 }, { 0.45, 1 } } })  -- wayfire "circle": sqrt(2x-x^2)
 
 hl.animation({ leaf = "global",        enabled = true, speed = 10,   bezier = "linear" })
 hl.animation({ leaf = "border",        enabled = true, speed = 5.39, bezier = "linear" })
 hl.animation({ leaf = "windows",       enabled = true, speed = 4.79, bezier = "linear" })
 hl.animation({ leaf = "windowsIn",     enabled = true, speed = 4.1,  bezier = "linear", style = "popin 87%" })
 hl.animation({ leaf = "windowsOut",    enabled = true, speed = 1.49, bezier = "linear",       style = "popin 87%" })
+hl.animation({ leaf = "windowsMove",   enabled = true, speed = 2,    bezier = "circle" })  -- hyprexpo overview zoom: 200ms
 hl.animation({ leaf = "fadeIn",        enabled = true, speed = 1.73, bezier = "linear" })
 hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.46, bezier = "linear" })
 hl.animation({ leaf = "fade",          enabled = true, speed = 3.03, bezier = "linear" })
@@ -140,7 +142,7 @@ hl.animation({ leaf = "layersIn",      enabled = true, speed = 4,    bezier = "l
 hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.5,  bezier = "linear",       style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 1.79, bezier = "linear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "linear" })
-hl.animation({ leaf = "workspaces",    enabled = true, speed = 1.94, bezier = "linear", style = "fade" })
+hl.animation({ leaf = "workspaces",    enabled = true, speed = 2,    bezier = "circle", style = "fade" })  -- hyprtasking grid pan/zoom: 200ms
 hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 1.21, bezier = "linear", style = "fade" })
 hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "linear", style = "fade" })
 hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 7,    bezier = "linear" })
@@ -191,9 +193,9 @@ hl.bind(M .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(M .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Hyprtasking overview
-hl.bind("mouse:276", function()
-    hl.plugin.hyprtasking.toggle("cursor")
-end)
+--hl.bind("mouse:276", function()
+--    hl.plugin.hyprtasking.toggle("cursor")
+--end)
 
 -- Hyprtasking directional navigation
 hl.bind(M .. " + left",  function() hl.plugin.hyprtasking.move("left") end)
@@ -209,9 +211,9 @@ hl.bind(M .. " + SHIFT + down",  function() hl.plugin.hyprtasking.movewindow("do
 
 
 
---hl.bind("mouse:276", function()
---    hl.plugin.hyprexpo.expo("toggle")
---end)
+hl.bind(M .. " + O", function()
+    hl.plugin.hyprexpo.expo("toggle")
+end)
 
 
 -- Multimedia keys
@@ -373,18 +375,19 @@ hl.window_rule({
 
 
 
---hl.config({
---    plugin = {
---        hyprexpo = {
---            columns = 3,
---            gaps_in = 5,
---            gaps_out = 0,
---            bg_col = "rgb(111111)",
---            workspace_method = "first 1",
---            gesture_distance = 200,
---            cancel_key = "escape",
---            show_cursor = 1,
---            keynav_enable = 0,
---        },
---    },
---})
+hl.config({
+    plugin = {
+        hyprexpo = {
+            columns = 3,
+            gaps_in = 5,
+            gaps_out = 0,
+            bg_col = "rgb(111111)",
+            workspace_method = "first 1",
+            gesture_distance = 200,
+            cancel_key = "escape",
+            show_cursor = 1,
+            keynav_enable = 0,
+            label_enable = 0,
+        },
+    },
+})

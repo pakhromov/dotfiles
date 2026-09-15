@@ -111,8 +111,6 @@ install_aur() {
 
 configure_system() {
     sudo cp -rT "$DOTFILES/root" /
-
-    sudo ln -sfT /usr/bin/dash /usr/bin/sh
     sudo usermod -s /usr/bin/zsh pavel
 
     sudo systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-resolve-hook.socket systemd-networkd-varlink.socket
@@ -124,18 +122,16 @@ configure_system() {
     sudo systemctl disable bluetooth.service
     sudo systemctl disable getty@tty1.service
 
-    sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
+    #sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
     sudo systemctl enable --now chronyd-sync
     sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket
-    sudo systemctl mask upower.service
     sudo systemctl mask user@.service
     sudo systemctl mask rtkit-daemon
 
     sudo modprobe i2c-dev
     sudo usermod -aG i2c pavel
     sudo mkinitcpio -P
-    sudo systemctl daemon-reload
 }
 
 check_system() {

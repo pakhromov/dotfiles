@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+
+prog=$(basename "$0")
+[ "$YZF_USE_DEFAULT" = 1 ] || unset FZF_DEFAULT_OPTS
+
+export FZF_DEFAULT_OPTS="
+  --ansi --multi --tiebreak=index --exact --layout=reverse-list --no-hscroll
+  --preview-window=right:50%:noinfo:wrap
+  --input-border=top
+  --scroll-off 7
+  --info=inline
+  --info-command='echo -e \"\$FZF_POS/\$FZF_MATCH_COUNT(\$FZF_SELECT_COUNT)\"'
+  --pointer '>'
+  --gutter ' '
+  --marker '┃'
+  --color label:-1
+$FZF_DEFAULT_OPTS
+$YZF_DEFAULT_OPTS"
+
+_k=$(tput sgr0)
+_a=$(tput setaf 6)
+_r=$(tput sgr0)
+_kb_remove=" ${_k}TAB${_a} select   ${_k}ENTER${_a} remove${_r} "
+_kb_orphans=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ENTER${_a} remove${_r} "
+
+_kb_upgrade=" ${_k}TAB${_a} select   ${_k}CTRL+A${_a} all   ${_k}ALT+ENTER${_a} url   ${_k}ENTER${_a} update${_r} "
+_kb_install=" ${_k}TAB${_a} select   ${_k}ALT+ENTER${_a} url   ${_k}ENTER${_a} install${_r} "
+
+fzf_preview() {
+	printf "yay --color=always %s {1} | " "$1"
+	printf "awk '{ sub(/ *:/,\":\"); \$1 = \$1; print }'\n"
+}
+
+search_install() {
+	local fzf_out
+	fzf_out=$(mktemp)
+
+	cleanup() { rm -f "$fzf_out"; }
+	trap cleanup EXIT
+
+	# yay -Ss output: alternating "repo/pkg version..." and "    description" lines
+	# pack into null-terminated two-line items for fzf --read0
+	yay -Ss --color=always "$@" 2>/dev/null |
+		awk '
+		/^    / && pkg { items[++n] = pkg "\n" $0; pkg = "" }
+		!/^    / && NF { if (pkg) items[++n] = pkg; pkg = $0 }
+		END            { if (pkg) items[++n] = pkg; for (i = n; i >= 1; i--) printf "%s\0", items[i] }
+		' |
+		fzf --read0 --print0 \
+			--pointer ' ' \
+			--input-label "$_kb_install" --input-label-pos '-1:top' \
+			--bind "alt-enter:execute-silent(for item in {+1}; do pkg=\$(printf '%s' \"\$item\" | sed 's/\x1b\[[0-9;]*m//g' | awk -F/ '{print \$2}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && setsid -f xdg-open \"\$url\" >/dev/null 2>&1; done)" \
+			>"$fzf_out"
+
+	[ ! -s "$fzf_out" ] && return
+
+	# convert null-separated items to lines, skip description lines, strip ANSI, extract repo/pkgname
+	tr '\0' '\n' <"$fzf_out" |
+		awk '!/^[[:space:]]/ && NF {
+			gsub(/\033\[[0-9;]*m/, "")
+			if ($1 ~ /\//) print $1
+		}' |
+		xargs -ro yay -S --needed
+}
+
+remove_orphans() {
+	yay -Qdtq 2>/dev/null |
+		fzf --border-label ' REMOVE ORPHANS ' --preview "$(fzf_preview -Qi)" \
+		--preview-label "$_kb_orphans" --preview-label-pos 'bottom' \
+		--bind "ctrl-a:toggle-all" |
+		xargs -ro sudo pacman -Rns
+}
+
+remove_recent() {
+	{
+		pacman -Qeq
+		printf "\n"
+		grep '\[ALPM\] installed' /var/log/pacman.log | tac
+	} | awk '
+		NF == 1 && !sep { explicit[$1] = 1; next }
+		NF == 0 { sep = 1; next }
+		$4 in explicit && !seen[$4]++ {
+			gsub(/\[|\]/, "", $1)
+			split($1, dt, "T")
+			gsub(/\(|\)/, "", $5)
+			print $4, "\033[90m" dt[1] " " $5 "\033[0m"
+		}
+	' |
+		fzf --preview "$(fzf_preview -Qi)" \
+		--preview-label "$_kb_remove" --preview-label-pos 'bottom' |
+		awk '{print $1}' |
+		xargs -ro sudo pacman -Rnsc
+}
+
+format_updates() {
+	awk '
+function comp(a1, a2, i) {
+	h1 = i <= n1
+	h2 = i <= n2
+	t1 = h1 ? a1[i] : ""
+	t2 = h2 ? a2[i] : ""
+	if (eq && h1 && h2 && t1 == t2) {
+		common = common t1
+	} else {
+		eq = 0
+		if (h1) diff1 = diff1 t1
+		if (h2) diff2 = diff2 t2
+	}
+}
+BEGIN {
+	expac = "/usr/bin/expac -S \"%r %n\" -"
+	# Priority: first repo in pacman.conf wins (CachyOS repos override base repos)
+	split("cachyos-core-v3 cachyos-extra-v3 cachyos-v3 cachyos core extra multilib chaotic-aur aur local", _pr)
+	for (_i in _pr) repo_prio[_pr[_i]] = _i+0
+	while (("pacman -Qmq" | getline pkg) > 0) aur_pkgs[pkg] = 1
+	close("pacman -Qmq")
+	# yay colors a repo name by hashing the string itself (djb2 variant,
+	# hash%6+31 -> one of the 6 base ANSI colors), not a fixed per-repo
+	# table - see Jguer/yay pkg/text/color.go:ColorHash. These are that
+	# hash precomputed for each repo actually in pacman.conf, so the list
+	# matches what yay itself prints. colors[""] is a fallback for any
+	# repo not in this list; it has no yay equivalent.
+	colors[""] = 37; colors["core"] = 33; colors["extra"] = 32
+	colors["multilib"] = 36; colors["aur"] = 34; colors["local"] = 31
+	colors["chaotic-aur"] = 32
+	colors["cachyos-core-v3"] = 34
+	colors["cachyos-v3"] = 34; colors["cachyos-extra-v3"] = 35; colors["cachyos"] = 32
+	order["core"] = 1; order["cachyos-core-v3"] = 2
+	order["extra"] = 3; order["cachyos-extra-v3"] = 4
+	order["cachyos-v3"] = 5; order["cachyos"] = 6
+	order["multilib"] = 7; order["chaotic-aur"] = 8
+	order["aur"] = 9; order["local"] = 10
+}
+{
+	pkgs[NR] = $1; v1_arr[NR] = $2; v2_arr[NR] = $4
+	if (length($1) > l_pkg) l_pkg = length($1)
+	if (length($2) > l_v1) l_v1 = length($2)
+	if (length($4) > l_v2) l_v2 = length($4)
+	print $1 |& expac
+}
+END {
+	if (NR == 0) exit
+	close(expac, "to")
+	while ((expac |& getline) > 0) {
+		r = $1; p = $2
+		if (!(p in repo_map) || repo_prio[r]+0 < repo_prio[repo_map[p]]+0)
+			repo_map[p] = r
+		if (length(r) > l_repo) l_repo = length(r)
+	}
+	close(expac)
+	if (length("aur") > l_repo) l_repo = length("aur")
+	l_pkgname = l_repo + 1 + l_pkg
+	for (j = 1; j <= NR; j++) {
+		p = pkgs[j]
+		if (p in repo_map) r = repo_map[p]
+		else if (p in aur_pkgs) r = "aur"
+		else r = "local"
+		o = (r in order) ? order[r] : 9
+		sort_proxy[j] = sprintf("%d %s", o, p) SUBSEP j
+	}
+	n = asort(sort_proxy)
+	for (i = 1; i <= n; i++) {
+		split(sort_proxy[i], parts, SUBSEP)
+		orig_idx = parts[2]
+		pkg = pkgs[orig_idx]; v1 = v1_arr[orig_idx]; v2 = v2_arr[orig_idx]
+		if (pkg in repo_map) repo = repo_map[pkg]
+		else if (pkg in aur_pkgs) repo = "aur"
+		else repo = "local"
+		color = repo in colors ? colors[repo] : colors[""]
+		eq = 1; common = ""; diff1 = ""; diff2 = ""
+		n1 = split(v1, arr1, /[-.:]/, sep1)
+		n2 = split(v2, arr2, /[-.:]/, sep2)
+		comp(sep1, sep2, 0)
+		for (k = 1; k <= (n1 > n2 ? n1 : n2); k++) {
+			comp(arr1, arr2, k)
+			comp(sep1, sep2, k)
+		}
+		printf "\033[1;%sm%s\033[0m\033[1m/%s\033[0m", color, repo, pkg
+		printf "%*s  ", (l_pkgname - length(repo) - length(pkg) - 1), ""
+		printf "%s\033[31m%s\033[0m%-*s -> %s\033[32m%s\033[0m\n", common, diff1, (l_v1 - length(v1)), "", common, diff2
+	}
+}'
+}
+
+upgrade() {
+	local pkgs
+	# checkupdates for official repos (no sudo needed), yay -Qua for AUR
+	pkgs=$({ checkupdates 2>/dev/null; yay -Qua 2>/dev/null; })
+
+	[ -z "$pkgs" ] &&
+		printf "there is no upgradable package\n" && return
+
+	local formatted
+	formatted=$(format_updates <<<"$pkgs")
+
+	local selected
+	selected=$(fzf --no-sort \
+		--input-label "$_kb_upgrade" --input-label-pos '-1:top' \
+		--bind "ctrl-a:toggle-all" \
+		--bind "alt-enter:execute-silent(for item in {+}; do pkg=\$(printf '%s' \"\$item\" | sed 's/\x1b\[[0-9;]*m//g' | awk -F'/' '{print \$2}' | awk '{print \$1}'); url=\$(expac -S '%u' \"\$pkg\" 2>/dev/null | head -1); [ -z \"\$url\" ] && url=\$(yay -Si \"\$pkg\" 2>/dev/null | awk '/^URL/ {print \$3}'); [ -n \"\$url\" ] && setsid -f xdg-open \"\$url\" >/dev/null 2>&1; done)" \
+		<<<"$formatted")
+
+	[ -z "$selected" ] && return
+
+	# Strip ANSI codes and split into repo/pkg pairs
+	parsed=$(awk -F'/' '{
+		repo = $1; gsub(/\033\[[0-9;]*m/, "", repo)
+		pkg = $2; gsub(/\033\[[0-9;]*m/, "", pkg); split(pkg, a, " "); pkg = a[1]
+		print repo"\t"pkg
+	}' <<<"$selected")
+
+	# Install official packages first (core/extra/multilib), then AUR
+	official=$(awk -F'\t' '$1 != "aur" && $1 != "local" {print $2}' <<<"$parsed")
+	aur=$(awk -F'\t' '$1 == "aur" || $1 == "local" {print $2}' <<<"$parsed")
+
+	status=0
+	[ -n "$official" ] && { xargs -ro sudo pacman -Sy --needed --noconfirm <<<"$official" || status=1; }
+	[ -n "$aur" ] && { xargs -ro yay -S --needed --noconfirm <<<"$aur" || status=1; }
+
+	if [ $status -eq 0 ]; then
+		printf "\033[1;32mUpdate successful\033[0m\n"
+	else
+		printf "\033[1;31mUpdate failed\033[0m\n"
+	fi
+
+	read -rsn1 -p "Press enter or esc to exit..."
+}
+
+help() {
+	cat <<EOF
+Info:
+    A package search TUI for Yay, powered by fzf.
+    It can install, upgrade, and remove packages.
+
+Usage:
+    $prog <query> -> Search and install packages
+    $prog [opt]   -> Other options
+
+Multiple Selection:
+    Tab         -> Select / Deselect
+    Ctrl + i    -> Select / Deselect
+
+Options:
+    h -> Print this message
+    u -> Upgrade upgradable packages
+    r -> Remove recently installed packages
+    o -> Remove orphan packages
+EOF
+}
+
+invalid_option() {
+	printf "\033[1mError:\033[0m Invalid option. " >&2
+	printf "Use \"%s --help\" for more information.\n" "$prog" >&2
+	exit 2
+}
+
+case "$1" in
+"")          printf "usage: %s <query>\n" "$prog" >&2 ;;
+-u | u)      [ -n "$2" ] && invalid_option; upgrade ;;
+-r | r)      [ -n "$2" ] && invalid_option; remove_recent ;;
+-o | o)      [ -n "$2" ] && invalid_option; remove_orphans ;;
+-h | h | --help) [ -n "$2" ] && invalid_option; help ;;
+*)           search_install "$@" ;;
+esac

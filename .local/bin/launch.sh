@@ -7,13 +7,13 @@ compositor="$1"
 dbus_env="/tmp/dbus-$USER.env"
 # Create new bus if file doesn't exist
 if [ ! -f "$dbus_env" ]; then
-    dbus-daemon --session --fork --print-address=1 --print-pid=1 > "$dbus_env"
+    dbus-daemon --session --fork --syslog-only --print-address=1 --print-pid=1 > "$dbus_env"
 else
     DBUS_SESSION_BUS_ADDRESS="$(sed -n '1p' "$dbus_env")"
     export DBUS_SESSION_BUS_ADDRESS
     # If bus is dead
     if ! dbus-send --session --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.GetId >/dev/null 2>&1; then
-        dbus-daemon --session --fork --print-address=1 --print-pid=1 > "$dbus_env"
+        dbus-daemon --session --fork --syslog-only --print-address=1 --print-pid=1 > "$dbus_env"
     fi
 fi
 DBUS_SESSION_BUS_ADDRESS="$(sed -n '1p' "$dbus_env")"
@@ -50,6 +50,7 @@ export MOZ_DISABLE_RDD_SANDBOX=1
 export CUDA_DISABLE_PERF_BOOST=1
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 export VIVALDI_FFMPEG_AUTO=0
+export WEBKIT_DISABLE_DMABUF_RENDERER=1
 
 export LD_LIBRARY_PATH=/home/pavel/Projects/wayfire-fix/wlroots/build
 export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/references/wayfire/build/plugins/single_plugins
@@ -58,8 +59,6 @@ export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview
 #export WAYFIRE_DEFAULT_CONFIG_BACKEND=/home/pavel/Projects/wayfire-fix/wayfire/build/src/libdefault-config-backend.so
 #export WAYFIRE_PLUGIN_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/build-old-wayfire/src/:/home/pavel/Projects/wayfire-fix/wayfire/build/src:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/animate:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/blur:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/cube:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/decor:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/grid:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/ipc:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/ipc-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/protocols:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/scale:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/single_plugins:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/tile:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/vswitch:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/window-rules:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/wm-actions:/home/pavel/Projects/wayfire-fix/wayfire/build/plugins/wobbly
 #export WAYFIRE_PLUGIN_XML_PATH=/home/pavel/Projects/wayfire-plugins/wayfire-overview-plugin/metadata:/home/pavel/Projects/wayfire-fix/wayfire/metadata
-
-log="/tmp/$compositor.log"
 
 case "$compositor" in
     kwin)
@@ -73,12 +72,9 @@ case "$compositor" in
            export KDE_FULL_SESSION=true
            # Without this, kbuildsycoca6 fails and KDE tools can't find the application menu database, breaking kglobalacceld shortcut registration and the Application Picker
            export XDG_MENU_PREFIX=plasma-
-           exec kwin_wayland --xwayland --no-lockscreen </dev/null >"$log" 2>&1 ;;
-    jay)   exec jay run </dev/null >"$log" 2>&1 ;;
-    river) exec river -no-xwayland </dev/null >"$log" 2>&1 ;;
-    sway)  exec sway --unsupported-gpu </dev/null >"$log" 2>&1 ;;
-    wayfire) exec wayfire -d </dev/null >"$log" 2>&1 ;;
-    *)     exec "$compositor" </dev/null >"$log" 2>&1 ;;
+           exec systemd-cat -t kwin --stderr-priority=warning kwin_wayland --no-lockscreen </dev/null ;;
+    wayfire) exec systemd-cat -t wayfire --stderr-priority=warning wayfire -d </dev/null ;;
+    *)     exec systemd-cat -t "$compositor" --stderr-priority=warning "$compositor" </dev/null ;;
 esac
 
 

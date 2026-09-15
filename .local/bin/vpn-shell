@@ -1,0 +1,174 @@
+#!/usr/bin/bash
+# Opens a shell (or runs a command) in a network namespace routed through WireGuard.
+# Usage: vpn-shell [-c wg.conf] [command...]
+set -euo pipefail
+
+if [[ $EUID -ne 0 ]]; then
+    export _ORIG_PATH="$PATH"
+    exec /usr/bin/sudo \
+        --preserve-env=_ORIG_PATH,VPN_CONF,LANG,LC_ALL,TERM,SHELL,DISPLAY,WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,XDG_CONFIG_HOME \
+        "$(readlink -f "$0")" "$@"
+fi
+
+export PATH=/usr/bin:/usr/sbin
+umask 077
+
+_USER="${SUDO_USER:-${USER:-$(id -un)}}"
+_passwd="$(getent passwd "$_USER")"
+_USER_HOME="$(cut -d: -f6 <<< "$_passwd")"
+_USER_SHELL="$(cut -d: -f7 <<< "$_passwd")"
+
+CONF="${VPN_CONF:-}"
+if [[ "${1:-}" == -c ]]; then
+    CONF="${2:?'-c requires a config file path'}"
+    shift 2
+fi
+
+if [[ -z "$CONF" ]]; then
+    _confdir="${XDG_CONFIG_HOME:-$_USER_HOME/.config}/wireguard"
+    _confs=("$_confdir"/*.conf)
+    if [[ ${#_confs[@]} -eq 1 && -f "${_confs[0]}" ]]; then
+        CONF="${_confs[0]}"
+    elif [[ ${#_confs[@]} -gt 1 ]]; then
+        printf 'Multiple WireGuard configs in %s — use -c to specify one\n' "$_confdir" >&2
+        exit 1
+    else
+        printf 'No WireGuard config found in %s — set VPN_CONF or use -c\n' "$_confdir" >&2
+        exit 1
+    fi
+fi
+
+_peer_count=$(grep -c -- '^\[Peer\]' "$CONF" || true)
+if [[ $_peer_count -eq 0 ]]; then
+    printf 'No [Peer] section found in %s\n' "$CONF" >&2
+    exit 1
+elif [[ $_peer_count -gt 1 ]]; then
+    printf 'Config has %d peers — only single-peer configs are supported\n' "$_peer_count" >&2
+    exit 1
+fi
+
+NS="vpn$$"
+WG="wg$$"
+TMPKEY=$(mktemp)
+
+cleanup() {
+    ip netns del "$NS"      2>/dev/null || true
+    ip link del "$WG"       2>/dev/null || true
+    rm -rf "/etc/netns/$NS" 2>/dev/null || true
+    rm -f "$TMPKEY" "${TMPKEY}.psk"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+get() { awk "/^${1} *=/{sub(/^[^=]+=[ ]*/,\"\"); print; exit}" "$CONF"; }
+
+privkey=$(get PrivateKey)
+address=$(get Address)
+dns=$(get DNS)
+pubkey=$(get PublicKey)
+endpoint=$(get Endpoint)
+allowed=$(get AllowedIPs | tr -d ' ')
+psk=$(get PresharedKey)
+keepalive=$(get PersistentKeepalive)
+
+[[ -z "$privkey"  ]] && { printf 'Config missing PrivateKey\n'  >&2; exit 1; }
+[[ -z "$address"  ]] && { printf 'Config missing Address\n'     >&2; exit 1; }
+[[ -z "$pubkey"   ]] && { printf 'Config missing PublicKey\n'   >&2; exit 1; }
+[[ -z "$endpoint" ]] && { printf 'Config missing Endpoint\n'    >&2; exit 1; }
+[[ -z "$allowed"  ]] && { printf 'Config missing AllowedIPs\n'  >&2; exit 1; }
+
+printf '%s\n' "$privkey" > "$TMPKEY"
+
+peer_args=(peer "$pubkey" allowed-ips "$allowed" endpoint "$endpoint")
+if [[ -n "$psk" ]]; then
+    printf '%s\n' "$psk" > "${TMPKEY}.psk"
+    peer_args+=(preshared-key "${TMPKEY}.psk")
+fi
+[[ -n "$keepalive" ]] && peer_args+=(persistent-keepalive "$keepalive")
+
+ip netns add "$NS"
+ip netns exec "$NS" ip link set lo up
+
+ip link add "$WG" type wireguard
+# Configure before moving into the namespace so hostname endpoints resolve via host DNS
+wg set "$WG" private-key "$TMPKEY" "${peer_args[@]}"
+ip link set "$WG" netns "$NS"
+
+while IFS= read -r addr; do
+    addr="${addr// /}"
+    [[ -n "$addr" ]] && ip netns exec "$NS" ip addr add "$addr" dev "$WG"
+done < <(printf '%s\n' "$address" | tr ',' '\n')
+
+ip netns exec "$NS" ip link set "$WG" up
+
+while IFS= read -r cidr; do
+    cidr="${cidr// /}"
+    [[ -z "$cidr" ]] && continue
+    if [[ "$cidr" == *:* ]]; then
+        ip netns exec "$NS" ip -6 route replace "$cidr" dev "$WG"
+    else
+        ip netns exec "$NS" ip    route replace "$cidr" dev "$WG"
+    fi
+done < <(printf '%s\n' "$allowed" | tr ',' '\n')
+
+if [[ -n "$dns" ]]; then
+    mkdir -p "/etc/netns/$NS"
+    printf '%s\n' "$dns" | tr ',' '\n' | while read -r s; do
+        s="${s// /}"
+        [[ -n "$s" ]] && printf 'nameserver %s\n' "$s"
+    done > "/etc/netns/$NS/resolv.conf"
+    chmod 644 "/etc/netns/$NS/resolv.conf"
+fi
+
+printf 'Waiting for handshake..' >&2
+
+# Trigger initial handshake in the background so the check loop starts immediately.
+# For catch-all entries use RFC-reserved addresses guaranteed to be in range.
+_first_cidr="${allowed%%,*}"
+_first_cidr_ip="${_first_cidr%/*}"
+case "$_first_cidr_ip" in
+    0.0.0.0) _ping_target="192.0.2.1" ;;  # RFC 5737 TEST-NET, within 0.0.0.0/0
+    ::)      _ping_target="2001:db8::1" ;; # RFC 3849 documentation, within ::/0
+    *)       _ping_target="$_first_cidr_ip" ;;
+esac
+ip netns exec "$NS" ping -c1 -W2 -q "$_ping_target" >/dev/null 2>&1 &
+_connected=0
+for _ in {1..15}; do
+    if ip netns exec "$NS" wg show "$WG" latest-handshakes | grep -Eqv $'^$|\t0$'; then
+        printf ' \033[1;32mok\033[0m\n' >&2
+        _connected=1
+        break
+    fi
+    printf '.' >&2
+    sleep 1
+done
+
+if [[ $_connected -eq 0 ]]; then
+    printf ' \033[1;31mtimed out\033[0m\n' >&2
+    exit 1
+fi
+
+printf '\033[1;32mVPN up\033[0m (%s)\n' "$(basename "$CONF" .conf)" >&2
+
+_env=(
+    HOME="$_USER_HOME"
+    PATH="${_ORIG_PATH:-$PATH}"
+    USER="$_USER"
+    LOGNAME="$_USER"
+    TERM="${TERM:-xterm}"
+    SHELL="$_USER_SHELL"
+)
+[[ -n "${WAYLAND_DISPLAY:-}"          ]] && _env+=(WAYLAND_DISPLAY="$WAYLAND_DISPLAY")
+[[ -n "${DISPLAY:-}"                  ]] && _env+=(DISPLAY="$DISPLAY")
+[[ -n "${XDG_RUNTIME_DIR:-}"          ]] && _env+=(XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR")
+[[ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]] && _env+=(DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS")
+[[ -n "${LANG:-}"            ]] && _env+=(LANG="$LANG")
+[[ -n "${LC_ALL:-}"          ]] && _env+=(LC_ALL="$LC_ALL")
+[[ -n "${XDG_CONFIG_HOME:-}" ]] && _env+=(XDG_CONFIG_HOME="$XDG_CONFIG_HOME")
+
+if [[ $# -gt 0 ]]; then
+    ip netns exec "$NS" runuser -u "$_USER" -- env -i "${_env[@]}" "$@"
+else
+    ip netns exec "$NS" runuser -u "$_USER" -- env -i "${_env[@]}" "$_USER_SHELL"
+fi
