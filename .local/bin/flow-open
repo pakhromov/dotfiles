@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# flow-open FILE... -- open files as tabs in the already-running flow instance.
+#
+# flow has no remote control of its own: no --remote flag, no socket, no
+# single-instance handling. Every invocation is a separate editor process. So
+# this drives the running one through kitty instead, sending the keys you would
+# otherwise press yourself:
+#
+#   escape   leave whatever mini mode or palette happens to be open
+#   ctrl+o   open_file                 (flow keymap, keybind/builtin/flow.json)
+#   ctrl+u   mini_mode_reset           (the input is pre-filled with the current
+#            file's directory, so it has to be cleared before typing a path)
+#   <path>   typed literally
+#   enter    mini_mode_select -> navigate -> opens in a new tab
+#
+# Keys go through `send-key` rather than `send-text` because flow turns on the
+# full kitty keyboard protocol (report_all_as_ctl_seqs); send-key encodes each
+# key for the keyboard mode the target program is actually in, which a
+# hand-written \x0f would not. It also bypasses kitty's own shortcut maps, so
+# the no_op overrides in flow-keybinds.conf are irrelevant here.
+#
+# The flow window is found by the FLOW=1 kitty user variable that the `flow`
+# wrapper sets on its window (see ~/.local/bin/flow). With no such window, a new
+# kitty window running flow is started instead.
+#
+# Caveat: no :LINE support. The open-file mini mode passes its text straight to
+# navigate as a filename, so "foo.zig:42" would be taken literally. Files only.
+
+set -u
+
+SOCKET=unix:@mykitty
+MATCH=var:FLOW=1
+
+k() { kitten @ --to "$SOCKET" "$@"; }
+
+if [ $# -eq 0 ]; then
+    echo "usage: ${0##*/} FILE..." >&2
+    exit 2
+fi
+
+# Resolve before doing anything else: the fallback window below starts with its
+# own working directory, and relative paths would resolve against the wrong one.
+paths=()
+for file; do
+    paths+=("$(realpath -m -- "$file")")
+done
+
+# send-key and send-text always exit 0, even when they matched nothing, so ask
+# ls -- which does report -- whether there is an instance to send to at all.
+if ! k ls --match "$MATCH" >/dev/null 2>&1; then
+    exec kitty --single-instance --listen-on="$SOCKET" --class flow flow "${paths[@]}"
+fi
+
+for path in "${paths[@]}"; do
+    # One key per call. A single send-key with several keys is a chord -- it
+    # presses them all, then releases in reverse -- not a sequence.
+    k send-key --match "$MATCH" escape
+    k send-key --match "$MATCH" ctrl+o
+    k send-key --match "$MATCH" ctrl+u
+    # send-text applies Python escaping rules, so backslashes must be doubled.
+    k send-text --match "$MATCH" "${path//\\/\\\\}"
+    k send-key --match "$MATCH" enter
+done
+
+# Raise the editor, once, after everything has been sent. This switches to the
+# right kitty tab and asks the compositor to focus the OS window -- on Wayland
+# through xdg-activation, which kitty's backend implements, so it needs nothing
+# compositor-specific here.
+k focus-window --match "$MATCH"

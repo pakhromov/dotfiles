@@ -1,0 +1,286 @@
+#!/usr/bin/env python3
+"""Pin the editor background/foreground across all of flow's built-in themes.
+
+flow loads themes from ~/.config/flow/themes/*.json first and only falls back to
+its built-ins for names that dir does not already claim (Widget.zig get_themes).
+So writing a file named after a built-in shadows it. This converts flow-themes'
+themes.zig into exactly those files, with two colours pinned, so that cycling
+with f9/f10 shows every theme against the same background and body text.
+
+The substitution is a colour remap, not a field assignment: every style whose
+colour equals the theme's own editor.bg becomes the new background, and likewise
+for editor.fg. That keeps the gutter, status bar, sidebar and panels in step
+with the text area instead of leaving them on the theme's original background,
+and it carries plain-text-coloured syntax tokens along too.
+
+The 16 ansi_* entries and ansi_palette are left alone -- those are the embedded
+terminal's palette, where red must stay red.
+
+Re-run after flow-themes updates. Delete ~/.config/flow/themes/*.json to undo.
+"""
+
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import os
+import re
+import sys
+import tarfile
+
+DEFAULT_BG = "#111111"
+DEFAULT_FG = "#A0A0A0"
+THEME_DIR = os.path.expanduser("~/.config/flow/themes")
+CACHE_GLOB = os.path.expanduser("~/.cache/zig/p/flow_themes-*.tar.gz")
+
+
+# --- reading themes.zig ------------------------------------------------------
+
+def read_themes_zig(path: str | None) -> str:
+    """themes.zig source, from a path or from the zig package cache tarball."""
+    if path:
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+
+    tarballs = sorted(glob.glob(CACHE_GLOB))
+    if not tarballs:
+        sys.exit(
+            f"no flow-themes package in {CACHE_GLOB}\n"
+            "fetch it once from a flow checkout:\n"
+            "  zig fetch \"$(grep -A1 '\\.themes = ' build.zig.zon | "
+            "grep url | cut -d'\"' -f2)\"\n"
+            "or pass --themes-zig PATH"
+        )
+    with tarfile.open(tarballs[-1]) as tar:
+        member = next(
+            (m for m in tar.getmembers() if m.name.endswith("src/themes.zig")), None
+        )
+        if member is None:
+            sys.exit(f"no src/themes.zig inside {tarballs[-1]}")
+        extracted = tar.extractfile(member)
+        assert extracted is not None
+        return extracted.read().decode("utf-8")
+
+
+# --- a parser for the Zig literal subset themes.zig uses ---------------------
+#
+# themes.zig is generated, so the shapes are few and regular: struct literals
+# with `.@"key" = value` or positional values, enum literals, hex integers and
+# strings. Enough of a parser to turn those into Python objects.
+
+TOKEN_RE = re.compile(
+    r"""
+      (?P<space>\s+|//[^\n]*)
+    | (?P<lbrace>\{) | (?P<rbrace>\})
+    | (?P<comma>,)   | (?P<eq>=)
+    | (?P<string>"(?:[^"\\]|\\.)*")
+    | (?P<field>\.@"(?:[^"\\]|\\.)*"|\.[A-Za-z_][A-Za-z0-9_]*)
+    | (?P<dot>\.)
+    | (?P<number>0x[0-9a-fA-F]+|\d+)
+    | (?P<other>&\[_\][A-Za-z_.]+|[A-Za-z_][A-Za-z0-9_.]*)
+    """,
+    re.VERBOSE,
+)
+
+
+class Parser:
+    def __init__(self, text: str, pos: int = 0):
+        self.text = text
+        self.pos = pos
+
+    def _next(self):
+        while True:
+            m = TOKEN_RE.match(self.text, self.pos)
+            if m is None:
+                raise SyntaxError(f"cannot tokenize at {self.text[self.pos:self.pos+40]!r}")
+            self.pos = m.end()
+            if m.lastgroup != "space":
+                return m
+
+    def _peek(self):
+        save = self.pos
+        m = self._next()
+        self.pos = save
+        return m
+
+    def value(self):
+        m = self._next()
+        kind = m.lastgroup
+        if kind == "string":
+            return json.loads(m.group())
+        if kind == "number":
+            return int(m.group(), 0)
+        if kind == "other":  # &[_]theme.Token{...} -- the marker before a list
+            return self.value()
+        if kind == "field":  # a bare enum literal, or the start of a struct
+            name = m.group()
+            if self._peek().lastgroup == "lbrace":
+                self._next()
+                return self.braced()
+            return unquote_field(name)
+        if kind == "lbrace" or kind == "dot":
+            if kind == "dot":
+                self._next()  # the '{' after '.'
+            return self.braced()
+        raise SyntaxError(f"unexpected {m.group()!r}")
+
+    def braced(self):
+        """Contents of a {...}: a dict if it has .key =, else a list."""
+        out_dict: dict[str, object] = {}
+        out_list: list[object] = []
+        while True:
+            m = self._next()
+            if m.lastgroup == "rbrace":
+                return out_dict if out_dict else out_list
+            if m.lastgroup == "comma":
+                continue
+            if m.lastgroup == "field" and self._peek().lastgroup == "eq":
+                self._next()
+                out_dict[unquote_field(m.group())] = self.value()
+                continue
+            # positional element: rewind and read it as a value
+            self.pos = m.start()
+            out_list.append(self.value())
+
+
+def unquote_field(tok: str) -> str:
+    tok = tok[1:]                                  # leading '.'
+    if tok.startswith("@"):                        # .@"quoted field"
+        tok = tok[1:]
+    return json.loads(tok) if tok.startswith('"') else tok
+
+
+# --- converting a parsed theme to flow's CustomTheme JSON --------------------
+
+STYLE_FIELDS = (
+    "editor editor_cursor editor_cursor_primary editor_cursor_secondary "
+    "editor_line_highlight editor_error editor_warning editor_information "
+    "editor_hint editor_match editor_selection terminal_selection "
+    "editor_whitespace editor_gutter editor_gutter_active editor_gutter_modified "
+    "editor_gutter_added editor_gutter_deleted editor_widget editor_widget_border "
+    "statusbar statusbar_hover scrollbar scrollbar_hover scrollbar_active sidebar "
+    "panel input input_border input_placeholder input_option_active "
+    "input_option_hover tab_active tab_inactive tab_selected "
+    "tab_unfocused_active tab_unfocused_inactive"
+).split()
+
+ANSI_FIELDS = [
+    f"ansi_{name}"
+    for name in "black red green yellow blue magenta cyan white".split()
+] + [
+    f"ansi_bright_{name}"
+    for name in "black red green yellow blue magenta cyan white".split()
+]
+
+
+def color_json(raw: dict, remap: dict[int, str]) -> dict:
+    value = raw["color"]
+    return {
+        "color": remap.get(value) or f"#{value:06X}",
+        "alpha": raw.get("alpha", 0xFF),
+    }
+
+
+def style_json(raw: dict, remap: dict[int, str]) -> dict:
+    out: dict[str, object] = {"fg": None, "bg": None, "fs": None}
+    for key in ("fg", "bg"):
+        if key in raw:
+            out[key] = color_json(raw[key], remap)
+    if "fs" in raw:
+        out["fs"] = raw["fs"]
+    return out
+
+
+def to_custom_theme(theme: dict, scopes: list[str], bg: str, fg: str) -> dict:
+    editor = theme["editor"]
+    # The two colours this theme uses for the text area, by value. Everything
+    # painted in either of them moves with it.
+    remap: dict[int, str] = {}
+    if "bg" in editor:
+        remap[editor["bg"]["color"]] = bg
+    if "fg" in editor:
+        remap[editor["fg"]["color"]] = fg
+
+    out: dict[str, object] = {
+        "name": theme["name"],
+        "description": theme["description"],
+        "type": theme["type"],
+    }
+    for field in STYLE_FIELDS:
+        if field in theme:
+            out[field] = style_json(theme[field], remap)
+    for field in ANSI_FIELDS:
+        out[field] = color_json(theme[field], {})  # terminal palette kept as-is
+    out["ansi_palette"] = theme["ansi_palette"]
+    out["scope_type"] = theme["scope_type"]
+    out["tokens"] = [
+        {"scope": scopes[token["id"]], "style": style_json(token["style"], remap)}
+        for token in theme["tokens"]
+        if token["id"] < len(scopes)
+    ]
+    return out
+
+
+# --- top level ---------------------------------------------------------------
+
+def parse_scopes(source: str) -> list[str]:
+    start = source.index("pub const scopes = [_][]const u8{")
+    parser = Parser(source, source.index("{", start))
+    return parser.value()
+
+
+def parse_themes(source: str) -> list[dict]:
+    start = source.index("pub const themes = [_]theme{")
+    parser = Parser(source, source.index("{", start))
+    return parser.value()
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--bg", default=DEFAULT_BG, help=f"background (default {DEFAULT_BG})")
+    ap.add_argument("--fg", default=DEFAULT_FG, help=f"plain text (default {DEFAULT_FG})")
+    ap.add_argument("--themes-zig", help="path to flow-themes src/themes.zig")
+    ap.add_argument("--out", default=THEME_DIR, help=f"output dir (default {THEME_DIR})")
+    ap.add_argument(
+        "--only",
+        choices=("dark", "light", "both"),
+        default="dark",
+        help="which themes to write (default dark)",
+    )
+    ap.add_argument("-n", "--dry-run", action="store_true")
+    args = ap.parse_args()
+
+    for value in (args.bg, args.fg):
+        if not re.fullmatch(r"#[0-9a-fA-F]{6}", value):
+            sys.exit(f"colour must be #RRGGBB, got {value!r}")
+
+    source = read_themes_zig(args.themes_zig)
+    scopes = parse_scopes(source)
+    themes = parse_themes(source)
+
+    wanted = [t for t in themes if args.only == "both" or t["type"] == args.only]
+    if not args.dry_run:
+        os.makedirs(args.out, exist_ok=True)
+
+    for theme in wanted:
+        custom = to_custom_theme(theme, scopes, args.bg, args.fg)
+        path = os.path.join(args.out, f"{theme['name']}.json")
+        if args.dry_run:
+            print(path)
+            continue
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(custom, f, indent=2)
+            f.write("\n")
+
+    print(
+        f"{'would write' if args.dry_run else 'wrote'} {len(wanted)} themes "
+        f"({args.only}) to {args.out} with bg {args.bg} / fg {args.fg}",
+        file=sys.stderr,
+    )
+    print(f"parsed {len(themes)} themes, {len(scopes)} scopes", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

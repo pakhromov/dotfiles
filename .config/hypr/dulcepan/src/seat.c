@@ -127,7 +127,8 @@ static enum wp_cursor_shape_device_v1_shape get_cursor_shape(struct dp_selection
 			// Moving is impossible
 			break;
 		}
-		return WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_MOVE;
+		return selection->action_active ? WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_GRABBING
+										: WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_GRAB;
 	}
 	// The default cursor
 	return WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_CROSSHAIR;
@@ -186,6 +187,7 @@ static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uin
 			state->status = DP_STATUS_SAVED;
 		}
 		dp_select_stop_interactive(selection);
+		update_cursor(seat);
 		return;
 	}
 

@@ -73,10 +73,49 @@ pick() {
     printf '%s' "$combined" | wl-copy
 }
 
+# Send Ctrl+Shift+V to the window that was focused before the menu opened.
+# Gated on XDG_CURRENT_DESKTOP (a colon-separated list, e.g. "Wayfire:wlroots").
+#   hyprland - native send_shortcut dispatcher (Actions::pass), no wtype needed;
+#              addressing the window explicitly avoids racing rofi's focus handback.
+#   wayfire  - inject-key, as before.
+current_desktop() {
+    case ":${XDG_CURRENT_DESKTOP,,}:" in
+        *:hyprland:*) echo hyprland ;;
+        *:wayfire:*)  echo wayfire ;;
+        *)            echo unknown ;;
+    esac
+}
+
+capture_target() {
+    [ "$(current_desktop)" = hyprland ] || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    hyprctl activewindow -j 2>/dev/null | jq -r '.address // empty'
+}
+
+paste_into() {
+    local win="$1" lua
+
+    case "$(current_desktop)" in
+        hyprland)
+            if [ -n "$win" ]; then
+                lua=$(printf 'hl.dsp.send_shortcut({ mods = "CTRL SHIFT", key = "V", window = "address:%s" })' "$win")
+            else
+                lua='hl.dsp.send_shortcut({ mods = "CTRL SHIFT", key = "V" })'
+            fi
+            hyprctl dispatch "$lua" >/dev/null
+            ;;
+        wayfire)
+            inject-key KEY_V KEY_LEFTCTRL KEY_LEFTSHIFT
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+target=$(capture_target)
+
 if pick; then
-    if ! inject-key KEY_V KEY_LEFTCTRL KEY_LEFTSHIFT; then
-        #sleep 0.1
-        wtype -M ctrl -M shift -k v
-    fi
+    paste_into "$target"
     pkill -x wl-copy || true
 fi

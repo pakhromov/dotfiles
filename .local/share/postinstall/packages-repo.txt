@@ -58,6 +58,7 @@ pdfarranger
 pipewire
 pipewire-jack
 python-pywebview
+qbittorrent
 qimgv-git
 resvg
 rclone
@@ -73,6 +74,7 @@ tesseract-data-swe
 tldr
 trash-cli
 tree
+ublock-origin
 vala
 vivaldi
 vivaldi-ffmpeg-codecs

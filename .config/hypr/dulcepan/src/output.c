@@ -265,9 +265,10 @@ static void output_handle_done(void *data, struct wl_output *wl_output) {
 
 	wl_surface_set_buffer_transform(output->main_surface, output->transform);
 
-	struct wl_region *empty_region = wl_compositor_create_region(state->compositor);
-	wl_surface_set_input_region(output->main_surface, empty_region);
-	wl_region_destroy(empty_region);
+	// The input region of the main surface is left at the default (infinite): some
+	// compositors don't descend into subsurfaces when hit-testing layer surfaces, so the
+	// pointer input is handled by the main surface instead of the select one.
+	wl_surface_set_user_data(output->main_surface, output);
 
 	zwlr_layer_surface_v1_add_listener(output->main_layer_surface, &layer_surface_listener, output);
 
@@ -284,8 +285,11 @@ static void output_handle_done(void *data, struct wl_output *wl_output) {
 	output->select_viewport = wp_viewporter_get_viewport(state->viewporter, output->select_surface);
 	wl_subsurface_set_desync(output->select_subsurface);
 
+	struct wl_region *empty_region = wl_compositor_create_region(state->compositor);
+	wl_surface_set_input_region(output->select_surface, empty_region);
+	wl_region_destroy(empty_region);
+
 	wl_surface_set_user_data(output->select_surface, output);
-	wl_surface_set_user_data(output->main_surface, output);
 }
 
 static void output_handle_scale(void *data, struct wl_output *wl_output, int32_t scale) {
@@ -460,10 +464,18 @@ static void redraw(struct dp_output *output) {
 	wl_surface_damage(
 			output->select_surface, 0, 0, output->effective_width, output->effective_height);
 
-	output->redraw_callback = wl_surface_frame(output->select_surface);
+	wl_surface_commit(output->select_surface);
+
+	// Some compositors don't schedule an output frame for a desync subsurface commit on its
+	// own, which would leave the frame callback undelivered and stall all redraws. Damage the
+	// parent surface and request the frame callback on it: the parent is a layer surface, which
+	// every compositor renders and sends frame callbacks for.
+	wl_surface_damage(
+			output->main_surface, 0, 0, output->effective_width, output->effective_height);
+
+	output->redraw_callback = wl_surface_frame(output->main_surface);
 	wl_callback_add_listener(output->redraw_callback, &redraw_callback_listener, output);
 
-	wl_surface_commit(output->select_surface);
 	wl_surface_commit(output->main_surface);
 }
 

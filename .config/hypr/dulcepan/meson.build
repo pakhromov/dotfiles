@@ -1,7 +1,7 @@
 project(
   'dulcepan',
   'c',
-  version: '1.0.3',
+  version: '1.1.0',
   license: 'GPL-3.0-only',
   default_options: [
     'c_std=c11',

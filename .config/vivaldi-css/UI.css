@@ -4,8 +4,8 @@
   --uiFont: 11pt;
   font-size: var(--uiFont) !important;
 
-  --addressW: 25%;
-  --bookmarksW: 42%;
+  --addressW: 30%;
+  --bookmarksW: 37%;
   --statusW: 33%;
 
   /* Address row order: 1 = leftmost, 3 = rightmost, each number used once */
@@ -17,6 +17,7 @@
   --bg: #000000;
   --fg: #a1a1a1;
   --accent: #202020;
+  /*--accent: #141414;*/
   --accentFg: #a1a1a1;
   --highlight: #d77757;
 
