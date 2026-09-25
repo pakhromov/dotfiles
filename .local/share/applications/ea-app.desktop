@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=EA app (Proton/Wineland)
+Comment=Handle origin2:// links from Battlelog and launch the EA app under Proton
+Exec=/home/pavel/.local/lib/ea-protocol-handler.sh %u
+Terminal=false
+NoDisplay=false
+Categories=Game;
+MimeType=x-scheme-handler/origin2;x-scheme-handler/origin;x-scheme-handler/link2ea;x-scheme-handler/eaapp;

@@ -12,7 +12,7 @@ application/ndjson=sublime_text.desktop
 text/javascript=sublime_text.desktop
 application/javascript=sublime_text.desktop
 inode/x-empty=sublime_text.desktop
-inode/directory=kitty.desktop
+inode/directory=xdg-yazi.desktop
 x-scheme-handler/http=vivaldi-stable.desktop
 x-scheme-handler/https=vivaldi-stable.desktop
 x-scheme-handler/chrome=vivaldi-stable.desktop
@@ -42,5 +42,8 @@ image/x-icon=qimgv.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 x-scheme-handler/claude=com.anthropic.Claude.desktop
 x-scheme-handler/t3code=t3code-url-handler.desktop
+x-scheme-handler/origin2=ea-app.desktop
+x-scheme-handler/origin=ea-app.desktop
+x-scheme-handler/link2ea=ea-app.desktop
 
 [Added Associations]

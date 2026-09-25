@@ -1,0 +1,42 @@
+#!/bin/zsh
+arg="$1"
+
+YAZI_ID=$(cat /tmp/yazi_instance_id 2>/dev/null)
+
+focus_or_launch() {
+    kitty @ --to unix:@mykitty focus-window --match cmdline:yazi &>/dev/null && return
+    kitty @ --to unix:@mykitty launch --type=os-window --os-window-class yazi yazi &>/dev/null && return
+    kitty --single-instance --listen-on="unix:@mykitty" --class yazi yazi &>/dev/null &!
+}
+
+if [ -d "$arg" ]; then
+    target_dir="$arg"
+    recent=$(ls -tp "$arg" | grep -v '/$' | head -1)
+    target_file="${recent:+$arg/$recent}"
+else
+    target_dir=$(dirname "$arg")
+    target_file="$arg"
+fi
+
+if [ -n "$YAZI_ID" ] && ya emit-to "$YAZI_ID" plugin write-id "${(qq)target_dir}"; then
+    [ -n "$target_file" ] && ya emit-to "$YAZI_ID" reveal "$target_file"
+    #kitty-launch-or-focus.sh yazi
+    focus_or_launch
+else
+    rm -f /tmp/yazi_instance_id
+    #kitty-launch-or-focus.sh yazi
+    focus_or_launch
+    (
+        for i in $(seq 1 30); do
+            sleep 0.3
+            new_id=$(cat /tmp/yazi_instance_id 2>/dev/null)
+            if [ -n "$new_id" ]; then
+                ya emit-to "$new_id" plugin write-id "${(qq)target_dir}"
+                [ -n "$target_file" ] && ya emit-to "$new_id" reveal "$target_file"
+                #kitty-launch-or-focus.sh yazi
+                kitty @ --to unix:@mykitty focus-window --match cmdline:yazi &>/dev/null
+                break
+            fi
+        done
+    ) &!
+fi

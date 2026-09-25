@@ -124,9 +124,8 @@ hl.config({
             inactive_border = "0xff242424",
         },
 
-        resize_on_border = false,
         allow_tearing    = false,
-        layout           = "dwindle",
+        layout           = "master",
     },
 
     decoration = {
@@ -134,20 +133,21 @@ hl.config({
 
         active_opacity   = 1.0,
         inactive_opacity = 1.0,
+        --rounding_power = 8.0,
+        --dim_inactive = false,
+        --dim_strength = 0.2,
+        --dim_around = 0.3,
 
         shadow = {
-            enabled      = false,
-            range        = 4,
-            render_power = 3,
-            color        = 0xee1a1a1a,
+            enabled = false,
         },
 
         blur = {
-            enabled  = false,
-            size     = 3,
-            passes   = 1,
-            vibrancy = 0.1696,
+            enabled = false,
         },
+        --wobble = {
+        --    enabled = true,
+        --},
     },
 
     animations = {
@@ -163,15 +163,24 @@ hl.config({
     },
 
     misc = {
+        --animate_manual_resizes = true,
+        --animate_mouse_windowdragging = true,
         force_default_wallpaper  = 1,
-        -- wayfire.ini [core] background_color = #171717FF  (ARGB: ff171717)
         background_color         = 0xff171717,
+        --bell_sound = "none",
+        --enable_anr_dialog = true,
         disable_hyprland_logo    = true,
-        -- suppresses the OSD warning about launching without start-hyprland
         disable_watchdog_warning = true,
         disable_splash_rendering = true,
         focus_on_activate        = true,
         middle_click_paste       = false,
+    },
+
+    group = {
+        auto_group = false,
+        groupbar = {
+            enabled = false,
+        }
     },
 
     xwayland = {
@@ -179,31 +188,16 @@ hl.config({
     },
 
     input = {
-        -- wayfire.ini [input] xkb_layout = us, se, ru
-        -- No grp:win_space_toggle here: keyboard-layout-switcher.py does the
-        -- switching via `hyprctl switchxkblayout all`, so all keyboards stay in
-        -- sync. Adding the xkb option too would double-toggle.
         kb_layout     = "us,se,ru",
-
-        -- wayfire.ini [input] kb_repeat_delay = 300 / kb_repeat_rate = 30
-        -- (hyprland defaults are 600 / 25)
         repeat_delay  = 300,
         repeat_rate   = 30,
-
         follow_mouse  = 1,
-
-        -- wayfire.ini [input] mouse_accel_profile = flat / mouse_cursor_speed = 0
-        -- flat = libinput applies no acceleration curve, just a constant factor.
-        -- force_no_accel goes further and feeds the raw unaccelerated delta
-        -- (InputManager.cpp:146). NOTE: it is global, not per-device, so it
-        -- strips the touchpad's acceleration too - set false to get that back.
         sensitivity     = 0,
         accel_profile   = "flat",
-        force_no_accel  = true,
-
-        touchpad = {
-            natural_scroll = false,
-        },
+        --force_no_accel  = true,
+        --emulate_discrete_scroll = 0,
+        --off_window_axis_events = 2,
+        --resolve_binds_by_sym = true,
     },
 })
 
@@ -213,25 +207,26 @@ hl.curve("linear",         { type = "bezier", points = { { 0,    0    }, { 1,   
 hl.curve("almostLinear",   { type = "bezier", points = { { 0.5,  0.5  }, { 0.75, 1 } } })
 hl.curve("quick",          { type = "bezier", points = { { 0.15, 0    }, { 0.1,  1 } } })
 hl.curve("circle",         { type = "bezier", points = { { 0,    0.55 }, { 0.45, 1 } } })  -- wayfire "circle": sqrt(2x-x^2)
+hl.curve("circle2",        { type = "bezier", points = { { 0,    0.3 }, { 0.35, 1 } } })
 
-hl.animation({ leaf = "global",        enabled = true, speed = 2,   bezier = "circle" })
+hl.animation({ leaf = "global",        enabled = true, speed = 2, bezier = "circle" })
 hl.animation({ leaf = "border",        enabled = true, speed = 2, bezier = "circle" })
 hl.animation({ leaf = "windows",       enabled = true, speed = 2, bezier = "circle" })
-hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 2, bezier = "circle", style = "popin 0%" })   -- zoom in from nothing
-hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 2, bezier = "circle", style = "popin 0%" })   -- zoom out to nothing
-hl.animation({ leaf = "windowsMove",   enabled = true, speed = 2,    bezier = "circle" })  -- hyprexpo overview zoom: 200ms
+hl.animation({ leaf = "windowsIn",     enabled = true, speed = 2, bezier = "circle", style = "popin 50%" })
+hl.animation({ leaf = "windowsOut",    enabled = true, speed = 2, bezier = "circle", style = "popin 50%" })
+hl.animation({ leaf = "windowsMove",   enabled = true, speed = 2, bezier = "circle" })  -- hyprexpo overview zoom: 200ms
 hl.animation({ leaf = "fadeIn",        enabled = false })   -- no fade on open, zoom only
 hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 2, bezier = "circle" })   -- required: a closing window lives only while this runs
 hl.animation({ leaf = "fade",          enabled = true, speed = 2, bezier = "circle" })
 hl.animation({ leaf = "layers",        enabled = true, speed = 2, bezier = "circle" })
-hl.animation({ leaf = "layersIn",      enabled = true,  speed = 2, bezier = "circle", style = "popin 0%" })   -- zoom, not fade
-hl.animation({ leaf = "layersOut",     enabled = true,  speed = 2, bezier = "circle", style = "popin 0%" })   -- zoom, not fade
+hl.animation({ leaf = "layersIn",      enabled = true,  speed = 2, bezier = "circle", style = "popin 50%" })   -- zoom, not fade
+hl.animation({ leaf = "layersOut",     enabled = true,  speed = 2, bezier = "circle", style = "popin 50%" })   -- zoom, not fade
 hl.animation({ leaf = "fadeLayersIn",  enabled = false })   -- no alpha fade when a layer opens
 hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 2, bezier = "circle" })
-hl.animation({ leaf = "workspaces",    enabled = true, speed = 2,    bezier = "circle" })  -- hyprtasking grid pan/zoom: 200ms
-hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 2, bezier = "circle" })
-hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2, bezier = "circle" })
-hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 2,    bezier = "circle" })
+hl.animation({ leaf = "workspaces",    enabled = true, speed = 3, bezier = "circle" })  -- hyprtasking grid pan/zoom: 200ms
+hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 3.5, bezier = "circle" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 3.5, bezier = "circle" })
+hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 2, bezier = "circle" })
 
 
 ---------------
@@ -541,7 +536,6 @@ hl.window_rule({
     match = { class = ".*(float|mousam).*" },
     float = true,
 })
-
 -- The dashboard is launched as `dashboard.sh --class float`, so its class is
 -- exactly "float" - float-half / float-full are separate classes and keep their
 -- own rules below. Global rounding and border_size are both 0, so they have to
@@ -576,21 +570,27 @@ hl.window_rule({
 --------------------
 hl.config({ debug = { disable_logs = false } })
 
-hl.config({ plugin = { overview = { rows = 3 } } })
-hl.config({ plugin = { overview = { columns = 3 } } })
-hl.bind("mouse:276", function() hl.plugin.overview.toggle() end)
+hl.bind("SUPER + O", function() hl.plugin.overview.toggle() end)
 hl.config({ plugin = { overview = {
-    border_size = 3,
+    rows = 3,
+    columns = 3,
+    border_size = 2,
     border_color = "#242424FF",
+    toggle_speed = 2.3,
+    toggle_curve = "circle",
 } } })
 
 hl.bind("SUPER + LEFT", function() hl.plugin.overview.move("left") end)
 hl.bind("SUPER + RIGHT", function() hl.plugin.overview.move("right") end)
 hl.bind("SUPER + UP", function() hl.plugin.overview.move("up") end)
 hl.bind("SUPER + DOWN", function() hl.plugin.overview.move("down") end)
-hl.config({
-    plugin = {
---        hyprtasking = {
+
+hl.bind("SUPER + SHIFT + LEFT", function() hl.plugin.overview.move_window("left") end)
+hl.bind("SUPER + SHIFT + RIGHT", function() hl.plugin.overview.move_window("right") end)
+hl.bind("SUPER + SHIFT + UP", function() hl.plugin.overview.move_window("up") end)
+hl.bind("SUPER + SHIFT + DOWN", function() hl.plugin.overview.move_window("down") end)
+
+--hl.config({ plugin = { hyprtasking = {
 --            drag_button            = 0x111,
 --            select_button          = 0x110,
 --            bg_color               = 0xff171717,
@@ -601,9 +601,7 @@ hl.config({
 --            warp_on_move_window    = 1,
 --            close_overview_on_reload = true,
 --
---            gestures = {
---                enabled       = false,
---            },
+--            gestures = {enabled = false,},
 --
 --            grid = {
 --                rows                  = 3,
@@ -612,28 +610,16 @@ hl.config({
 --                layers                = 1,
 --                loop_layers           = true,
 --                gaps_use_aspect_ratio = false,
---            },
---        },
-        edge_hacks = {
-            windows       = "brave, vivaldi, helium, flow",
-            edges         = "bottom:1 right:1",
-            scrollbar_fix = "80:1065",
-        },
-    },
-})
-
----- Hyprtasking overview
---hl.bind("mouse:276", function()
---    hl.plugin.hyprtasking.toggle("cursor")
---end)
-----
----- Hyprtasking directional navigation
+--},},},})
+--
+--
+--hl.bind("SUPER + O", function() hl.plugin.hyprtasking.toggle("cursor") end)
+--
 --hl.bind(M .. " + left",  function() hl.plugin.hyprtasking.move("left") end)
 --hl.bind(M .. " + right", function() hl.plugin.hyprtasking.move("right") end)
 --hl.bind(M .. " + up",    function() hl.plugin.hyprtasking.move("up") end)
 --hl.bind(M .. " + down",  function() hl.plugin.hyprtasking.move("down") end)
 --
----- Hyprtasking move window to adjacent workspace
 --hl.bind(M .. " + SHIFT + left",  function() hl.plugin.hyprtasking.movewindow("left") end)
 --hl.bind(M .. " + SHIFT + right", function() hl.plugin.hyprtasking.movewindow("right") end)
 --hl.bind(M .. " + SHIFT + up",    function() hl.plugin.hyprtasking.movewindow("up") end)
@@ -643,6 +629,13 @@ hl.config({
 
 
 
+hl.config({ plugin = { edge_hacks = {
+            windows       = "brave, vivaldi, helium, flow",
+            edges         = "bottom:1 right:1",
+            scrollbar_fix = "80:1065",
+        },
+    },
+})
 
 
 

@@ -12,33 +12,22 @@ restart() {
   "$@" >/dev/null 2>&1 &
 }
 
-wayland_display() {
-  case "${XDG_CURRENT_DESKTOP:-}" in
-    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ; sudo nvidia-smi -lgc 650,1950 ;;
-    river)   wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
-    Hyprland) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
-  esac
-}
+#wayland_display() {
+#  case "${XDG_CURRENT_DESKTOP:-}" in
+#    wayfire) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ; sudo nvidia-smi -lgc 650,1950 ;;
+#    Hyprland) wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007 ;;
+#  esac
+#}
 
 case "${1:-}" in
   -w)
-    start mako
-    #start cclipd -c 5000 -t 'image/png' -t 'image/*' -t 'text/plain;charset=utf-8' -t 'text/*'
     start zzzclip daemon
-    wayland_display
+    wlr-randr --output eDP-1 --off --output DP-2 --mode 1920x1080@144.001007
     ;;
-  -gw)
-    sudo mount /dev/nvme0n1p4 /home/pavel/mnt/nvme0n1p4
-    bdprochot-undervolt.sh
-    wayland_display
-    ;;
-  -gx)
-    sudo mount /dev/nvme0n1p4 /home/pavel/mnt/nvme0n1p4
-    bdprochot-undervolt
+  -x)
     xrandr --output DP-3 --mode 1920x1080 --rate 144 --output DP-2 --off
     ;;
   *)
-    printf 'usage: %s -w|-gw|-gx\n' "$(basename "$0")" >&2
     exit 1
     ;;
 esac

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Yazi
+Exec=/home/pavel/.local/lib/xdg-yazi %f
+MimeType=inode/directory;
+Terminal=false
+NoDisplay=true
