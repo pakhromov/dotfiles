@@ -57,6 +57,7 @@ pacman-contrib
 pdfarranger
 pipewire
 pipewire-jack
+python-passlib
 python-pywebview
 qbittorrent
 qimgv-git

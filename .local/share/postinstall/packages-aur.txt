@@ -13,6 +13,7 @@ ghgrab-bin
 grabit-bin
 iwmenu-bin
 lazydlp-bin
+lidm-bin
 localsend-go-bin
 lore-bin
 mako-daemonless

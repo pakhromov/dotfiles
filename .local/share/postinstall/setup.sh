@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 echo "==> Cloning zsh plugins..."
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
