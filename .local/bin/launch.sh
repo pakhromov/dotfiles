@@ -73,6 +73,8 @@ case "$compositor" in
            # Without this, kbuildsycoca6 fails and KDE tools can't find the application menu database, breaking kglobalacceld shortcut registration and the Application Picker
            export XDG_MENU_PREFIX=plasma-
            exec systemd-cat -t kwin --stderr-priority=warning kwin_wayland --no-lockscreen </dev/null ;;
+    river) exec systemd-cat -t river --stderr-priority=warning river -no-xwayland </dev/null ;;
+    jay) exec systemd-cat -t jay --stderr-priority=warning jay run </dev/null ;;
     wayfire) exec systemd-cat -t wayfire --stderr-priority=warning wayfire -d </dev/null ;;
     *)     exec systemd-cat -t "$compositor" --stderr-priority=warning "$compositor" </dev/null ;;
 esac

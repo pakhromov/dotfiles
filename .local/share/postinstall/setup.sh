@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+echo "==> Cloning zsh plugins..."
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
+git clone https://github.com/pakhromov/zsh-autosuggestions              "$HOME/.config/zsh/plugins/zsh-autosuggestions"
+
+echo "==> Cloning yazi plugins..."
+git clone https://github.com/alberti42/faster-piper.yazi.git          "$HOME/.config/yazi/plugins/faster-piper.yazi"
+git clone https://github.com/BBOOXX/file-actions.yazi.git             "$HOME/.config/yazi/plugins/file-actions.yazi"
+rm -rf "$HOME/.config/yazi/plugins/file-actions.yazi/actions"
+ln -sf "$HOME/.config/yazi/actions" "$HOME/.config/yazi/plugins/file-actions.yazi/actions"
+git clone https://github.com/boydaihungst/mediainfo.yazi.git          "$HOME/.config/yazi/plugins/mediainfo.yazi"
+git clone https://github.com/uhs-robert/recycle-bin.yazi.git          "$HOME/.config/yazi/plugins/recycle-bin.yazi"
+git clone https://github.com/uhs-robert/sshfs.yazi.git                "$HOME/.config/yazi/plugins/sshfs.yazi"
+git clone https://github.com/simla33/ucp.yazi.git                     "$HOME/.config/yazi/plugins/ucp.yazi"
+git clone https://github.com/imsi32/yatline-gruvbox-material.yazi.git "$HOME/.config/yazi/plugins/yatline-gruvbox-material.yazi"
+git clone https://github.com/wekauwau/yatline-tokyo-night.yazi.git    "$HOME/.config/yazi/plugins/yatline-tokyo-night.yazi"
+git clone https://github.com/imsi32/yatline.yazi.git                  "$HOME/.config/yazi/plugins/yatline.yazi"
+git clone https://github.com/pakhromov/localsend.yazi                 "$HOME/.config/yazi/plugins/localsend.yazi"
+git clone https://github.com/pakhromov/yatline-selected-size.yazi     "$HOME/.config/yazi/plugins/yatline-selected-size.yazi"
+git clone https://github.com/pakhromov/yatline-disk-usage.yazi        "$HOME/.config/yazi/plugins/yatline-disk-usage.yazi"
+git clone https://github.com/pakhromov/smart-tab.yazi                 "$HOME/.config/yazi/plugins/smart-tab.yazi"
+git clone https://github.com/pakhromov/batch-rename-gui.yazi          "$HOME/.config/yazi/plugins/batch-rename-gui.yazi"
+git clone https://github.com/pakhromov/goto-file-dir.yazi             "$HOME/.config/yazi/plugins/goto-file-dir.yazi"
+git clone https://github.com/pakhromov/to-pdf-preview.yazi            "$HOME/.config/yazi/plugins/to-pdf-preview.yazi"
+git clone https://github.com/pakhromov/autosave.yazi                  "$HOME/.config/yazi/plugins/autosave.yazi"
+git clone https://github.com/pakhromov/paste-navigate.yazi            "$HOME/.config/yazi/plugins/paste-navigate.yazi"
+git clone https://github.com/pakhromov/xcursor-preview.yazi           "$HOME/.config/yazi/plugins/xcursor-preview.yazi"
+
+echo "==> Cloning Sublime Text plugins..."
+git clone --branch personal https://github.com/pakhromov/TabBarTools  "$HOME/.config/sublime-text/Packages/TabBarTools"
+git clone https://github.com/pakhromov/WordHighlight                  "$HOME/.config/sublime-text/Packages/WordHighlight"
+git clone https://github.com/pakhromov/QColor                         "$HOME/.config/sublime-text/Packages/QColor"
+
+d=$(mktemp -d) && printf "[org/gnome/desktop/interface]\ngtk-theme='Materia-dark-compact'\ncursor-theme='LiOSV'\ncursor-size=24\nfont-name='ComicShannsLigaMod Nerd Font 12'\n" > "$d/settings" && mkdir -p ~/.config/dconf && dconf compile ~/.config/dconf/user "$d" && rm -r "$d"
+update-mime-database ~/.local/share/mime

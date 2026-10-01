@@ -28,20 +28,19 @@ add_repos() {
 }
 
 clone_dotfiles() {
-    sudo pacman -S --needed --noconfirm git shared-mime-info
+    sudo pacman -S --needed --noconfirm git
     echo "==> Cloning dotfiles..."
     git clone --bare "https://github.com/$REPO.git" "$GIT_DIR"
     git --git-dir="$GIT_DIR" config core.bare false
     git --git-dir="$GIT_DIR" config core.worktree "$HOME"
     git --git-dir="$GIT_DIR" --work-tree="$HOME" checkout
     git --git-dir="$GIT_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
-    update-mime-database ~/.local/share/mime
 
-    echo "==> Cloning Firefox Lepton theme..."
-    PROFILE_DIR="$HOME/.config/mozilla/firefox/pavel.default"
-    git clone https://github.com/black7375/Firefox-UI-Fix "$PROFILE_DIR/chrome" -b photon-style
-    cp "$PROFILE_DIR/userChrome.css" "$PROFILE_DIR/chrome/userChrome.css"
-    cp "$PROFILE_DIR/prefs-initial.js" "$PROFILE_DIR/prefs.js"
+    #echo "==> Cloning Firefox Lepton theme..."
+    #PROFILE_DIR="$HOME/.config/mozilla/firefox/pavel.default"
+    #git clone https://github.com/black7375/Firefox-UI-Fix "$PROFILE_DIR/chrome" -b photon-style
+    #cp "$PROFILE_DIR/userChrome.css" "$PROFILE_DIR/chrome/userChrome.css"
+    #cp "$PROFILE_DIR/prefs-initial.js" "$PROFILE_DIR/prefs.js"
 
     echo "==> Cloning zsh plugins..."
     git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$HOME/.config/zsh/plugins/fast-syntax-highlighting"
@@ -87,11 +86,11 @@ install_gpu_drivers() {
     case "$gpu" in
         1)
             echo "==> Installing NVIDIA drivers..."
-            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver-git egl-wayland
+            sudo pacman -S --needed --noconfirm nvidia-open nvidia-utils libva-nvidia-driver-git egl-wayland lib32-nvidia-utils
             ;;
         2)
             echo "==> Installing AMD drivers..."
-            sudo pacman -S --needed --noconfirm mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon
+            sudo pacman -S --needed --noconfirm mesa vulkan-radeon lib32-mesa lib32-vulkan-radeon
             ;;
         *)
             echo "Invalid choice, skipping GPU drivers."
@@ -112,193 +111,28 @@ install_aur() {
 configure_system() {
     sudo cp -rT "$DOTFILES/root" /
     sudo usermod -s /usr/bin/zsh pavel
-    d=$(mktemp -d) && printf "[org/gnome/desktop/interface]\ngtk-theme='Materia-dark-compact'\nicon-theme='breeze'\ncursor-theme='LiOSV'\ncursor-size=24\nfont-name='ComicShannsLigaMod Nerd Font 12'\n" > "$d/settings" && mkdir -p ~/.config/dconf && dconf compile ~/.config/dconf/user "$d" && rm -r "$d"
+    sudo usermod -aG i2c pavel
+    d=$(mktemp -d) && printf "[org/gnome/desktop/interface]\ngtk-theme='Materia-dark-compact'\ncursor-theme='LiOSV'\ncursor-size=24\nfont-name='ComicShannsLigaMod Nerd Font 12'\n" > "$d/settings" && mkdir -p ~/.config/dconf && dconf compile ~/.config/dconf/user "$d" && rm -r "$d"
+    update-mime-database ~/.local/share/mime
 
+    #sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-resolve-hook.socket systemd-networkd-varlink.socket
     sudo systemctl disable systemd-resolved.service systemd-resolved-monitor.socket systemd-resolved-varlink.socket
     sudo rm -f /etc/resolv.conf
     sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
-    sudo systemctl enable --now iwd
+    sudo systemctl enable iwd
     sudo rfkill block bluetooth
     sudo systemctl disable bluetooth.service
     sudo systemctl disable getty@tty1.service
+    sudo systemctl enable lidm
 
-    #sudo systemctl mask systemd-journald systemd-journald.socket systemd-journald-dev-log.socket systemd-journal-flush systemd-journald-audit.socket
     sudo systemctl disable systemd-timesyncd.service
-    sudo systemctl enable --now chronyd-sync
+    sudo systemctl enable chronyd-sync
     sudo systemctl disable systemd-userdbd.service systemd-userdbd.socket
     sudo systemctl mask user@.service
     sudo systemctl mask rtkit-daemon
 
-    sudo modprobe i2c-dev
-    sudo usermod -aG i2c pavel
     sudo mkinitcpio -P
-}
-
-check_system() {
-    local ok="\033[32m✓\033[0m"
-    local fail="\033[31m✗\033[0m"
-    local total failed
-
-    echo ""
-    echo "==> Repos"
-    for repo in cachyos cachyos-v3 cachyos-core-v3 cachyos-extra-v3 chaotic-aur; do
-        if pacman -Sl "$repo" &>/dev/null; then
-            echo -e "  $ok $repo"
-        else
-            echo -e "  $fail $repo"
-        fi
-    done
-
-    echo ""
-    echo "==> Native packages"
-    total=0; failed=0
-    while IFS= read -r pkg; do
-        [[ -z "$pkg" || "$pkg" == \#* ]] && continue
-        ((total++))
-        if ! pacman -Qi "$pkg" &>/dev/null; then
-            echo -e "  $fail $pkg"
-            ((failed++))
-        fi
-    done < "$DOTFILES/packages-repo.txt"
-    echo "    $((total - failed))/$total installed"
-
-    echo ""
-    echo "==> AUR packages"
-    total=0; failed=0
-    while IFS= read -r pkg; do
-        [[ -z "$pkg" || "$pkg" == \#* ]] && continue
-        ((total++))
-        if ! pacman -Qi "$pkg" &>/dev/null; then
-            echo -e "  $fail $pkg"
-            ((failed++))
-        fi
-    done < "$DOTFILES/packages-aur.txt"
-    echo "    $((total - failed))/$total installed"
-
-    echo ""
-    echo "==> GPU drivers"
-    local nvidia_pkgs=(nvidia-open nvidia-utils lib32-nvidia-utils libva-nvidia-driver)
-    local amd_pkgs=(mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon)
-    local nvidia_installed=0 amd_installed=0
-    local nvidia_missing=() amd_missing=()
-
-    for pkg in "${nvidia_pkgs[@]}"; do
-        if pacman -Qi "$pkg" &>/dev/null; then
-            ((nvidia_installed++))
-        else
-            nvidia_missing+=("$pkg")
-        fi
-    done
-
-    for pkg in "${amd_pkgs[@]}"; do
-        if pacman -Qi "$pkg" &>/dev/null; then
-            ((amd_installed++))
-        else
-            amd_missing+=("$pkg")
-        fi
-    done
-
-    if [[ $nvidia_installed -eq ${#nvidia_pkgs[@]} ]]; then
-        echo -e "  $ok NVIDIA drivers installed"
-    elif [[ $nvidia_installed -gt 0 ]]; then
-        echo -e "  $fail NVIDIA drivers incomplete, missing: ${nvidia_missing[*]}"
-    fi
-
-    if [[ $amd_installed -eq ${#amd_pkgs[@]} ]]; then
-        echo -e "  $ok AMD drivers installed"
-    elif [[ $amd_installed -gt 0 ]]; then
-        echo -e "  $fail AMD drivers incomplete, missing: ${amd_missing[*]}"
-    fi
-
-    if [[ $nvidia_installed -eq 0 && $amd_installed -eq 0 ]]; then
-        echo -e "  $fail No GPU drivers installed"
-    fi
-
-    echo ""
-    echo "==> Root dotfiles"
-    while IFS= read -r f; do
-        system_path="/${f#$DOTFILES/root/}"
-        if ! sudo test -f "$system_path"; then
-            echo -e "  $fail missing: $system_path"
-        elif ! sudo diff -q "$f" "$system_path" &>/dev/null; then
-            echo -e "  $fail differs: $system_path"
-        else
-            echo -e "  $ok $system_path"
-        fi
-    done < <(find "$DOTFILES/root" -type f)
-
-    echo ""
-    echo "==> Local dotfiles"
-    for d in "$DOTFILES" "$HOME/.config" "$HOME/.local/bin"; do
-        if [[ -d "$d" ]]; then
-            echo -e "  $ok $d"
-        else
-            echo -e "  $fail $d"
-        fi
-    done
-
-    echo ""
-    echo "==> System configuration"
-
-    if [[ "$(readlink -f "$(getent passwd pavel | cut -d: -f7)")" == "$(readlink -f /usr/bin/zsh)" ]]; then
-        echo -e "  $ok default shell: zsh"
-    else
-        echo -e "  $fail default shell: $(getent passwd pavel | cut -d: -f7)"
-    fi
-
-    if [[ "$(readlink /usr/bin/sh)" == "/usr/bin/dash" ]]; then
-        echo -e "  $ok /usr/bin/sh -> dash"
-    else
-        echo -e "  $fail /usr/bin/sh -> $(readlink /usr/bin/sh)"
-    fi
-
-    if [[ "$(readlink /etc/resolv.conf)" == "/run/resolvconf/resolv.conf" ]]; then
-        echo -e "  $ok /etc/resolv.conf symlink"
-    else
-        echo -e "  $fail /etc/resolv.conf -> $(readlink /etc/resolv.conf)"
-    fi
-
-    for svc in iwd chronyd-sync; do
-        if systemctl is-enabled "$svc" &>/dev/null; then
-            echo -e "  $ok $svc enabled"
-        else
-            echo -e "  $fail $svc not enabled"
-        fi
-    done
-
-
-    for svc in rtkit-daemon upower.service user@.service \
-               systemd-journald systemd-journal-flush systemd-journald.socket \
-               systemd-journald-dev-log.socket systemd-journald-audit.socket; do
-        if [[ "$(systemctl is-enabled "$svc" 2>/dev/null)" == "masked" ]]; then
-            echo -e "  $ok $svc masked"
-        else
-            echo -e "  $fail $svc not masked"
-        fi
-    done
-
-    for svc in systemd-networkd systemd-resolved systemd-timesyncd bluetooth.service \
-               systemd-userdbd.service systemd-userdbd.socket getty@tty1.service; do
-        state=$(systemctl is-enabled "$svc" 2>/dev/null)
-        if [[ "$state" == "disabled" || "$state" == "indirect" ]]; then
-            echo -e "  $ok $svc disabled"
-        else
-            echo -e "  $fail $svc still enabled"
-        fi
-    done
-}
-
-clone_myfiles() {
-    if ! command -v rclone &>/dev/null; then
-        echo "error: rclone is not installed"
-        exit 1
-    fi
-    if ! rclone listremotes | grep -q "^gdrive:"; then
-        echo "error: gdrive remote not configured, run 'rclone config' first"
-        exit 1
-    fi
-    myfiles clone "$HOME"
 }
 
 echo "What do you want to do?"
@@ -308,8 +142,6 @@ echo "  3) Install GPU drivers"
 echo "  4) Install official packages"
 echo "  5) Install AUR packages"
 echo "  6) System configuration"
-echo "  7) System check"
-echo "  8) Restore personal files from Google Drive"
 read -rp "Choice: " choice </dev/tty
 
 case "$choice" in
@@ -319,7 +151,5 @@ case "$choice" in
     4) install_official ;;
     5) install_aur ;;
     6) configure_system ;;
-    7) check_system ;;
-    8) clone_myfiles ;;
     *) echo "Invalid choice"; exit 1 ;;
 esac

@@ -63,6 +63,7 @@ qimgv-git
 resvg
 rclone
 ripgrep
+shared-mime-info
 sqlitebrowser
 sshfs
 starship

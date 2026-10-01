@@ -18,13 +18,13 @@ if [ -n "${KEEPLOGS:-}" ]; then
 fi
 mkdir -p "$LOGDIR"
 
-UMU=/home/pavel/.local/share/lutris/runtime/umu/umu-run
+UMU=/usr/bin/umu-run
 stamp=$(date +%H%M%S)
 
 # An EA app self-update leaves "EA Desktop\EA Desktop" pointing at the previous
 # version, which makes the app hang on "Connecting to the EA app". Repoint it
 # before launching; this is a no-op when the link is already correct.
-"$LIB/fix-ea-link.sh" || exit 1
+#"$LIB/fix-ea-link.sh" || exit 1
 
 # That link lives on disk as a directory named "EA Desktop?", which no unix path
 # can traverse, so resolve the versioned dir instead.
@@ -49,11 +49,11 @@ export VKD3D_DEBUG=warn
 
 # gamemode switches the CPU governor to performance while the game runs (needs
 # membership of the "gamemode" group). Set NOGAMEMODE=1 to launch without it.
-GM=()
-if [ -z "${NOGAMEMODE:-}" ] && command -v gamemoderun >/dev/null; then
-    GM=(gamemoderun)
-fi
-
+#GM=()
+#if [ -z "${NOGAMEMODE:-}" ] && command -v gamemoderun >/dev/null; then
+#    GM=(gamemoderun)
+#fi
+#
 bdprochot-undervolt.sh
 
 exec "${GM[@]}" "$UMU" "$EA" "$@" >"$LOGDIR/ea-$stamp.out" 2>&1
