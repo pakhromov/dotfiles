@@ -4,7 +4,6 @@ base
 base-devel
 bat
 bottom
-brave-origin-beta-bin
 brightnessctl
 chrony
 circle-flags
