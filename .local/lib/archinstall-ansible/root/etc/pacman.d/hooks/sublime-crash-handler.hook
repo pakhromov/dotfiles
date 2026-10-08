@@ -7,4 +7,4 @@ Target = sublime-text-4
 [Action]
 Description = Disabling Sublime Text crash handler...
 When = PostTransaction
-Exec = /bin/cp /home/pavel/.local/share/postinstall/root/opt/sublime_text/crash_handler /opt/sublime_text/crash_handler
+Exec = /bin/cp /home/pavel/.local/lib/archinstall-ansible/root/opt/sublime_text/crash_handler /opt/sublime_text/crash_handler

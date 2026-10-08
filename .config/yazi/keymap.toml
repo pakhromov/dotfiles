@@ -14,7 +14,7 @@ prepend_keymap = [
     # `/` creates a directory from the filter, or falls through to paste-navigate when empty
     { on = "/", run = "plugin custom-filter -- dir", desc = "Create a directory from the filter text" },
 	# Ctrl+Enter to go to file's directory (useful in search results)
-	{ on = "<C-Enter>", run = "plugin goto-file-dir", desc = "Navigate to hovered file's directory" },
+	{ on = "<C-Enter>", run = [ "plugin goto-file-dir", "follow" ], desc = "Navigate to hovered file's directory or follow a symlink" },
 	# Smart tab navigation
 	{ on = "<C-Right>", run = [ "plugin custom-filter -- clear", "plugin smart-tab", "plugin autosave" ], desc = "Go to next tab or create new tab if on last" },
 	# ALL letter keys for immediate filtering
@@ -101,7 +101,8 @@ keymap = [
     { on = "<C-c>",         run = "yank",                        desc = "Yank selected files (copy)" },
     { on = "<C-x>",         run = "yank --cut",                  desc = "Yank selected files (cut)" },
     { on = "<C-v>",         run = ["paste", "escape", "unyank"],                       desc = "Paste yanked files" },
-    { on = "<C-V>",         run = "paste --force",               desc = "Paste yanked files (overwrite if the destination exists)" },
+    { on = [ "<C-s>", "r" ], run = ["link --follow --relative", "escape", "unyank"],      desc = "Symlink relative path" },
+    { on = [ "<C-s>", "a" ], run = ["link --follow", "escape", "unyank"],        desc = "Symlink absolute path" },
     { on = "<C-Backspace>",         run = "remove",                      desc = "Trash selected files" },
     { on = "<C-Delete>",         run = "remove --permanently",        desc = "Permanently delete selected files" },
     { on = "<C-r>",         run = "rename --cursor=before_ext",  desc = "Rename selected file(s)" },
@@ -119,8 +120,8 @@ keymap = [
     { on = [ "<", "n" ], run = "linemode none",        desc = "Linemode: none" },
 
     # Copy
-    { on = [ "<C-s>", "f" ], run = "copy path",             desc = "Copy the file path" },
-    { on = [ "<C-s>", "c" ], run = "copy filename",         desc = "Copy the filename" },
+    { on = [ "<C-S-c>", "c" ], run = "copy path",             desc = "Copy the file path" },
+    { on = [ "<C-S-c>", "f" ], run = "copy filename",         desc = "Copy the filename" },
 
         # Sorting
     { on = [ ",", "m" ], run = [ "sort mtime --reverse", "linemode mtime" ],    desc = "Sort by modified time" },

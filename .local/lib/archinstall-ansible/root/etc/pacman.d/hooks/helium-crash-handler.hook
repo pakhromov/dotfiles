@@ -7,4 +7,4 @@ Target = helium-browser-bin
 [Action]
 Description = Disabling Helium crash handler...
 When = PostTransaction
-Exec = /bin/cp /home/pavel/.local/share/postinstall/root/opt/helium-browser-bin/helium_crashpad_handler /opt/helium-browser-bin/helium_crashpad_handler
+Exec = /bin/cp /home/pavel/.local/lib/archinstall-ansible/root/opt/helium-browser-bin/helium_crashpad_handler /opt/helium-browser-bin/helium_crashpad_handler

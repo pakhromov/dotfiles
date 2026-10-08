@@ -41,6 +41,8 @@
   --tabActiveStrip: #b1b9f9;
   --tabActiveStripHeight: 3px;
   --tabHoverStrip: color-mix(in srgb, var(--tabActiveStrip) 50%, transparent);
+  /* Active tab strip color while the window is not focused */
+  --tabActiveStripUnfocused: color-mix(in srgb, var(--tabActiveStrip) 60%, transparent);
 
   /* Tab title fade width at the right edge */
   --tabTitleFade: 24px;
@@ -196,6 +198,12 @@ body,
   box-shadow: inset 0 var(--tabActiveStripHeight) 0 0 var(--tabActiveStrip) !important;
 }
 
+/* Dimmed accent strip while the window is not focused, so that a change of
+   the focus always makes Vivaldi draw a new frame, also on an idle page */
+#browser.isblurred .tab-strip .tab.active {
+  box-shadow: inset 0 var(--tabActiveStripHeight) 0 0 var(--tabActiveStripUnfocused) !important;
+}
+
 /* Separators between inactive tabs */
 #browser:is(.tabs-top, .tabs-bottom) .tab-strip > span > .tab-position::after {
   content: '';
@@ -337,6 +345,11 @@ body,
   width: var(--tabAudioIconSize) !important;
   height: var(--tabAudioIconSize) !important;
   transform: none !important;
+}
+
+/* Pinned and narrow tabs: Vivaldi forces a dark sound icon, flip it to light */
+#browser #tabs-container .tab:is(.pinned, .tab-small) .tab-audio .audioicon {
+  filter: invert(1);
 }
 
 /* Fade tab titles at the right edge instead of cutting them or showing '...' */
