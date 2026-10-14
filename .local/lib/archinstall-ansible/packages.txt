@@ -55,6 +55,8 @@ pacman-contrib
 pdfarranger
 pipewire
 pipewire-jack
+python-dbus
+python-gobject
 python-passlib
 python-pywebview
 qbittorrent

@@ -5,7 +5,10 @@ end)
 
 require("custom-filter"):setup()
 require("autosave"):setup({})
-require("write-id"):setup()
+-- Started by xdg-yazi / yazi-filemanager1: open the requested folder after the saved tabs are restored
+if os.getenv("YAZI_LEVEL") == "1" and os.getenv("YAZI_OPEN") then
+	ya.emit("plugin", { "focus-dir-tab", os.getenv("YAZI_OPEN") })
+end
 require("sshfs"):setup()
 --require("full-border"):setup {
 --    -- Available values: ui.Border.PLAIN, ui.Border.ROUNDED

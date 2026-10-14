@@ -9,18 +9,15 @@ end)
 
 return {
     entry = function(_, job)
-        local parts = {}
-        local i = 1
-        while job.args[i] ~= nil do
-            parts[#parts + 1] = tostring(job.args[i])
-            i = i + 1
-        end
-        local dir = table.concat(parts, " ")
+        local dir = tostring(job.args[1] or "")
         local idx = find_tab(dir)
         if idx >= 0 then
             ya.emit("tab_switch", { idx })
         else
             ya.emit("tab_create", { dir })
+        end
+        if job.args[2] then
+            ya.emit("reveal", { tostring(job.args[2]) })
         end
     end,
 }

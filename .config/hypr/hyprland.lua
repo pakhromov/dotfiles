@@ -571,13 +571,22 @@ hl.window_rule({
 hl.config({ debug = { disable_logs = false } })
 
 hl.bind("SUPER + O", function() hl.plugin.overview.toggle() end)
+hl.bind("SUPER + SHIFT + TAB", function() hl.plugin.overview.toggle_all() end)
 hl.config({ plugin = { overview = {
     rows = 3,
     columns = 3,
     border_size = 2,
     border_color = "#242424FF",
-    toggle_speed = 2.3,
-    toggle_curve = "circle",
+    duration = "200ms circle",
+    grabbed_scale = 50,
+    snapshot_switch = 0.6,
+    scaled_target = true,
+    refresh_windows = true,
+    overview_wait_timeout = 15,
+    closing_focus = true,
+    overview_focus_timeout = 30,
+    switch_duration = "300ms circle",
+    switch_wait_timeout = 1000,
 } } })
 
 hl.bind("SUPER + LEFT", function() hl.plugin.overview.move("left") end)
@@ -629,13 +638,13 @@ hl.bind("SUPER + SHIFT + DOWN", function() hl.plugin.overview.move_window("down"
 
 
 
-hl.config({ plugin = { edge_hacks = {
-            windows       = "brave, vivaldi, helium, flow",
-            edges         = "bottom:1 right:1",
-            scrollbar_fix = "80:1065",
-        },
-    },
-})
+--hl.config({ plugin = { edge_hacks = {
+--            windows       = "brave, vivaldi, helium, flow",
+--            edges         = "bottom:1 right:1",
+--            scrollbar_fix = "80:1065",
+--        },
+--    },
+--})
 
 
 
