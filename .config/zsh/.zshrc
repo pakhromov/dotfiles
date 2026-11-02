@@ -97,39 +97,6 @@ subl() {
   command subl "$@"
 }
 
-function y() {
-  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-  local session_file="$HOME/.local/state/yazi/session.json"
-  local target_dir="${1:-$PWD}"
-
-  # Resolve to absolute path
-  target_dir="${target_dir:A}"
-
-  if [[ -f "$session_file" ]] && command -v jq &>/dev/null; then
-    local tab_idx
-    tab_idx=$(jq -r --arg cwd "$target_dir" '.tabs[] | select(.cwd == $cwd) | .idx' "$session_file" 2>/dev/null | head -1)
-
-    if [[ -n "$tab_idx" ]]; then
-      # Directory exists in a tab, set it as active
-      jq --argjson idx "$tab_idx" '.active_idx = $idx' "$session_file" > "$session_file.tmp" \
-        && mv "$session_file.tmp" "$session_file"
-    else
-      # Directory doesn't exist, add new tab
-      local max_idx
-      max_idx=$(jq '[.tabs[].idx] | max // 0' "$session_file" 2>/dev/null)
-      local new_idx=$((max_idx + 1))
-      jq --arg cwd "$target_dir" --argjson idx "$new_idx" \
-        '.tabs += [{"idx": $idx, "cwd": $cwd}] | .active_idx = $idx' "$session_file" > "$session_file.tmp" \
-        && mv "$session_file.tmp" "$session_file"
-    fi
-  fi
-
-  yazi --cwd-file="$tmp"
-  IFS= read -r -d '' cwd < "$tmp"
-  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-  rm -f -- "$tmp"
-}
-
 yay() {
   command yay "$@"
   rehash
@@ -254,6 +221,7 @@ alias ch="claude-history"
 alias rr="yzf -r"
 alias ro="yzf -o"
 alias yy="yzf"
+alias y="yazi"
 alias ls="eza -1a --icons=always --group-directories-first --hyperlink auto"
 alias -g dn='2>/dev/null'
 alias dotfiles='git --git-dir=$HOME/.dotfiles-git --work-tree=$HOME'

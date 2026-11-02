@@ -1,10 +1,10 @@
 "$schema" = 'https://starship.rs/config-schema.json'
+#([ ](fg:color_fg bg:color_bg)$sudo)\
 format = """
 [╭─](#585858)[](color_bg)\
 $os\
 [ ](fg:color_fg bg:color_bg)$directory\
 ([ ](fg:color_fg bg:color_bg)$git_branch)$git_metrics$git_status\
-([ ](fg:color_fg bg:color_bg)$sudo)\
 ([ ](fg:color_fg bg:color_bg)$jobs)\
 [](fg:color_bg)\
 $fill\

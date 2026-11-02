@@ -41,9 +41,11 @@ image/tiff=qimgv.desktop
 image/x-icon=qimgv.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 x-scheme-handler/claude=com.anthropic.Claude.desktop
-x-scheme-handler/t3code=t3code-url-handler.desktop
+x-scheme-handler/t3code=com.t3tools.T3Code.desktop
 x-scheme-handler/origin2=ea-app.desktop
 x-scheme-handler/origin=ea-app.desktop
 x-scheme-handler/link2ea=ea-app.desktop
+x-scheme-handler/codex=chatgpt.desktop
 
 [Added Associations]
+x-scheme-handler/t3code=com.t3tools.T3Code.desktop;

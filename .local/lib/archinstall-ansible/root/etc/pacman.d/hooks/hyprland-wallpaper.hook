@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = hyprland
+
+[Action]
+Description = Linking hyprland wallpaper...
+When = PostTransaction
+Exec = /bin/ln -sf /home/pavel/.config/hypr/wp.png /usr/share/hypr/wall1.png

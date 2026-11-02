@@ -1,3 +1,68 @@
+--------------
+---- DBUS ----
+--------------
+
+local function update_dbus_environment()
+    os.execute("dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DISPLAY XDG_RUNTIME_DIR XDG_SESSION_DESKTOP")
+end
+
+-- A bus belongs to its login session. Reusing one from a previous login races
+-- that login's cleanup, which will kill it even after a new compositor adopts it.
+do
+    local function shell_quote(value)
+        return "'" .. value:gsub("'", "'\\''") .. "'"
+    end
+
+    local function bus_alive(address)
+        if not address or address == "" then return false end
+        -- Hyprland uses SA_NOCLDWAIT: os.execute()/pclose() cannot reliably
+        -- report child exit status. Have the shell report success over stdout.
+        local probe = assert(io.popen(
+            "dbus-send --bus=" .. shell_quote(address)
+            .. " --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus"
+            .. " org.freedesktop.DBus.GetId >/dev/null 2>&1 && printf 'ready\\n'", "r"
+        ))
+        local ready = probe:read("*l")
+        probe:close()
+        return ready == "ready"
+    end
+
+    local runtime_dir = assert(os.getenv("XDG_RUNTIME_DIR"), "XDG_RUNTIME_DIR is not set")
+    local session_id = assert(os.getenv("XDG_SESSION_ID"), "XDG_SESSION_ID is not set")
+    local env_path = runtime_dir .. "/hyprland-dbus-" .. session_id .. ".env"
+    local address
+    local saved = io.open(env_path, "r")
+    if saved then
+        address = saved:read("*l")
+        saved:close()
+    end
+
+    local started = false
+    if not bus_alive(address) then
+        -- Restore normal signal handling and unblock inherited compositor
+        -- signals before daemonizing. This affects only the child process.
+        local daemon = assert(io.popen(
+            "env --default-signal dbus-daemon --session --fork --syslog-only --print-address=1 --print-pid=1", "r"
+        ))
+        local output = daemon:read("*a")
+        daemon:close()
+        address = output:match("^([^\r\n]+)\n%d+")
+        assert(address, "Failed to start the D-Bus session bus")
+        local file = assert(io.open(env_path, "w"))
+        assert(file:write(output))
+        assert(file:close())
+        started = true
+    end
+
+    hl.env("DBUS_SESSION_BUS_ADDRESS", address)
+    -- A config reload can replace a dead bus while the compositor is already
+    -- running. Publish its existing display environment to that new bus too.
+    if started and os.getenv("WAYLAND_DISPLAY") then
+        update_dbus_environment()
+    end
+end
+
+
 ------------------
 ---- MONITORS ----
 ------------------
@@ -65,6 +130,10 @@ end
 -------------------
 
 hl.on("hyprland.start", function()
+    -- Publish the display environment before other startup commands can ask
+    -- D-Bus to activate applications. This updates D-Bus directly.
+    update_dbus_environment()
+
     -- Plugins load AFTER the config has been parsed, so the plugin.* keys in
     -- hl.config() below are unknown at parse time and Hyprland raises the error
     -- overlay ("unknown config key 'plugin.hyprtasking.*'"). The plugin works
@@ -77,18 +146,12 @@ hl.on("hyprland.start", function()
     -- hyprland already execs via /bin/sh -c, so && works directly.
     -- The eDP-1 dance runs after the reload so nothing re-parses over it.
 
-    --hyprctl plugin load /home/pavel/Projects/hyprland-plugins/hyprtasking/build/libhyprtasking.so &&
-    --hyprctl plugin load /home/pavel/Projects/hyprland-plugins/overview/build/liboverview.so &&
-    hl.exec_cmd(
-        "hyprctl plugin load /home/pavel/Projects/hyprland-plugins/overview/build/liboverview.so && hyprctl plugin load /home/pavel/Projects/hyprland-plugins/hyprland-edge-hacks-plugin/build/libedge-hacks.so && hyprctl reload && wlr-randr --output eDP-1 --on && sleep 1 && wlr-randr --output eDP-1 --off && hyprctl dispatch 'hl.dsp.force_renderer_reload()'"
-    )
-
-    -- Ported from wayfire.ini [autostart]
-    -- dbus first: mako-daemonless relies on the activation env being correct.
-    hl.exec_cmd("dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DISPLAY XDG_RUNTIME_DIR XDG_SESSION_DESKTOP")
-    hl.exec_cmd("zzzclip daemon")
+    --hl.exec_cmd("hyprctl plugin load /home/pavel/Projects/hyprland-plugins/overview-bench/hdiag-tail/build/liboverview.so")
+    hl.exec_cmd("hyprctl plugin load /home/pavel/Projects/hyprland-plugins/overview/build/liboverview.so")
+    hl.exec_cmd("hyprctl plugin load /home/pavel/.config/hypr/scrollbar_fix/libscrollbar_fix.so")
+    hl.exec_cmd("hyprctl plugin load /home/pavel/.config/hypr/edp-disable-fix/libedp-disable-fix.so")
+    hl.exec_cmd("hyprctl plugin load /home/pavel/.config/hypr/clipboard_bridge/libclipboard_bridge.so")
     hl.exec_cmd("audio-default.sh")
-    --hl.exec_cmd("sudo nvidia-smi -lgc 650,1950")
 end)
 
 
@@ -97,7 +160,7 @@ end)
 -------------------------------
 
 hl.env("XCURSOR_SIZE",    "24")
-hl.env("XCURSOR_THEME",   "Cyberpunk-Neon")
+hl.env("XCURSOR_THEME",   "LiOSV")
 --hl.env("HYPRCURSOR_THEME", "Hackneyed Cursors")
 --hl.env("HYPRCURSOR_SIZE", "24")
 
@@ -117,87 +180,166 @@ hl.config({
         gaps_in  = 0,
         gaps_out = 0,
         border_size = 0,
-
+        resize_on_border = false,
+        allow_tearing = false,
+        layout = "dwindle",
 
         col = {
             active_border   = "0xff242424",
             inactive_border = "0xff242424",
         },
-
-        allow_tearing    = false,
-        layout           = "master",
     },
 
-    decoration = {
-        rounding       = 0,
-
-        active_opacity   = 1.0,
-        inactive_opacity = 1.0,
-        --rounding_power = 8.0,
-        --dim_inactive = false,
-        --dim_strength = 0.2,
-        --dim_around = 0.3,
-
-        shadow = {
-            enabled = false,
-        },
-
-        blur = {
-            enabled = false,
-        },
-        --wobble = {
-        --    enabled = true,
-        --},
+    render = {
+        direct_scanout = 1,
+        --async_commit = true,
+        cm_auto_hdr = 0,
+        cm_enabled = false,
+        --commit_timing_enabled
+        expand_undersized_textures = true,
+        icc_vcgt_enabled = false,
+        keep_unmodified_copy = 0,
+        --new_render_scheduling = true,
+        send_content_type = false,
+        --use_fp16 = 0,
+        --xp_mode = false
     },
 
-    animations = {
-        enabled = true,
-    },
-
-    master = {
-        new_status = "master",
-    },
-
-    cursor = {
-        no_hardware_cursors = false,
-    },
-
-    misc = {
-        --animate_manual_resizes = true,
-        --animate_mouse_windowdragging = true,
-        force_default_wallpaper  = 1,
-        background_color         = 0xff171717,
-        --bell_sound = "none",
-        --enable_anr_dialog = true,
-        disable_hyprland_logo    = true,
-        disable_watchdog_warning = true,
-        disable_splash_rendering = true,
-        focus_on_activate        = true,
-        middle_click_paste       = false,
-    },
-
-    group = {
-        auto_group = false,
-        groupbar = {
-            enabled = false,
-        }
+    opengl = {
+        nvidia_anti_flicker = false
     },
 
     xwayland = {
         enabled = false,
     },
 
+    decoration = {
+        rounding       = 0,
+        border_part_of_window = true,
+
+        active_opacity = 1.0,
+        inactive_opacity = 1.0,
+        fullscreen_opacity = 1.0,
+
+        --rounding_power = 4.0,
+        --dim_inactive = false,
+        --dim_modal = true,
+        --dim_special = 0.2,
+        --dim_strength = 0.2,
+        --dim_around = 0.3,
+
+        shadow = {
+            enabled = false,
+        },
+        blur = {
+            enabled = false,
+        },
+        motion_blur = {
+            enabled = false,
+        },
+        wobble = {
+            enabled = false,
+        },
+        glow = {
+            enabled = false,
+        }
+    },
+
+    animations = {
+        enabled = true,
+    },
+
+    dwindle = {
+        preserve_split = true,
+    },
+
+    cursor = {
+        no_hardware_cursors = 0,
+        enable_hyprcursor = false,
+        hotspot_padding = 1,
+        zoom_disable_aa = true,
+        --warp_on_change_workspace = 1,
+        --no_break_fs_vrr = 0,
+        --zoom_detached_camera = false,
+        --zoom_rigid = true
+    },
+
+    misc = {
+        --animate_manual_resizes = true,
+        --animate_mouse_windowdragging = true,
+        --disable_autoreload = true,
+        --enable_swallow = true,
+        --render_unfocused_fps = 1,
+        force_default_wallpaper = 1,
+        disable_hyprland_logo = true,
+        background_color = 0xff171717,
+        bell_sound = "none",
+        initial_workspace_tracking = 0,
+        disable_watchdog_warning = true,
+        disable_splash_rendering = true,
+        focus_on_activate        = true,
+        middle_click_paste       = false,
+    },
+
+    ecosystem = {
+        no_donation_nag = true,
+        no_update_news = true,
+    },
+
+    group = {
+        auto_group = true,
+        insert_after_current = false,
+        col = {
+            border_active = "0xff242424",
+            border_inactive = "0xff242424",
+        },
+        groupbar = {
+            enabled = true,
+            render_titles = true,
+            height = 32,
+            --font_family =
+            font_size = 11,
+            --font_weight_active =
+            --font_weight_inactive =
+
+            indicator_height = 0,
+            indicator_gap = 0,
+            gaps_in = 8,
+            gaps_out = 2,
+            keep_upper_gap = false,
+            text_color = "0xffffffff",
+            text_color_inactive = "0xff9a9a9a",
+            col = {
+                active = "0xff3c3c3c",
+                inactive = "0xff242424",
+            },
+        },
+    },
+
     input = {
-        kb_layout     = "us,se,ru",
-        repeat_delay  = 300,
-        repeat_rate   = 30,
-        follow_mouse  = 1,
-        sensitivity     = 0,
-        accel_profile   = "flat",
-        --force_no_accel  = true,
+        kb_layout = "us,se,ru",
+        repeat_delay = 300,
+        repeat_rate = 30,
+        follow_mouse = 1,
+        focus_on_close = 1,
+        sensitivity = 0,
+        accel_profile = "flat",
+        --force_no_accel = true,
         --emulate_discrete_scroll = 0,
-        --off_window_axis_events = 2,
-        --resolve_binds_by_sym = true,
+        --off_window_axis_events = 3,
+        --resolve_binds_by_sym = false,
+
+        --touchpad = {}
+        touchdevice = {
+            enabled = false,
+        },
+        --tablet = {
+        --    enabled = false,
+        --},
+    },
+
+    binds = {
+        movefocus_cycles_groupfirst = true,
     },
 })
 
@@ -249,6 +391,20 @@ hl.bind(M .. " + Q",           hl.dsp.window.close())
 -- Move/resize windows with mouse
 hl.bind(M .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(M .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- TEMPORARY (blur test): the focused window's opacity on SUPER + mouse wheel
+local window_opacity = {}
+local function step_opacity(delta)
+    local w = hl.get_active_window()
+    if not w then return end
+    local a = math.min(1.0, math.max(0.1, (window_opacity[w.address] or 1.0) + delta))
+    window_opacity[w.address] = a
+    -- Focused and unfocused alike: in the overview no window is focused.
+    hl.dispatch(hl.dsp.window.set_prop({ prop = "opacity", value = tostring(a) }))
+    hl.dispatch(hl.dsp.window.set_prop({ prop = "opacity_inactive", value = tostring(a) }))
+end
+hl.bind(M .. " + mouse_up",   function() step_opacity(0.05) end)
+hl.bind(M .. " + mouse_down", function() step_opacity(-0.05) end)
 
 
 
@@ -396,13 +552,13 @@ hl.bind(M .. " + SHIFT + GRAVE", hl.dsp.exec_cmd("launch-or-focus.sh -w 8 --sing
 
 -- launch-or-focus helpers (compositor-agnostic script)
 hl.bind(M .. " + U",           hl.dsp.exec_cmd("kitty-launch-or-focus.sh yzf -u"))                       -- binding_24
-hl.bind(M .. " + I",           hl.dsp.exec_cmd("kitty-launch-or-focus.sh zzzclip-images.sh"))            -- binding_25
+hl.bind(M .. " + I",           hl.dsp.exec_cmd("kitty-launch-or-focus.sh cliphist-images.sh"))            -- binding_25
 hl.bind(M .. " + K",           hl.dsp.exec_cmd("kitty-launch-or-focus.sh nasc"))                         -- binding_26
 hl.bind(M .. " + SHIFT + W",   hl.dsp.exec_cmd("kitty-launch-or-focus.sh impala"))                       -- binding_53
 hl.bind(M .. " + N",           hl.dsp.exec_cmd([[kitty-launch-or-focus.sh vpn-shell nyaazf.sh 'naruto|-"kun.hu"|(varyg dual)']])) -- binding_40
 
 -- Menus / pickers
-hl.bind(M .. " + V",           hl.dsp.exec_cmd("zzzclip-menu.sh"))                                       -- binding_1
+hl.bind(M .. " + V",           hl.dsp.exec_cmd("cliphist-menu.sh"))                                       -- binding_1
 hl.bind(M .. " + E",           hl.dsp.exec_cmd("emoji-picker.sh"))                                       -- binding_4
 hl.bind(M .. " + SHIFT + E",   hl.dsp.exec_cmd("nerdfont-picker.sh"))                                    -- binding_18
 hl.bind(M .. " + ALT + E",     hl.dsp.exec_cmd("unicode-picker.sh"))                                     -- binding_41
@@ -430,8 +586,8 @@ hl.bind(M .. " + ALT + M",     hl.dsp.exec_cmd("mic-volume.sh mute"))           
 -- force_renderer_reload does that wake-up explicitly.
 -- transform: 0 = normal, 1 = 90, 2 = 180, 3 = 270 (wl_output_transform)
 local function rotate_dp2(transform)
-    hl.monitor({ output = "DP-2", mode = "1920x1080@144", position = "0x0", scale = 1, transform = transform })
     hl.dispatch(hl.dsp.force_renderer_reload())
+    hl.monitor({ output = "DP-2", mode = "1920x1080@144", position = "0x0", scale = 1, transform = transform })
 end
 
 hl.bind(M .. " + ALT + CTRL + up",    function() rotate_dp2(2) end)   -- binding_45: 180
@@ -440,10 +596,10 @@ hl.bind(M .. " + ALT + CTRL + left",  function() rotate_dp2(3) end)   -- binding
 hl.bind(M .. " + ALT + CTRL + right", function() rotate_dp2(1) end)   -- binding_48: 90
 
 -- simple-tile key_focus_* (wayfire used CTRL+SUPER; SUPER+ALT above is a hyprland-only extra)
-hl.bind(M .. " + CTRL + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(M .. " + CTRL + down",  hl.dsp.focus({ direction = "down" }))
-hl.bind(M .. " + CTRL + left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(M .. " + CTRL + right", hl.dsp.focus({ direction = "right" }))
+--hl.bind(M .. " + CTRL + up",    hl.dsp.focus({ direction = "up" }))
+--hl.bind(M .. " + CTRL + down",  hl.dsp.focus({ direction = "down" }))
+--hl.bind(M .. " + CTRL + left",  hl.dsp.focus({ direction = "left" }))
+--hl.bind(M .. " + CTRL + right", hl.dsp.focus({ direction = "right" }))
 
 -- Bare modifier-combo taps (wayfire modifier_binding_timeout = 400).
 -- Same rule as SUPER_L / Control_L: keep the full modmask in the bind string.
@@ -571,22 +727,27 @@ hl.window_rule({
 hl.config({ debug = { disable_logs = false } })
 
 hl.bind("SUPER + O", function() hl.plugin.overview.toggle() end)
-hl.bind("SUPER + SHIFT + TAB", function() hl.plugin.overview.toggle_all() end)
+hl.bind("SUPER + SHIFT + O", function() hl.plugin.overview.toggle_all() end)
 hl.config({ plugin = { overview = {
     rows = 3,
     columns = 3,
     border_size = 2,
     border_color = "#242424FF",
     duration = "200ms circle",
+    skip_empty_workspaces = true,
+    fullsize_rendering = false,
     grabbed_scale = 50,
+    preview_border_color = 0xcc404080,
+    preview_border_size = 3,
+    preview_border_radius = 8,
     snapshot_switch = 0.6,
     scaled_target = true,
-    refresh_windows = true,
     overview_wait_timeout = 15,
-    closing_focus = true,
-    overview_focus_timeout = 30,
+    overview_focus_timeout = 50,
     switch_duration = "300ms circle",
     switch_wait_timeout = 1000,
+    pool_buffers = 0,
+    flush_after_draw = false,
 } } })
 
 hl.bind("SUPER + LEFT", function() hl.plugin.overview.move("left") end)
@@ -599,104 +760,49 @@ hl.bind("SUPER + SHIFT + RIGHT", function() hl.plugin.overview.move_window("righ
 hl.bind("SUPER + SHIFT + UP", function() hl.plugin.overview.move_window("up") end)
 hl.bind("SUPER + SHIFT + DOWN", function() hl.plugin.overview.move_window("down") end)
 
---hl.config({ plugin = { hyprtasking = {
---            drag_button            = 0x111,
---            select_button          = 0x110,
---            bg_color               = 0xff171717,
---            layout                 = "grid",
---            gap_size               = 2,
---            border_size            = 2,
---            exit_on_hovered        = false,
---            warp_on_move_window    = 1,
---            close_overview_on_reload = true,
---
---            gestures = {enabled = false,},
---
---            grid = {
---                rows                  = 3,
---                cols                  = 3,
---                loop                  = false,
---                layers                = 1,
---                loop_layers           = true,
---                gaps_use_aspect_ratio = false,
---},},},})
---
---
---hl.bind("SUPER + O", function() hl.plugin.hyprtasking.toggle("cursor") end)
---
---hl.bind(M .. " + left",  function() hl.plugin.hyprtasking.move("left") end)
---hl.bind(M .. " + right", function() hl.plugin.hyprtasking.move("right") end)
---hl.bind(M .. " + up",    function() hl.plugin.hyprtasking.move("up") end)
---hl.bind(M .. " + down",  function() hl.plugin.hyprtasking.move("down") end)
---
---hl.bind(M .. " + SHIFT + left",  function() hl.plugin.hyprtasking.movewindow("left") end)
---hl.bind(M .. " + SHIFT + right", function() hl.plugin.hyprtasking.movewindow("right") end)
---hl.bind(M .. " + SHIFT + up",    function() hl.plugin.hyprtasking.movewindow("up") end)
---hl.bind(M .. " + SHIFT + down",  function() hl.plugin.hyprtasking.movewindow("down") end)
+
+
+hl.config({ plugin = { clipboard_bridge = {
+    command = "cliphist -max-store-size 0 store",
+
+    clipboard = "regular",
+    xwayland = false,
+    persistence = true,
+    forward_sensitive = false,
+
+    mime_types = "image/jpeg,image/*,image/png,text/plain;charset=utf-8,UTF8_STRING,text/plain,*",
+    forward_all = false,
+
+    min_size = 0,
+    max_size = 0,
+    timeout_ms = 0,
+
+    excluded_apps = "",
+    excluded_patterns = "",
+} } })
+
+
+if hl.plugin.scrollbar_fix then
+    hl.plugin.scrollbar_fix.rule({
+        app = "vivaldi-stable",
+        scrollbar_width = 17,
+        gap_top = 80,
+        gap_bottom = 15,
+        gaps_fullscreen = 15,
+    })
+end
 
 
 
-
-
---hl.config({ plugin = { edge_hacks = {
---            windows       = "brave, vivaldi, helium, flow",
---            edges         = "bottom:1 right:1",
---            scrollbar_fix = "80:1065",
---        },
---    },
---})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- NOTE: the bare-Super overview toggle lives in the MODIFIER-ONLY TAPS
--- dispatcher above, not here. A separate hl.bind("SUPER + SUPER_L", ...)
--- collides with it - same key and modmask - and the later registration wins,
--- so the dispatcher stopped seeing Super releases entirely and every Super tap
--- opened the overview, including when Super was used as a chord modifier.
-
---hl.config({
---    plugin = {
---        hyprexpo = {
---            columns = 3,
---            gaps_in = 5,
---            gaps_out = 0,
---            bg_col = "rgb(111111)",
---            workspace_method = "first 1",
---            gesture_distance = 200,
---            cancel_key = "escape",
---            show_cursor = 1,
---            keynav_enable = 0,
---            label_enable = 0,
---        },
---    },
---})
+-- Turn the focused window into a group, or dissolve the group it is in
+hl.bind(M .. " + G",           hl.dsp.group.toggle())
+-- Show the next / previous window of the group
+hl.bind(M .. " + CTRL + TAB",  hl.dsp.group.next())
+hl.bind(M .. " + CTRL + SHIFT + TAB", hl.dsp.group.prev())
+-- Move the focused window into the group next to it
+hl.bind(M .. " + CTRL + LEFT",  hl.dsp.window.move({ into_group = "left" }))
+hl.bind(M .. " + CTRL + RIGHT", hl.dsp.window.move({ into_group = "right" }))
+hl.bind(M .. " + CTRL + UP",    hl.dsp.window.move({ into_group = "up" }))
+hl.bind(M .. " + CTRL + DOWN",  hl.dsp.window.move({ into_group = "down" }))
+-- Take the focused window out of its group
+hl.bind(M .. " + CTRL + G",     hl.dsp.window.move({ out_of_group = true }))

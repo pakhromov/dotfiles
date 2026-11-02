@@ -7,10 +7,6 @@ Switch to Last-Used Keyboard Layout=Meta+Alt+L,Meta+Alt+L,Switch to Last-Used Ke
 Switch to Next Keyboard Layout=Meta+Alt+K,Meta+Alt+K,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
 
-[kaccess]
-Toggle Screen Reader On and Off=Meta+Alt+S,Meta+Alt+S,Toggle Screen Reader On and Off
-_k_friendly_name=Accessibility
-
 [ksmserver]
 Halt Without Confirmation=none,none,Shut Down Without Confirmation
 Lock Session=Screensaver\tMeta+L,Screensaver\tMeta+L,Lock Session
@@ -32,13 +28,13 @@ Expose=Ctrl+F9\tMeta+F9,Ctrl+F9\tMeta+F9,Toggle Present Windows (Current desktop
 ExposeAll=Launch (C)\tCtrl+F10\tMeta+F10,Launch (C)\tCtrl+F10\tMeta+F10,Toggle Present Windows (All desktops)
 ExposeClass=Ctrl+F7\tMeta+F7,Ctrl+F7\tMeta+F7,Toggle Present Windows (Window class)
 ExposeClassCurrentDesktop=none,none,Toggle Present Windows (Window class on current desktop)
-Grid View=Meta+G,Meta+G,Toggle Grid View
+Grid View=Meta+O,Meta+G,Toggle Grid View
 Increase Opacity=none,none,Increase Opacity of Active Window by 5%
 Kill Window=Meta+Ctrl+Esc,Meta+Ctrl+Esc,Kill Window
 LaunchKitty=Meta+Return,none,Launch Kitty Terminal
 Move Tablet to Next LogicalOutput=none,none,Move the tablet to the next output
-MoveMouseToCenter=none,Meta+F6,Move Mouse to Center
-MoveMouseToFocus=none,Meta+F5,Move Mouse to Focus
+MoveMouseToCenter=none,Meta+F6,Center Pointer in Screen
+MoveMouseToFocus=none,Meta+F5,Center Pointer in Focused Window
 MoveZoomDown=none,none,Move Zoomed Area Downwards
 MoveZoomLeft=none,none,Move Zoomed Area to Left
 MoveZoomRight=none,none,Move Zoomed Area to Right
@@ -218,6 +214,36 @@ view_actual_size=Meta+0,Meta+0,Zoom to Actual Size
 view_zoom_in=Meta++\tMeta+=,Meta++\tMeta+=,Zoom In
 view_zoom_out=Meta+-,Meta+-,Zoom Out
 
+[kwin][$InverseAction]
+Cycle Overview Opposite=Cycle Overview
+Increase Opacity=Decrease Opacity
+MoveZoomRight=MoveZoomLeft
+MoveZoomUp=MoveZoomDown
+Switch One Desktop Down=Switch One Desktop Up
+Switch One Desktop to the Left=Switch One Desktop to the Right
+Switch Window Right=Switch Window Left
+Switch Window Up=Switch Window Down
+Switch to Next Desktop=Switch to Previous Desktop
+Switch to Previous Screen=Switch to Next Screen
+Switch to Screen Below=Switch to Screen Above
+Switch to Screen to the Left=Switch to Screen to the Right
+Walk Through Windows (Reverse)=Walk Through Windows
+Walk Through Windows Alternative (Reverse)=Walk Through Windows Alternative
+Walk Through Windows of Current Application=Walk Through Windows of Current Application (Reverse)
+Walk Through Windows of Current Application Alternative=Walk Through Windows of Current Application Alternative (Reverse)
+Window Grow Horizontal=Window Shrink Horizontal
+Window Lower=Window Raise
+Window One Desktop Down=Window One Desktop Up
+Window One Desktop to the Left=Window One Desktop to the Right
+Window One Screen Down=Window One Screen Up
+Window One Screen to the Left=Window One Screen to the Right
+Window Pack Down=Window Pack Up
+Window Pack Left=Window Pack Right
+Window Shrink Vertical=Window Grow Vertical
+Window to Next Desktop=Window to Previous Desktop
+Window to Next Screen=Window to Previous Screen
+view_zoom_out=view_zoom_in
+
 [mediacontrol]
 _k_friendly_name=Media Controller
 mediavolumedown=none,none,Media volume down
@@ -290,9 +316,6 @@ _launch=Meta+Shift
 
 [services][mpv.desktop]
 _launch=Meta+M
-
-[services][net.local.dunstctl-2.desktop]
-_launch=none
 
 [services][net.local.dunstctl.desktop]
 _launch=Control
