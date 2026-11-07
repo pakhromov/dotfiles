@@ -162,6 +162,11 @@ body,
   display: none !important;
 }
 
+/* Hide the panel bar and panels completely */
+#panels-container {
+  display: none !important;
+}
+
 /* Hide the link preview shown over the page on hover */
 #webview-container ~ .StatusInfo {
   display: none !important;

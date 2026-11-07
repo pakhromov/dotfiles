@@ -9,8 +9,8 @@
 # It's written straight to the terminal, so it needs no remote control and is
 # scoped to this window only. TVE= is base64 for "1".
 
-FLOW_BIN=/usr/bin/flow
-
+#FLOW_BIN=/usr/bin/flow
+FLOW_BIN=/home/pavel/.config/flow/flow/zig-out/bin/flow
 # Write to the controlling terminal, not stdout -- stdout may be redirected, and
 # the escape has to reach kitty's parser to take effect.
 set_flag()   { printf '\033]1337;SetUserVar=FLOW=MQ==\a' > /dev/tty 2>/dev/null; }

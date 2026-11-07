@@ -1,6 +1,6 @@
 # eDP-1 startup disable fix
 
-Rebuilt for Hyprland **0.57.0** (`0aa6745f705f2c4b0a5004eb019ef76e5bbdb426`),
+Rebuilt for Hyprland **0.57.1** (`acc1aa0bfd4bd575dcb0f76c35ccf12b660a1ab9`),
 plugin API **0.2**, and Aquamarine **0.16.0**. Compilation, ABI-hash, exported-hook,
 and dynamic-symbol checks passed against the installed release. Live output and
 VRAM behavior still need verification in the desktop session.

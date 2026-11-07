@@ -93,8 +93,8 @@ memory have not been measured; operation counts are not timing benchmarks.
 
 ## Build and load
 
-Rebuilt and checked against Hyprland **0.57.0**
-(`0aa6745f705f2c4b0a5004eb019ef76e5bbdb426`), plugin API **0.2**. Existing Lua
+Rebuilt and checked against Hyprland **0.57.1**
+(`acc1aa0bfd4bd575dcb0f76c35ccf12b660a1ab9`), plugin API **0.2**. Existing Lua
 rules and click behavior are compatible; no configuration changes are required.
 
 ```sh

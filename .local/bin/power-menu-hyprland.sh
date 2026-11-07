@@ -12,7 +12,7 @@ case "$choice" in
         hyprshutdown -t 'Rebooting...' --post-cmd 'systemctl reboot'
         ;;
     "󰍃 logout")
-        hyprshutdown -t 'Logging out...'
+        hyprshutdown -t 'Logging out...' --post-cmd 'loginctl terminate-session ${XDG_SESSION_ID-}'
         ;;
     " UEFI")
         hyprshutdown -t 'Rebooting to UEFI...' --post-cmd 'systemctl reboot --firmware-setup'

@@ -177,7 +177,7 @@ hl.env("__GL_VRR_ALLOWED",         "0")
 
 hl.config({
     general = {
-        gaps_in  = 0,
+        gaps_in  = 2,
         gaps_out = 0,
         border_size = 0,
         resize_on_border = false,
@@ -221,12 +221,12 @@ hl.config({
         inactive_opacity = 1.0,
         fullscreen_opacity = 1.0,
 
-        --rounding_power = 4.0,
-        --dim_inactive = false,
-        --dim_modal = true,
-        --dim_special = 0.2,
-        --dim_strength = 0.2,
-        --dim_around = 0.3,
+       rounding_power = 4.0,
+       --dim_inactive = true,
+       --dim_modal = true,
+       --dim_special = 0.2,
+       --dim_strength = 0.2,
+       dim_around = 0.3,
 
         shadow = {
             enabled = false,
@@ -464,13 +464,15 @@ local function mod_tap(self_key)
         local t = uptime()
         for k in pairs(down) do suppress_bare[k] = t end
         if super == 1 and shift == 1 and alt == 1 and ctrl == 0 then
-            hl.exec_cmd("monstar")                                                 -- binding_37
+            hl.exec_cmd("monstar")
         elseif super == 1 and ctrl == 1 and shift == 0 and alt == 0 then
-            hl.exec_cmd("launch-or-focus.sh -w 4 --single-class sublime_text subl")     -- binding_2
+            hl.exec_cmd("launch-or-focus.sh -w 4 --single-class sublime_text subl")
+        elseif super == 1 and ctrl == 1 and shift == 0 and alt == 1 then
+            hl.exec_cmd("flow-open")
         elseif super == 1 and shift == 1 and ctrl == 0 and alt == 0 then
-            hl.exec_cmd("launch-or-focus.sh -w 1 --single-class shell kitty --single-instance --listen-on=unix:@mykitty --class shell zsh")    -- binding_8
+            hl.exec_cmd("launch-or-focus.sh -w 1 --single-class shell kitty --single-instance --listen-on=unix:@mykitty --class shell zsh")
         elseif super == 1 and alt == 1 and ctrl == 0 and shift == 0 then
-            hl.exec_cmd("dashboard.sh --class float --session ~/.config/kitty/session.conf")     -- binding_49
+            hl.exec_cmd("dashboard.sh --class float --session ~/.config/kitty/session.conf")
         end
         return
     end
@@ -487,7 +489,7 @@ local function mod_tap(self_key)
     if ctrl == 1 then
         hl.exec_cmd("makoctl invoke && makoctl dismiss")                           -- binding_51
     elseif super == 1 then
-        hl.plugin.hyprtasking.toggle("cursor")                                 -- expo toggle = <super>
+        hl.plugin.overview.toggle_all()                                 -- expo toggle = <super>
     end
 end
 
@@ -641,6 +643,12 @@ hl.window_rule({                                          -- rule_10: subl -> 21
     workspace = "4",
 })
 
+hl.window_rule({
+    name  = "flow",
+    match = { class = ".*flow.*" },
+    workspace = "4",
+})
+
 hl.window_rule({                                          -- rule_11: browser -> 12
     name  = "assign-browser",
     match = { class = ".*vivaldi.*" },
@@ -733,7 +741,7 @@ hl.config({ plugin = { overview = {
     columns = 3,
     border_size = 2,
     border_color = "#242424FF",
-    duration = "200ms circle",
+    duration = "230ms circle",
     skip_empty_workspaces = true,
     fullsize_rendering = false,
     grabbed_scale = 50,
@@ -746,7 +754,7 @@ hl.config({ plugin = { overview = {
     overview_focus_timeout = 50,
     switch_duration = "300ms circle",
     switch_wait_timeout = 1000,
-    pool_buffers = 0,
+    pool_buffers = 6,
     flush_after_draw = false,
 } } })
 
